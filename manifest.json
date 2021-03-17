@@ -1,37 +1,37 @@
 {
   "manifest_version": 2,
-  "name": "psjs",
+  "name": "SARA",
   "version": "1.0",
-  "description": "Provides different methods and granularity of stopping/preventing the more annoying javascript features.",
+  "description": "Easiler or automatically fill out web forms (most like job application forms. But other's work too).",
   "permissions": [
     "storage",
     "declarativeContent",
     "activeTab",
     "tabs",
-    "webRequest",
-    "<all_urls>",
-    "webRequestBlocking",
-    "<all_urls>"
+    "contextMenus"
   ],
   "icons": {
-    "96": "icons/psjs96.png"
+    "16": "icons/logo16.png",
+    "64": "icons/logo64.png",
+    "96": "icons/logo96.png",
+    "128": "icons/logo128.png"
   },
   "browser_action": {
     "default_icon": {
-      "96":"icons/psjs96.png"
+      "96":"icons/logo96.png"
     },
-    "default_title": "psjs",
+    "default_title": "SARA",
     "default_popup": "popup/menu.html"
   },
   "options_page": "options/settings.html",
   "background": {
-    "scripts": ["./common.js","./background.js"],
-    "persistent": true
+    "scripts": ["./background.js"],
+    "persistent": false
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["./content_scripts/psjs.js"],
+      "js": ["./content_scripts/main.js"],
       "all_frames": true,
       "run_at": "document_start"
     }
