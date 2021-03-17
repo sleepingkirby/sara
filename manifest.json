@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "psjs",
+  "version": "1.0",
+  "description": "Provides different methods and granularity of stopping/preventing the more annoying javascript features.",
+  "permissions": [
+    "storage",
+    "declarativeContent",
+    "activeTab",
+    "tabs",
+    "webRequest",
+    "<all_urls>",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "icons": {
+    "96": "icons/psjs96.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "96":"icons/psjs96.png"
+    },
+    "default_title": "psjs",
+    "default_popup": "popup/menu.html"
+  },
+  "options_page": "options/settings.html",
+  "background": {
+    "scripts": ["./common.js","./background.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["./content_scripts/psjs.js"],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ]
+}

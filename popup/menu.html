@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="menu.css"/>
+  </head>
+
+<body>
+
+  <div class="pageWrap">
+    <div id="notify" class="notify"></div>
+    <div id="mstrSwtch"><input type="checkbox" id="on" class="tgglBtn" /><label class="tgglBtn" for="on" id="onLbl" >on</label></div>
+    <div class="glbl">
+      <input type="checkbox" id="breakJs" class="tgglBtn" /><label class="tgglBtn" for="breakJs" id="breakJsLbl" >breakJs</label>
+      <input type="checkbox" id="stopJs" class="tgglBtn" /><label class="tgglBtn" for="stopJs" id="stopJsLbl" >stopJs</label>
+      <input type="checkbox" id="prvntEvnt" class="tgglBtn" /><label class="tgglBtn" for="prvntEvnt" id="prvntEvntLbl" >prvntEvnt</label>
+      <input type="checkbox" id="prvntXhr" class="tgglBtn" /><label class="tgglBtn" for="prvntXhr" id="prvntXhrLbl" >prvntXhr</label>
+    </div>
+
+    <div class="glbl glblInptTxt" style="margin-bottom: 4px;">
+      <input type="checkbox" id="evntLstBool" class="tgglBtn" /><label class="tgglBtn" for="evntLstBool" id="evntLstBoolLbl" >evnt</label><div class="glblLst"><div id="evntLst">none</div></div>
+    </div>
+    <div class="glbl glblInptTxt">
+      <input type="checkbox" id="xhrLstBool" class="tgglBtn" /><label class="tgglBtn" for="xhrLstBool" id="xhrLstBoolLbl" >ajax</label><div class="glblLst"> <div id="xhrLst">none</div></div>
+    </div>
+
+    <div class="glbl" style="margin-top: 20px;">
+      <div class="ignrTtl">host</div>
+      <div id="curHst" class="ignrHst">&nbsp;</div> 
+    </div>
+
+    <div class="glbl" style="justify-content: flex-end"><button id="addToIgnr" type="button" >add to ignore list</button></div>
+
+
+    <div class="glbl" style="margin-top: 20px;">
+      <div class="ignrTtl">apply</div>
+      <div class="ignrHst"><div id="applyLstVal" class="wdColInpt">&nbsp;</div> </div>
+    </div>
+
+    <div class="glbl" style="justify-content: flex-end;"><a href="" id="settingsPage">Settings</a></div>
+
+  <div class="about">
+    <a href="https://b3spage.sourceforge.io/index.html?mewate" id="donate">About/Donate</a><br>
+  </div>
+
+
+  <script src="menu.js"> </script>
+</body>
+
+</html>

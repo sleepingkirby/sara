@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="./settings.css"/>
+  </head>
+
+  <body>
+    <div class="pageWrap">
+
+      <div id="enable" name="enable">
+        <div style="border: 1px solid #eeeeee; border-radius: 8px; padding: 6px 10px 6px 10px;">
+          <div><label id="enableTitle" for="inptAddOnEn">Add-on enabled:</label> </div>
+          <div style="border: none;"><input id="inptAddOnEn" class="addOnEn" type="checkbox" name='on' act="save" /></div>
+        </div>
+      </div>
+
+      <div class="olBox">
+        <div class="header">
+          <div mMsgId="glblHdMsg" msgClass="toolTipFull" info="Global (all domain) settings.">global settings:</div>
+        </div> 
+        <div id="glblHdMsg" mMsgId="glblHdsg" class="toolTip"></div>
+
+ 
+        <div class="chckLst">
+          <div class="fRow">
+            <div mMsgId="glblMsg" msgClass="toolTipFull" info="This is the *NUCLEAR* option. Pages these days have ways to try to load things even when other scripts says to do otherwise. This will *LITERALLY BREAK THE JAVASCRIPT IN THE PAGE BY CALLING A BROKEN JAVASCRIPT SYNTAX.* Use only when a) you want *ALL* javascript to not run b) you don't care if you break the entire page to do it." >break js: </div>
+            <input id="breakJs" name="breakJs" act="save" type="checkbox" mMsgId="glblMsg" msgClass="toolTipFull" info="This is the *NUCLEAR* option. Pages these days have ways to try to load things even when other scripts says to do otherwise. This will *LITERALLY BREAK THE JAVASCRIPT IN THE PAGE BY CALLING A BROKEN JAVASCRIPT SYNTAX.* Use only when a) you want *ALL* javascript to not run b) you don't care if you break the entire page to do it." /> 
+          </div>
+    
+          <div class="fRow">
+            <div mMsgId="glblMsg" msgClass="toolTipFull" info="This attempts to gracefully to tell javascript to end all scripts. It tells the page that an error was thrown so stop all execution. There may be ways to get around this, which is why the previous 'break js' options exits." >stop js: </div>
+            <input id="stopJs" type="checkbox" name="stopJs" act="save" mMsgId="glblMsg" msgClass="toolTipFull" info="This attempts to gracefully to tell javascript to end all scripts. It tells the page that an error was thrown so stop all execution. There may be ways to get around this, which is why the previous 'break js' options exits." /> 
+          </div>
+    
+          <div class="fRow">
+            <div mMsgId="glblMsg" msgClass="toolTipFull" info="This overrides the addEventListener() funtion with nothing functional. It'll send a console message that an attempt was made and where to and that's it." >prevent event listeners: </div>
+            <input id="prvntEventLstnr" name="prvntEvnt" act="save" type="checkbox" mMsgId="glblMsg" msgClass="toolTipFull" info="This overrides the addEventListener() funtion with nothing functional. It'll send a console message that an attempt was made and where to and that's it."/>
+          </div>
+
+          <div class="fRow">
+            <div mMsgId="glblMsg" msgClass="toolTipFull" info="This overrides the existing ajax funtions with nothing functional. It'll send a console message that an attempt was made and where to and that's it." >prevent xhr/ajax: </div>
+            <input id="prvntXHR" name="prvntXhr" act="save" type="checkbox" mMsgId="glblMsg" msgClass="toolTipFull" info="This overrides the existing ajax funtions with nothing functional. It'll send a console message that an attempt was made and where to and that's it."/>
+          </div>
+        </div>
+       
+        <div id="glblMsg" msgId="glblMsg"  class="toolTip" ></div>
+ 
+        <div class="subHeader"> 
+          <div mMsgId="evntHdMsg" msgClass="toolTipFull" info="Add event type to disable listeners to that event. This makes it so that things like right-click (contextmenu) can't be disabled. This is like the 'prevent event listener', but doesn't kill all the event listeners " >stop event propagation: </div>
+        </div>
+        <div id="evntHdMsg" class="toolTip"></div>
+
+
+        <div class="addLstnTxt">
+          <div><input type="checkbox" name="evntLstBool" act="save" mMsgId="evntMsg" msgClass="toolTipFull" info="enable event propagation prevention"  ></div>
+          <div style="flex-grow: 5;"><input id="addLstnTxtInpt" name="evntLst" type="text" placeholder="ex. click|contextmenu|scroll" style="width: 100%;" mMsgId="evntMsg" msgClass="toolTipFull" savebtn="addLstnTxtInptSbmt" info="abort, afterprint, animationend, animationiteration, animationstart, beforeprint, beforeunload, blur, canplay, canplaythrough, change, click, contextmenu, copy, cut, dblclick, drag, dragend, dragenter, dragleave, dragover, dragstart, drop, durationchange, ended, error, focus, focusin, focusout, fullscreenchange, fullscreenerror, hashchange, input, invalid, keydown, keypress, keyup, load, loadeddata, loadedmetadata, loadstart, message, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseout, mouseup, mousewheel, offline, online, open, pagehide, pageshow, paste, pause, play, playing, popstate, progress, ratechange, resize, reset, scroll, search, seeked, seeking, select, show, stalled, storage, submit, suspend, timeupdate, toggle, touchcancel, touchend, touchmove, touchstart, transitionend, unload, volumechange, waiting, wheel" /></div>
+          <div><input id="addLstnTxtInptSbmt" type="submit" value="save" act="save" actFor="addLstnTxtInpt" style="margin-left: 6px; width:60px;" /></div>
+        </div>
+
+        <div id="evntMsg" mMsgId="evntMsg"  class="toolTip"></div>
+
+        <div class="subHeader"> 
+          <div mMsgId="ntwrkHdMsg" msgClass="toolTipFull" info="Add types to list to prevent network calls. This stops the likes of xhr calls or movies. This is like 'prevent xhr/ajax', but it works on the browser level rather than at the javascript level." >stop network call types: </div>
+        </div>
+        <div id="ntwrkHdMsg" mMsgId="ntwrkHdMsg" class="toolTip"></div>
+
+        <div class="addLstnTxt">
+          <div><input id="xhrLstEnbl" name="xhrLstBool" act="save" type="checkbox" mMsgId="ntwrkMsg" msgClass="toolTipFull" info="enable network call prevention" action="save" actionFor="self"></div>
+          <div style="flex-grow: 5;"><input id="addNtwrkTxtInpt" name="xhrLst" type="text" placeholder="ex. xmlhttprequest|media|websocket" style="width: 100%;" mMsgId="ntwrkMsg" msgClass="toolTipFull" savebtn="addNtwrkTxtInptSbmt" info="main_frame, sub_frame, stylesheet, script, image, font, object, xmlhttprequest, ping, csp_report, media, websocket, other"/></div>
+          <div><input id="addNtwrkTxtInptSbmt" name="addNtwrkTxtInptSbmt" type="submit" value="save" act="save" actFor="addNtwrkTxtInpt" style="margin-left: 6px; width:60px;" /></div>
+        </div>
+
+        <div id="ntwrkMsg" mMsgId="ntwrkMsg"  class="toolTip"></div>
+
+      </div>
+
+      <div class="olBox">
+        <div class="header">
+          <div mMsgId="ignrLstHdMsg" msgClass="toolTipFull" info="Domains here will ignore all global settings.">ignore list: (for global settings only)</div>
+        </div>
+
+        <div id="ignrLstHdMsg" msgId="ignrLstHdMsg"  class="toolTip" >
+        </div>
+
+        <div class="ignrLst">
+          <textarea id="ignrLstTA" name="ignrLst" type="text" savebtn="ignrLstTASbmt" placeholder="ex. gmail.com
+youtube.com"></textarea>
+          <div id="ignrLstSbmt">
+          <input id="ignrLstTASbmt" type="submit" value="save" act="save" actFor="ignrLstTA" style="margin-left: 6px; width:60px;" />
+          </div>
+        </div>
+      </div>
+
+      <div class="olBox">
+        <div class="header">
+          <div mMsgId="applyLstHdMsg" msgClass="toolTipFull" info="custom settings set per domain">apply list:</div>
+        </div>
+
+        <div id="applyLstHdMsg" msgId="applyLstHdMsg"  class="toolTip" ></div>
+
+        <div class="chckLst">
+          <div class="fRow">
+            <input id="applyLstEnbld" name="applyLstEnbld" type="checkbox" mMsgId="applyLstMsg" msgClass="toolTipFull" info="enter entry as enabled" checked />
+          </div>
+
+          <div class="fRow">
+            <input id="applyLstDmn" name="applyLstDmn" type="text" placeholder="ex. domain.com" mMsgId="applyLstMsg" msgClass="toolTipFull" info="Domain to apply settings to" />
+          </div>
+
+          <div class="fRow">
+            <div id="applyLstBrkJsLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="break JS option. Refer to global's &quot;break JS&quot; for full info" >brkJs: </div>
+            <input id="applyLstBrkJs" name="applyLstBrkJs" type="checkbox" mMsgId="applyLstMsg" msgClass="toolTipFull" info="break JS option. Refer to global's &quot;break JS&quot; for full info" />
+          </div>
+
+
+          <div class="fRow">
+            <div id="applyLstStpJsLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop JS option. Refer to global's &quot;stop JS&quot; for full info" >stopJs: </div>
+            <input id="applyLstStpJs" type="checkbox" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop JS option. Refer to global's &quot;stop JS&quot; for full info"/>
+          </div>
+
+          <div class="fRow">
+            <div id="applyLstEvntLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop event listener option. Refer to global's &quot;prevent event listeners&quot; for full info" >events: </div>
+            <input id="applyLstEvnt" type="checkbox" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop event listener option. Refer to global's &quot;prevent event listeners&quot; for full info"/>
+          </div>
+
+          <div class="fRow">
+            <div id="applyLstXHRLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop XHR/AJAX option. Refer to global's &quot;XHR/Ajax&quot; for full info" >xhr/ajax: </div>
+            <input id="applyLstXHR" type="checkbox" mMsgId="applyLstMsg" msgClass="toolTipFull" info="stop XHR/AJAX option. Refer to global's &quot;prevent xhr/ajax&quot; for full info"/>
+          </div>
+
+
+          <div class="fRow">
+            <div id="applyLstEvntCstLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="Custom event listeners">event prop:</div>
+            <div><input id="applyLstEvntCst" type="text" placeholder="ex. click|contextmenu|scroll" style="width: 100%;" mMsgId="applyLstMsg" msgClass="toolTipFull" info="abort, afterprint, animationend, animationiteration, animationstart, beforeprint, beforeunload, blur, canplay, canplaythrough, change, click, contextmenu, copy, cut, dblclick, drag, dragend, dragenter, dragleave, dragover, dragstart, drop, durationchange, ended, error, focus, focusin, focusout, fullscreenchange, fullscreenerror, hashchange, input, invalid, keydown, keypress, keyup, load, loadeddata, loadedmetadata, loadstart, message, mousedown, mouseenter, mouseleave, mousemove, mouseover, mouseout, mouseup, mousewheel, offline, online, open, pagehide, pageshow, paste, pause, play, playing, popstate, progress, ratechange, resize, reset, scroll, search, seeked, seeking, select, show, stalled, storage, submit, suspend, timeupdate, toggle, touchcancel, touchend, touchmove, touchstart, transitionend, unload, volumechange, waiting, wheel" /></div>
+          </div>
+          <div class="fRow">
+            <div id="applyLstNtwrkLbl" mMsgId="applyLstMsg" msgClass="toolTipFull" info="Custom network calls">network call:</div>
+            <div><input id="applyLstNtwrk" type="text" placeholder="ex. xmlhttprequest|media|websocket" style="width: 100%;" mMsgId="applyLstMsg" msgClass="toolTipFull" info="main_frame, sub_frame, stylesheet, script, image, font, object, xmlhttprequest, ping, csp_report, media, websocket, other" /></div>
+          </div>
+          <div class="fRow">
+            <input id="pullGlblStt" mMsgId="applyLstMsg" msgClass="toolTipFull" info="pulls the current global settings to here" act="pllApply" type="submit" value="pull" />
+          </div>
+          <div class="fRow">
+            <input id="clrStt" mMsgId="applyLstMsg" msgClass="toolTipFull" info="clears the settings to default" act="clrApply" type="submit" value="clear" />
+          </div>
+        </div>
+
+        <div id="applyLstMsg" msgId="applyLstMsg"  class="toolTip" ></div>
+        <div id="applyLstSvMsg" style="position:static; justify-content: flex-start;" msgId="applyLstMsg"  act="rmClass" actFor="toolTipFull" class="toolTip" ></div>
+
+        <div class="chckLst" style="margin-top: 30px;" >
+          <div class="fRow"><input id="addBtn" act="convAndAdd" savebtn="addLstTASbmt" type="submit" value="vvv  add  vvv" /></div>
+        </div>
+
+        <div class="ignrLst">
+          <textarea id="applyLstTA" name="applyLst" type="text" savebtn="addLstTASbmt" placeholder="custom options by domain to be filled here..."></textarea>
+          <div id="ignrLstSbmt">
+          <input id="addLstTASbmt" type="submit" act="save" actFor="applyLstTA" value="save" style="margin-left: 6px; width:60px;" />
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  
+    <script src="./options.js"></script>
+  </body>
+</html>
