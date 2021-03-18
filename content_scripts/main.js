@@ -1,6 +1,17 @@
 //loading external files and settings.
 (function() {
 
+/**
+ * Check and set a global guard variable.
+ * If this content script is injected into the same page again,
+ * it will do nothing next time.
+ */
+if (window.hasRun) {
+  return;
+}
+window.hasRun = true;
+
+
 //validate Str
 function validStr(str){
   if( str && (typeof str === 'string' || str instanceof String) && str!=""){
@@ -32,22 +43,6 @@ return rtrn;
 }
 
 
-  /**
-   * Check and set a global guard variable.
-   * If this content script is injected into the same page again,
-   * it will do nothing next time.
-   */
-  if (window.hasRun) {
-    return;
-  }
-  window.hasRun = true;
-
-  var onEl;
-
-  window.oncontextmenu=(e) => {onEl=e.path[0];};
-  
-
-  
   /*--------------------------
   pre: none
   post: none
@@ -67,6 +62,18 @@ return rtrn;
     pageDone();
   }
 
+  /*----------------------
+  pre: none
+  post: none
+  gets the attributes of an element and makes it into an obj
+  ----------------------*/
+  function elAttrToObj(el){
+  var rtrn={};
+  var arr=el.getAttributeNames();
+  arr.forEach( (i,n)=>{rtrn[i]=el.getAttribute(i);});
+  return rtrn;
+  }
+
   /*--------------------
   pre: everything above here
   post: everything modified as a result of running functions above here
@@ -75,10 +82,9 @@ return rtrn;
   function runOnMsg(request, sender, sendResponse){
     switch(request.action){
       case 'getEl':
-      console.log(request.action);
-      console.log("=====>");
-      console.log(onEl);
-      sendResponse("Message Received");
+      var obj=elAttrToObj(onEl);
+      console.log(JSON.stringify(obj));
+      sendResponse(JSON.stringify(obj));
       break;
       default:
       break;
@@ -89,9 +95,13 @@ return rtrn;
 
 //================================================= main code run ====================================================
 var conf={};
+var onEl;
+
+//set event so that right click will capture the element it's over
+window.oncontextmenu=(e) => {onEl=e.path[0];};
+
 
 chrome.storage.local.get(null, function(d){
-
 });
 
 

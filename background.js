@@ -57,7 +57,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status == 'complete') {   
     chrome.contextMenus.onClicked.addListener(function(info, tabs) {
       chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log(response);});  
+      chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log("======bg===>>"); console.log(response);});  
       });
     });
   }
