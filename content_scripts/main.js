@@ -161,7 +161,14 @@ return 0;
   the main logic for what to do when a message comes in from the popup menu
   ---------------------*/
   function runOnMsg(request, sender, sendResponse){
+  console.log(request);
+  console.log(sender);
+  console.log(sendResponse);
     switch(request.action){
+      case 'getEl':
+      console.log(request.action);
+      sendResponse("Message Received");
+      break;
       default:
       break;
     }
@@ -387,14 +394,10 @@ applyLstXHR: "true"
     stopEventListeners(applyLst[host].applyLstEvntCst, "for apply list on domain: \""+host+"\"");
     }
   }
-
-
 });
 
 
+//get message from other parts
 chrome.runtime.onMessage.addListener(runOnMsg);
+
 })();
-
-
-
-

@@ -11,17 +11,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   }
 });
 
-chrome.contextMenus.removeAll();
-chrome.contextMenus.create({
-      id: "0",
-      title: "SARA"
-});
-chrome.contextMenus.create({
-      id: "1",
-      title: "SARA",
-      parentId: "0"
-});
-
 
 //initializing the extension settings if no settings exists
 chrome.storage.local.get(null, (d) => {
@@ -31,6 +20,47 @@ chrome.storage.local.get(null, (d) => {
   }
 });
 
+
+//chrome.contextMenus.removeAll();
+chrome.contextMenus.create({
+      id: "root",
+      title: "SARA",
+      contexts: ["all"]
+});
+chrome.contextMenus.create({
+      id: "paste",
+      title: "Paste",
+      contexts: ["all"],
+      parentId: "root"
+});
+chrome.contextMenus.create({
+      id: "info",
+      title: "Info",
+      contexts: ["all"],
+      parentId: "root"
+});
+chrome.contextMenus.create({
+      id: "clip",
+      title: "To Clipboard",
+      contexts: ["all"],
+      parentId: "root"
+});
+chrome.contextMenus.create({
+      id: "lvl1",
+      title: "level1",
+      contexts: ["all"],
+      parentId: "paste"
+});
+
+chrome.contextMenus.onClicked.addListener(function(info, tabs) {
+  //chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
+   //if (changeInfo.status == 'complete') {   
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+         chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log(response);});  
+      });
+   //}
+  //});
+});
 
 //listen to changes on applyLst reparse if changes exist
 //chrome.storage.onChanged.addListener(function(c,n){
