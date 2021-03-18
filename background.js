@@ -21,7 +21,7 @@ chrome.storage.local.get(null, (d) => {
 });
 
 
-//chrome.contextMenus.removeAll();
+chrome.contextMenus.removeAll();
 chrome.contextMenus.create({
       id: "root",
       title: "SARA",
@@ -52,15 +52,17 @@ chrome.contextMenus.create({
       parentId: "paste"
 });
 
-chrome.contextMenus.onClicked.addListener(function(info, tabs) {
-  //chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
-   //if (changeInfo.status == 'complete') {   
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
+  if (changeInfo.status == 'complete') {   
+    chrome.contextMenus.onClicked.addListener(function(info, tabs) {
       chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-         chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log(response);});  
+      chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log(response);});  
       });
-   //}
-  //});
+    });
+  }
 });
+
 
 //listen to changes on applyLst reparse if changes exist
 //chrome.storage.onChanged.addListener(function(c,n){
