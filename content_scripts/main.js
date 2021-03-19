@@ -67,10 +67,12 @@ return rtrn;
   post: none
   gets the attributes of an element and makes it into an obj
   ----------------------*/
-  function elAttrToObj(el){
-  var rtrn={};
+  function elToObj(el){
+  console.log(el);
+  var rtrn={"tagName":"", "attr":{}};
   var arr=el.getAttributeNames();
-  arr.forEach( (i,n)=>{rtrn[i]=el.getAttribute(i);});
+  arr.forEach( (i,n)=>{rtrn.attr[i]=el.getAttribute(i);});
+  rtrn["tagName"]=el.tagName.toLowerCase();
   return rtrn;
   }
 
@@ -82,7 +84,7 @@ return rtrn;
   function runOnMsg(request, sender, sendResponse){
     switch(request.action){
       case 'getEl':
-      var obj=elAttrToObj(onEl);
+      var obj=elToObj(onEl);
       console.log(JSON.stringify(obj));
       sendResponse(JSON.stringify(obj));
       break;
@@ -98,7 +100,10 @@ var conf={};
 var onEl;
 
 //set event so that right click will capture the element it's over
-window.oncontextmenu=(e) => {onEl=e.path[0];};
+window.oncontextmenu=(e) => {
+  onEl=e.path[0];
+  chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
+};
 
 
 chrome.storage.local.get(null, function(d){
