@@ -40,6 +40,32 @@ textarea::placeholder,input::placeholder{
 color: #444444;
 }
 
+.switch{
+justify-content: flex-start;
+}
+
+.switch div{
+border-left:1px solid #888888;
+border-top:1px solid #888888;
+border-right:1px solid #888888;
+border-radius: 8px 8px 0px 0px;
+padding: 6px 6px 4px 6px;
+margin-right: 8px;
+}
+
+.switch input{
+display: none;
+}
+.switch input:checked + label div{
+color: #000000;
+background-color: #888888;
+}
+
+.switch .inptOn{
+color: #000000;
+background-color: #888888;
+}
+
 .pageWrap{
 display: table;
 width: 100%;
