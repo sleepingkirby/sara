@@ -83,10 +83,12 @@ return rtrn;
   function runOnMsg(request, sender, sendResponse){
     switch(request.action){
       case 'getEl':
-      var obj=elToObj(onEl);
+      //sends current hovered over element to the background script to populate the right click menu
+      var obj=elToObj(onEl); 
       sendResponse(JSON.stringify(obj));
       break;
       case 'sendInfo':
+      //copies the proper attribute of the desire element into the clipboard
       var ta=document.createElement("textarea");
       ta.textContent=request.msg.val;
       document.body.appendChild(ta);
@@ -94,10 +96,6 @@ return rtrn;
       document.execCommand('copy', false, null);
       document.body.removeChild(ta);
       sendResponse(true);
-      break;
-      case 'saraUpgradeReload':
-      console.log("Got message");
-      location.reload();//reload page for all pages that has this content script AND the extension has reloaded
       break;
       default:
       sendResponse("clicked default");
@@ -123,7 +121,6 @@ return rtrn;
       location.reload();
       }
       
-    console.log(e);
     }
   }
 

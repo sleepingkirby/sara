@@ -45,7 +45,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   var arr=Object.keys(msg.onEl.attr);
     //change the menu item title
     chrome.contextMenus.update("info",{
-      title: "Current Element: "+msg.onEl.tagName
+      title: "Copy Element Attr: "+msg.onEl.tagName
     });
     
     //removes previous entry
@@ -81,6 +81,7 @@ chrome.storage.local.get(null, (d) => {
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
   if (changeInfo.status == 'complete') {   
+    //adds listeners for the right click/context menu so we know what to do if something is clicked
     chrome.contextMenus.onClicked.addListener(function(info, tabs) {
         // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
         if(info.menuItemId.substr(0,5) == "info-"){
