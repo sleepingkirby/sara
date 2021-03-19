@@ -68,7 +68,6 @@ return rtrn;
   gets the attributes of an element and makes it into an obj
   ----------------------*/
   function elToObj(el){
-  console.log(el);
   var rtrn={"tagName":"", "attr":{}};
   var arr=el.getAttributeNames();
   arr.forEach( (i,n)=>{rtrn.attr[i]=el.getAttribute(i);});
@@ -85,29 +84,68 @@ return rtrn;
     switch(request.action){
       case 'getEl':
       var obj=elToObj(onEl);
-      console.log(JSON.stringify(obj));
       sendResponse(JSON.stringify(obj));
       break;
-      default:
+      case 'sendInfo':
+      var ta=document.createElement("textarea");
+      ta.textContent=request.msg.val;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy', false, null);
+      document.body.removeChild(ta);
+      sendResponse(true);
       break;
+      case 'saraUpgradeReload':
+      console.log("Got message");
+      location.reload();//reload page for all pages that has this content script AND the extension has reloaded
+      break;
+      default:
+      sendResponse("clicked default");
+      break;
+    }
+  }
+
+  /*-------------------------
+  pre: onEl exists, mouseover event passed down, elToObj()
+  post: mouseover event listener addedi
+  sends message current element as object to background script
+  -------------------------*/
+  function elObjToBG(e){
+  onEl=e.path[0];
+    try{
+    chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
+    }
+    catch(e){
+      if(ignErr===null){
+      ignErr=confirm("Hi, this is the extension \"SARA\". I've detected an error when trying to talk with another part of myself.\nThis is probably because I was upgraded, reloaded or removed. In order for me to run correctly, this page will have to be reloaded. \nClick \"OK\" to reload the page.\nClick \"Cancel\" to continue to work as it is. \n\n"+e);
+      }
+      if(ignErr){
+      location.reload();
+      }
+      
+    console.log(e);
     }
   }
 
 
 
 //================================================= main code run ====================================================
+
 var conf={};
 var onEl;
+var ignErr=null;
 
 //set event so that right click will capture the element it's over
+/* this doesn't work because context menu is render at the same time the code to update it is sent off.
+as such, the contextmenu shown to the user is always one selection behind.
 window.oncontextmenu=(e) => {
   onEl=e.path[0];
   chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
 };
+*/
+document.addEventListener("mouseover", elObjToBG);
 
-
-chrome.storage.local.get(null, function(d){
-});
+chrome.storage.local.get(null, function(d){});
 
 
 //get message from other parts

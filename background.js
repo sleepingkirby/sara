@@ -30,7 +30,7 @@ function mkCntxtMnu(func){
 
 //======================== functional code =============================
 
-var cntxtCch=[];//cache for the context menu id's
+var cntxtCch={};//cache for the context menu id's
 mkCntxtMnu();
 
 chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
@@ -49,22 +49,23 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     });
     
     //removes previous entry
-    var tmp=cntxtCch.shift();
+    var ids=Object.keys(cntxtCch);
+    var tmp=ids.shift();
       while(tmp){
       chrome.contextMenus.remove(tmp);
-      tmp=cntxtCch.shift();
+      tmp=ids.shift();
       }
+    cntxtCch={};
     //populates the context menu
     arr.forEach((val, i) => {
-    cntxtCch.push("info-"+val);
+    cntxtCch["info-"+val]={"val":msg.onEl.attr[val], "attr":val};
         chrome.contextMenus.create({
         id: "info-"+val,
         title: val+": \""+msg.onEl.attr[val]+"\"",
         contexts: ["all"],
         parentId: "info"
-        },()=>{console.log("done!");});
+        });
     });
-  sendResponse("yes");
   }
 });
 
@@ -81,18 +82,22 @@ chrome.storage.local.get(null, (d) => {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
   if (changeInfo.status == 'complete') {   
     chrome.contextMenus.onClicked.addListener(function(info, tabs) {
-      chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {action: "getEl"}, function(response) { console.log("======bg===>>"); console.log(response);});  
-      });
+        // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
+        if(info.menuItemId.substr(0,5) == "info-"){
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+          chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
+          });
+        }
+        /*
+        else if(){
+          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+          chrome.tabs.sendMessage(tabs[0].id, {action: "paste"}, function(response) { console.log("======bg===>>"); console.log(response);});  
+          });
+        }
+        */
     });
   }
 });
-
-
-
-//listen to changes on applyLst reparse if changes exist
-//chrome.storage.onChanged.addListener(function(c,n){
-//});
 
 
 chrome.runtime.onInstalled.addListener(function() {
