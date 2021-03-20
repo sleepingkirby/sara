@@ -31,7 +31,6 @@ var max=nm.length;
   document.getElementById(nm[i].getAttribute("tabMain")).classList.remove("mainOn");
   }
 document.getElementById(id).classList.toggle("mainOn");
-
 }
 
 
@@ -44,25 +43,49 @@ var max=swtchTbs.length;
   }
 }
 
-//sets the form to values stored in chrome.storage.local
-function getSettings(){
-  chrome.storage.local.get(null,function(d){
-  var tmpEl;
-    for(let k in d){
-    tmpEl=document.getElementsByName(k);
+
+
+//draw Profiles page
+function drawProfiles(prof){
+var p=prof;
+var elId="prflFrm";
+var stack=[];
+stack.push({n:"root",i:0});
+  if(!prof || prof==""){
+  p="default";
+  }
+
+  chrome.storage.local.get({profiles:p, profile_meta:p},function(d){
+    var prof=d.profiles[p];
+    var meta=d.profile_meta[p];
     
-      if(tmpEl.length>=1){
-      tmpEl=tmpEl[0];
-        if(tmpEl.hasAttribute("type") && tmpEl.type=="checkbox"){
-        tmpEl.checked=d[k];
-        }
-        else{
-        tmpEl.value=d[k];
+    var tmp=null;
+    //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
+    //using the tail end of stack as the current location 
+    //while(stack.length>0){
+    while(stack.length>0){
+
+      //if current location's index is beyond the arr.length, pop the stack
+      if(stack[stack.length-1].i>(meta[stack[stack.length-1].n].length-1)){
+      stack.pop();
+        if(stack.length>0){
+        stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
-    } 
+      else{
+        //if the current location and index is object, push to stack.
+        if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
+        stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});
+        }
+        else{
+        //else,it's a leaf node
+        console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        stack[stack.length-1].i = stack[stack.length-1].i +1;
+        }
+      }
+    }
   });
 }
 
-
+drawProfiles();
 startListen();

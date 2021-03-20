@@ -78,11 +78,31 @@ margin: 0px 0px 0px 0px;
 border: 1px #888888 solid;
 display: none;
 justify-content: flex-start;
-padding: 6px 8px 6px 8px;
+padding: 16px 8px 6px 8px;
+flex-direction: column;
+align-items: stretch;
 }
 
 .mainOn{
 display: flex;
+}
+
+.main > div {
+justify-content: flex-start;
+margin-bottom: 10px;
+}
+
+.prflLbl{
+margin-right: 6px;
+}
+
+select{
+background-color: #000000;
+border-radius: 3px 3px 3px 3px;
+padding: 3px 5px 3px 5px;
+color: #888888;
+font-family: "DejaVu Sans", Arial, sans-serif;
+font-size: 12px;
 }
 
 #enable{

@@ -33,8 +33,70 @@ function mkCntxtMnu(func){
 var cntxtCch={};//cache for the context menu id's
 mkCntxtMnu();
 
-chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+chrome.storage.local.get(null,(d)=>{
+  if(Object.keys(d).length <= 0){
+    var ind={
+      profiles: {
+        "default":{
+          name:{
+          last: "",
+          first: "",
+          m: ""
+          },
+          addr:{
+          1:"",
+          2:""
+          },
+        city: "",
+        state: "",
+        province: "",
+        zip: "",
+        postal: "",
+        mail: "",
+          phone: {
+          cell: "",
+          home: ""
+          },
+          job:{
+          1:"",
+          2:""
+          },
+          ref:{
+          1: "",
+          2: ""
+          },
+          covers:{
+          1:""
+          }
+        }
+      },
+      profile_meta:{
+        "default":{
+        root:["stat", "exp", "references", "others"],
+        stat:["name","addr", "city", "state", "province", "zip", "postal", "mail", "phone"],
+        exp:["job"],
+        others:["covers"],
+        name:["last", "first", "m"],
+        addr:["1", "2"],
+        phone:["cell","home"],
+        "job":["1","2"],
+        "references":["ref"],
+        "ref":["1","2"],
+        covers:["1"]
+        }
+      },
+      settings:{
+      autofill: false,
+      hoverId: false
+      }
+    };
+    chrome.storage.local.set(ind,(e)=>{console.log(e);});
+  }
+});
 
+
+
+chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
 //listener for contentScript
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
