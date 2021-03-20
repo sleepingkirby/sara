@@ -40,6 +40,11 @@ textarea::placeholder,input::placeholder{
 color: #444444;
 }
 
+.pageWrap{
+display: table;
+width: 100%;
+}
+
 .switch{
 justify-content: flex-start;
 }
@@ -56,6 +61,7 @@ margin-right: 8px;
 .switch input{
 display: none;
 }
+
 .switch input:checked + label div{
 color: #000000;
 background-color: #888888;
@@ -66,9 +72,17 @@ color: #000000;
 background-color: #888888;
 }
 
-.pageWrap{
-display: table;
-width: 100%;
+
+.main{
+margin: 0px 0px 0px 0px;
+border: 1px #888888 solid;
+display: none;
+justify-content: flex-start;
+padding: 6px 8px 6px 8px;
+}
+
+.mainOn{
+display: flex;
 }
 
 #enable{

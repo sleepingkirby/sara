@@ -9,29 +9,36 @@
   <body>
     <div class="pageWrap">
       <div class="switch">
-        <input type="radio" name="switchTab" id="prflInpt" />
+        <input type="radio" name="switchTab" class="swtchTb" tabMain="prflMain" id="prflInpt" checked />
         <label for="prflInpt">
           <div id="profile">
           Profile
           </div>
         </label>
   
-        <input type="radio" name="switchTab" id="imprtInpt" />
+        <input type="radio" name="switchTab" class="swtchTb" tabMain="imprtMain" id="imprtInpt" />
         <label for="imprtInpt">
-        <div id="import">
-        Import/Export
-        </div>
+          <div id="import">
+          Import/Export
+          </div>
         </label>
 
-        <input type="radio" name="switchTab" id="sttngsInpt" />
+        <input type="radio" name="switchTab" class="swtchTb" tabMain="sttngsMain" id="sttngsInpt" />
         <label for="sttngsInpt">
-        <div id="settings">
-        Settings
-        </div>
+          <div id="settings">
+          Settings
+          </div>
         </label>
-        
       </div>
-      <div>
+
+      <div class="main mainOn" id="prflMain">
+      profile
+      </div>
+      <div class="main" id="imprtMain">
+      import
+      </div>
+       <div class="main" id="sttngsMain">
+      settings
       </div>
     </div>
   
