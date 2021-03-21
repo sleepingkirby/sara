@@ -43,13 +43,62 @@ var max=swtchTbs.length;
   }
 }
 
+//fill out the select element 
+function fillSlct(id, prof){
+  if(!id || id==""){
+  return 0; 
+  }
 
+  var tmp=null;
+  chrome.storage.local.get("profiles", (e)=>{
+  var arr=Object.keys(e.profiles);
+  var tmp=null;
+  var slct=document.getElementById(id);
+    for(let i of arr){
+    tmp=document.createElement("option");
+    tmp.innerText=i;
+    tmp.value=i;
+      if(i==prof){
+      tmp.selected=true;
+      }
+    slct.appendChild(tmp);
+    }
+  });
+}
+
+//get value from profile data object and stack
+function getVal(prf, stk, leaf){
+  if(!prf || !stk || !leaf){
+  return null;
+  }
+
+  //root should always be there. Assume that
+  //if there is only root or less, do nothing  
+  if(stk.length<1){
+  return null;
+  }
+
+
+var val=prf;
+  for(i=1; i<stk.length; i++){
+    if(val.hasOwnProperty(stk[i].n)){
+    val=val[stk[i].n];
+    }
+  }
+  
+  if(val.hasOwnProperty(leaf)){
+  return val[leaf];
+  }
+
+return null;
+}
 
 //draw Profiles page
 function drawProfiles(prof){
 var p=prof;
 var elId="prflFrm";
 var stack=[];
+var rtrn="";
 stack.push({n:"root",i:0});
   if(!prof || prof==""){
   p="default";
@@ -62,7 +111,7 @@ stack.push({n:"root",i:0});
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
     //using the tail end of stack as the current location 
-    //while(stack.length>0){
+    var i=0;
     while(stack.length>0){
 
       //if current location's index is beyond the arr.length, pop the stack
@@ -71,21 +120,31 @@ stack.push({n:"root",i:0});
         if(stack.length>0){
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
+      rtrn+="    </div> \
+            </div> \
+            ";
       }
       else{
         //if the current location and index is object, push to stack.
         if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
+        rtrn+="<div class=\"prflCtg\"> \
+                <div class=\"prflCtgTtl\">"+meta[stack[stack.length-1].n][stack[stack.length-1].i]+":</div> \
+                <div class=\"prflGrp\"> \
+              ";
         stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});
         }
         else{
         //else,it's a leaf node
-        console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        rtrn+="<div class=\"prflInpt\">"+meta[stack[stack.length-1].n][stack[stack.length-1].i]+": <input type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
     }
+    document.getElementById("prflFrm").innerHTML=rtrn;
   });
 }
 
+fillSlct("prflSlct", "");
 drawProfiles();
 startListen();
