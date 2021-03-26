@@ -22,6 +22,17 @@ var end=rtrn.search('/');
 return rtrn;
 }
 
+function getURLVar(){
+var url=window.location.href;
+var i=url.indexOf("?");
+  if(i<0){
+  return "";
+  }
+var vNm=url.substr(i+1);
+return vNm;
+}
+
+
 function tabSwitch(e){
 var el=e.target;
 var id=el.getAttribute("tabMain");
@@ -96,6 +107,24 @@ var val=prf;
 return null;
 }
 
+//generate path string. For the javascript to know where the items is in the hash trees.
+function genStkPath(stk, leaf){
+var tkn="::-::";
+var rtrn="";
+//assume root is there. if not, return nothing.
+  if(!leaf || leaf=="" || !stk || stk.length<=0 || stk[0]!="root"){
+  return "";
+  }
+  
+var i=1;
+var max=stk.length
+  while(i>=max){
+  
+  i++;
+  }
+
+}
+
 //draw Profiles page
 function drawProfiles(prof){
 var p=prof;
@@ -119,8 +148,8 @@ stack.push({n:"root",i:0});
     return 0;
     }
 
-    var prof=d.profiles[p];
-    var meta=d.profile_meta[p];
+    prof=d.profiles[p];
+    meta=d.profile_meta[p];
  
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
@@ -159,6 +188,10 @@ stack.push({n:"root",i:0});
   });
 }
 
-fillSlct("prflSlct", "");
-drawProfiles();
+var urlPrf=getURLVar();
+var meta=null;
+var prof=null;
+
+fillSlct("prflSlct", urlPrf);
+drawProfiles(urlPrf);
 startListen();
