@@ -51,6 +51,9 @@ function fillSlct(id, prof){
 
   var tmp=null;
   chrome.storage.local.get("profiles", (e)=>{
+    if(!e.hasOwnProperty("profiles")){
+    return 0;
+    }
   var arr=Object.keys(e.profiles);
   var tmp=null;
   var slct=document.getElementById(id);
@@ -85,7 +88,7 @@ var val=prf;
     val=val[stk[i].n];
     }
   }
-  
+ 
   if(val.hasOwnProperty(leaf)){
   return val[leaf];
   }
@@ -105,9 +108,20 @@ stack.push({n:"root",i:0});
   }
 
   chrome.storage.local.get({profiles:p, profile_meta:p},function(d){
+    
+    if(!d.hasOwnProperty("profiles")||!d.hasOwnProperty("profile_meta")){
+    return 0;
+    }
+    if(d.profiles.length<=0||d.profile_meta.length<=0){
+    return 0;
+    }
+    if(!d.profiles.hasOwnProperty(p) || !d.profile_meta.hasOwnProperty(p)){
+    return 0;
+    }
+
     var prof=d.profiles[p];
     var meta=d.profile_meta[p];
-    
+ 
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
     //using the tail end of stack as the current location 
@@ -136,7 +150,7 @@ stack.push({n:"root",i:0});
         else{
         //else,it's a leaf node
         //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        rtrn+="<div class=\"prflInpt\">"+meta[stack[stack.length-1].n][stack[stack.length-1].i]+": <input type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /></div>";
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button>-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }

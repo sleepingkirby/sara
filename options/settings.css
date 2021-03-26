@@ -40,6 +40,49 @@ textarea::placeholder,input::placeholder{
 color: #444444;
 }
 
+button{
+display: flex;
+background-color: transparent;
+border: 1px solid #888888;
+color: #888888;
+height: 100%;
+}
+
+.prflSlct{
+align-items: stretch;
+}
+
+.prflAdd{
+margin-left: 10px;
+transition: all;
+}
+
+.prflAdd input{
+width:0px;
+height: 100%;
+margin-right: 0px;
+box-sizing: border-box;
+transition: all .5s ease-in-out;
+border: 0px;
+padding: 0px;
+}
+
+.prflAdd:hover input{
+width: 180px;
+border: 1px solid #888888;
+padding: 1px 4px 1px 4px;
+margin-right: 6px;
+}
+
+.prflAdd button{
+border-radius: 14px;
+height: 24px;
+width: 24px;
+justify-content: center;
+align-items: center;
+padding: 0px;
+}
+
 .pageWrap{
 display: table;
 width: 100%;
@@ -114,8 +157,38 @@ padding-top: 8px;
 
 #prflFrm div.prflInpt{
 flex-direction: row;
-align-items: center;
-margin: 2px 0px 6px 0px;
+align-items: stretch;
+margin: 2px 8px 6px 0px;
+}
+
+#prflFrm div.prflInpt button{
+margin-left: 6px;
+background-color: transparent;
+color: #888888;
+border: 1px solid #888888;
+border-radius: 4px;
+}
+
+#prflFrm div.prflInpt input:first-child{
+margin-right: 8px;
+flex-shrink: 10;
+flex-grow: 1;
+width: 100%;
+height: 100%;
+border: 0px;
+}
+
+#prflFrm div.prflInpt div.prflInptTtl{
+overflow: hidden;
+resize: horizontal;
+margin-right: 10px;
+border: 1px solid #888888;
+border-radius: 4px;
+width: 100px;
+}
+
+.prflInpt + .prflCtg{
+margin-top: 12px;
 }
 
 .prflCtg{
@@ -129,7 +202,7 @@ justify-content: flex-start;
 .prflCtg input{
 padding: 2px 2px 2px 6px;
 display: flex;
-flex-grow:5;
+flex-grow: 8;
 }
 
 .prflCtg > div.prflCtgTtl{
@@ -139,7 +212,7 @@ padding: 0px 0px 0px 0px;
 }
 
 .prflCtg > div.prflGrp{
-padding: 10px 10px 0px 20px;
+padding: 10px 0px 0px 20px;
 }
 
 .prflGrp > div.prflInpt:last-of-type{
@@ -153,6 +226,36 @@ padding: 3px 5px 3px 5px;
 color: #888888;
 font-family: "DejaVu Sans", Arial, sans-serif;
 font-size: 12px;
+}
+
+#prflNewFrm{
+margin-top: 12px;
+margin-left: 12px;
+padding: 6px 0px 4px 0px;
+
+}
+
+.prflNewInpt{
+border: 1px solid red;
+resize: horizontal;
+overflow: hidden;
+border: 1px solid #888888;
+border-radius: 4px;
+width: 80px;
+margin-right: 10px;
+}
+
+.prflNewInpt input{
+width: 100%;
+height: 100%;
+border: 0px;
+padding: 2px 2px 2px 6px;
+}
+
+
+#prflNewFrm button{
+border-radius: 4px;
+height: 100%;
 }
 
 #enable{
