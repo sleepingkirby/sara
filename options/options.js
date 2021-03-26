@@ -142,7 +142,7 @@ stack.push({n:"root",i:0});
         //if the current location and index is object, push to stack.
         if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
         rtrn+="<div class=\"prflCtg\"> \
-                <div class=\"prflCtgTtl\">"+meta[stack[stack.length-1].n][stack[stack.length-1].i]+":</div> \
+                <div class=\"prflCtgTtl\"><input type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> \
                 <div class=\"prflGrp\"> \
               ";
         stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});

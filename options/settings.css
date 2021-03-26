@@ -23,7 +23,6 @@ justify-content: space-evenly;
 align-items: center;
 box-sizing: border-box;
 text-align: justify;
-transition: all;
 }
 
 textarea{
@@ -54,7 +53,7 @@ align-items: stretch;
 
 .prflAdd{
 margin-left: 10px;
-transition: all;
+transition: all .5s ease-in-out;
 }
 
 .prflAdd input{
@@ -169,7 +168,7 @@ border: 1px solid #888888;
 border-radius: 4px;
 }
 
-#prflFrm div.prflInpt input:first-child{
+div.prflInpt input:first-child{
 margin-right: 8px;
 flex-shrink: 10;
 flex-grow: 1;
@@ -178,7 +177,7 @@ height: 100%;
 border: 0px;
 }
 
-#prflFrm div.prflInpt div.prflInptTtl{
+div.prflInpt div.prflInptTtl{
 overflow: hidden;
 resize: horizontal;
 margin-right: 10px;
@@ -208,8 +207,21 @@ flex-grow: 8;
 .prflCtg > div.prflCtgTtl{
 font-weight: bolder;
 font-size: larger;
+border: 0px;
+border-bottom: 1px solid #888888;
 padding: 0px 0px 0px 0px;
+resize: horizontal;
+overflow: hidden;
+width: 110px;
 }
+
+.prflCtg > div.prflCtgTtl > input{
+border: 0px;
+width: 100%;
+font-weight: bolder;
+font-size: larger;
+}
+
 
 .prflCtg > div.prflGrp{
 padding: 10px 0px 0px 20px;
@@ -232,17 +244,29 @@ font-size: 12px;
 margin-top: 12px;
 margin-left: 12px;
 padding: 6px 0px 4px 0px;
+transition: all 0.5s ease-in-out;
+}
 
+#prflNewFrm:hover div.prflNewInpt{
+border: 1px solid #888888;
+width: 80px;
+margin-right: 10px;
+}
+
+#prflNewFrm .prflNewTtl{
+font-size: 16px;
+margin-right: 6px;
+font-size: larger;
+font-weight: bolder;
 }
 
 .prflNewInpt{
-border: 1px solid red;
 resize: horizontal;
 overflow: hidden;
-border: 1px solid #888888;
+border: 0px;
 border-radius: 4px;
-width: 80px;
-margin-right: 10px;
+width: 0px;
+margin-right: 0px;
 }
 
 .prflNewInpt input{
