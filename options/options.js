@@ -107,22 +107,29 @@ var val=prf;
 return null;
 }
 
-//generate path string. For the javascript to know where the items is in the hash trees.
+/*---------------------------------
+pre: stack structured by drawProfiles()
+post: none
+generate path string. For the javascript to know where the items is in the hash trees.
+---------------------------------*/ 
 function genStkPath(stk, leaf){
 var tkn="::-::";
 var rtrn="";
+ 
 //assume root is there. if not, return nothing.
-  if(!leaf || leaf=="" || !stk || stk.length<=0 || stk[0]!="root"){
+  if(!leaf || leaf=="" || !stk || stk.length<=0||stk[0].n!="root"){
   return "";
   }
-  
-var i=1;
+
+var i=0;
 var max=stk.length
-  while(i>=max){
-  
+var t="";
+  while(i<max){
+    rtrn+=t+stk[i].n;
+    t=tkn;
   i++;
   }
-
+return rtrn+t+leaf;
 }
 
 //draw Profiles page
@@ -170,8 +177,9 @@ stack.push({n:"root",i:0});
       else{
         //if the current location and index is object, push to stack.
         if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
+        var pathTtl=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
         rtrn+="<div class=\"prflCtg\"> \
-                <div class=\"prflCtgTtl\"><input type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> \
+                <div class=\"prflCtgTtl\"><input stkPath=\""+pathTtl+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> \
                 <div class=\"prflGrp\"> \
               ";
         stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});
@@ -179,7 +187,8 @@ stack.push({n:"root",i:0});
         else{
         //else,it's a leaf node
         //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button>-</button></div>";
+        var pathVar=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input stkPath=\""+pathVar+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input forInpt=\""+pathVar+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button>-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
