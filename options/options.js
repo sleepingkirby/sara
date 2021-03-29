@@ -113,7 +113,7 @@ post: none
 generate path string. For the javascript to know where the items is in the hash trees.
 ---------------------------------*/ 
 function genStkPath(stk, leaf){
-var tkn="::-::";
+var tkn="|||";
 var rtrn="";
  
 //assume root is there. if not, return nothing.
@@ -162,6 +162,8 @@ stack.push({n:"root",i:0});
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
     //using the tail end of stack as the current location 
     var i=0;
+    var idNum=1;
+    var idPre="stdPath";
     while(stack.length>0){
 
       //if current location's index is beyond the arr.length, pop the stack
@@ -177,9 +179,17 @@ stack.push({n:"root",i:0});
       else{
         //if the current location and index is object, push to stack.
         if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
+        var pathIndx=idPre+idNum;
+        idNum++;
         var pathTtl=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        idObj[pathIndx]=pathTtl;
         rtrn+="<div class=\"prflCtg\"> \
-                <div class=\"prflCtgTtl\"><input stkPath=\""+pathTtl+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> \
+                <div class=\"prflCtgTtlWrap\"> \
+                  <div class=\"prflCtgTtl\"> \
+                    <input id=\""+pathIndx+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /> \
+                  </div> \
+                  <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button> \
+                </div> \
                 <div class=\"prflGrp\"> \
               ";
         stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});
@@ -187,19 +197,25 @@ stack.push({n:"root",i:0});
         else{
         //else,it's a leaf node
         //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        var pathIndx=idPre+idNum;
+        idNum++;
         var pathVar=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input stkPath=\""+pathVar+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input forInpt=\""+pathVar+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button>-</button></div>";
+        idObj[pathIndx]=pathVar;
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathIndx+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input forInpt=\""+pathIndx+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
     }
     document.getElementById("prflFrm").innerHTML=rtrn;
   });
+console.log(idObj);
 }
 
 var urlPrf=getURLVar();
 var meta=null;
 var prof=null;
+var idObj={};
+
 
 fillSlct("prflSlct", urlPrf);
 drawProfiles(urlPrf);

@@ -50,10 +50,6 @@ padding: 2px 4px 2px 4px;
 font-family: "DejaVu Sans", Arial, sans-serif;
 }
 
-.prflSlct{
-align-items: stretch;
-}
-
 .prflAdd{
 margin-left: 10px;
 transition: all .5s ease-in-out;
@@ -66,13 +62,13 @@ margin-right: 0px;
 box-sizing: border-box;
 transition: all .5s ease-in-out;
 border: 0px;
-padding: 0px;
+padding: 2px 0px 2px 0px;
 }
 
 .prflAdd:hover input{
 width: 180px;
 border: 1px solid #888888;
-padding: 1px 4px 1px 4px;
+padding: 2px 2px 2px 6px;
 margin-right: 6px;
 }
 
@@ -134,6 +130,11 @@ display: flex;
 .main > div {
 justify-content: flex-start;
 margin-bottom: 10px;
+}
+
+#prflMain > .prflSlct{
+align-items: stretch;
+justify-content: space-between;
 }
 
 .prflLbl{
@@ -207,7 +208,17 @@ display: flex;
 flex-grow: 8;
 }
 
-.prflCtg > div.prflCtgTtl{
+#prflFrm div.prflCtgTtlWrap{
+flex-direction: row;
+}
+
+#prflFrm div.prflCtgTtlWrap > button{
+margin-left: 8px;
+align-items: center;
+align-self: flex-end;
+}
+
+div.prflCtgTtl{
 font-weight: bolder;
 font-size: larger;
 border: 0px;
@@ -218,19 +229,18 @@ overflow: hidden;
 width: 110px;
 }
 
-.prflCtg > div.prflCtgTtl > input{
+div.prflCtgTtl > input{
 border: 0px;
 width: 100%;
 font-weight: bolder;
 font-size: larger;
 }
 
-
-.prflCtg > div.prflGrp{
+div.prflGrp{
 padding: 10px 0px 0px 20px;
 }
 
-.prflGrp > div.prflInpt:last-of-type{
+div.prflInpt:last-of-type{
 margin-bottom: 14px;
 }
 
@@ -251,12 +261,21 @@ align-self: flex-start;
 }
 
 #prflNewFrm div.prflNewInpt{
-transition: all 0.5s ease-in-out;
+transition-property: margin-right, border, min-width, max-width;
+transition-duration: 0.8s;
+transition-timing-function: ease-in-out;
+width: 0px;
+max-width: 0px;
+min-width: 0px;
+margin-right:0px;
+border: 0px;
 }
 
 #prflNewFrm:hover div.prflNewInpt{
 border: 1px solid #888888;
 width: 80px;
+max-width: 300px;
+min-width: 80px;
 margin-right: 10px;
 }
 
@@ -286,6 +305,39 @@ padding: 2px 2px 2px 6px;
 #prflNewFrm button{
 border-radius: 4px;
 height: 100%;
+}
+
+#prflDflt{
+display: none;
+}
+
+#prflDflt + label{
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100%;
+background-color: transparent;
+margin-left: 10px;
+}
+
+#prflDflt + label::after{
+display: flex;
+justify-content: center;
+align-items: center;
+content: "Make Default";
+padding: 2px 4px 2px 4px;
+border: 1px solid #888888;
+height: 100%;
+background-color: transparent;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+#prflDflt:checked + label::after{
+content: "Default";
+border: 1px solid #ffffff;
+color: #ffffff;
+background-color: #31B0D5;
 }
 
 #imprtMain{

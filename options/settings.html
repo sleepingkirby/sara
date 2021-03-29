@@ -33,19 +33,26 @@
 
       <div class="main mainOn" id="prflMain">
         <div class="prflSlct">
-          <div class="prflLbl">
-          Profile:
-          </div> 
-          <select id="prflSlct">
-          </select>
-          <div class="prflAdd">
-          <input type="text" placeholder="new profile name" />
-          <button>+</button>
+          <div>
+            <div class="prflLbl">
+            Profile:
+            </div> 
+            <select id="prflSlct">
+            </select>
+            <input id="prflDflt" type="checkbox" />
+            <label for="prflDflt" />
+          </div>
+
+          <div>
+            <div class="prflAdd">
+            <input type="text" placeholder="new profile name" />
+            <button>+</button>
+            </div>
           </div>
         </div>
         <div id="prflNewFrm">
           <div class="prflNewTtl">
-          add:
+          add field:
           </div>
           <div class="prflNewInpt">
           <input name="new[categ]" type="text" placeholder="category" />
