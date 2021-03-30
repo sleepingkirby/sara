@@ -44,7 +44,7 @@ var max=nm.length;
 document.getElementById(id).classList.toggle("mainOn");
 }
 
-//
+//updates the checkbox based off of the select html element
 function updtChckBx(selectEl, checkEl){
   if(!selectEl || selectEl=="" || !checkEl|| checkEl==""){
   return null;
@@ -52,6 +52,56 @@ function updtChckBx(selectEl, checkEl){
 
   chrome.storage.local.get("settings", (e)=>{
   document.getElementById(checkEl).checked=(e.hasOwnProperty("settings") && e.settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==e.settings.def_profile);
+  });
+}
+
+//requires drawProfiles();
+function addPath(arr,prf){
+  if(!arr||!Array.isArray(arr)){
+  return null;
+  }
+
+//"sanitizing" the array. Which means removing the empty stuff and adding "root" to the top
+var a=["root"];
+var i=0;
+var max=arr.length;
+  while(i<max){
+    if(arr[i] && arr[i]!="" && arr[i]!=null){
+    a.push(arr[i]);
+    }
+  i++;
+  }
+
+var ref=null;
+  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  var i=0;
+  var max=a.length - 2;
+    //profile_meta
+    while(i<max){
+      console.log("========== "+i+": "+a[i]+" -> "+a[i+1]+" =========>>");
+      console.log(d.profile_meta[prf][a[i]]);
+        //if the array doesn't exist, create it
+        if(!d.profile_meta[prf].hasOwnProperty(a[i])){
+        d.profile_meta[prf][a[i]]=[];
+        }
+        //if the array exists but doesn't have an entry, add it
+        if(!d.profile_meta[prf][a[i]].hasOwnProperty(a[i+1])){
+        d.profile_meta[prf][a[i]].push(a[i+1]);
+        }
+    i++;
+    }
+    //profiles the first item is always the category, the last is always the value. do nothing on 0 and 4/
+  i=1;
+  max=a.length - 1;
+  var ref=d.profiles[prf];
+    while(i<max){
+      if(a[i] && a[i]!="" && !ref.hasOwnProperty(a[i])){
+      ref[a[i]]={};
+      ref=ref[a[i]];
+      }
+    i++;
+    }
+  console.log(d);
   });
 }
 
@@ -106,6 +156,19 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
       break;
       case "newFld":
       //adds new Fld to profiles, update meta_profile, redraw page.
+      var el=document.getElementById("prflNewFrm");
+      var cllct=el.getElementsByTagName("input");
+      var i=0;
+      var max=cllct.length;
+      var obj={};
+        while(i<max){
+        obj[cllct[i].name]=cllct[i].value;
+        i++;
+        }
+      var arr=[obj["new[categ]"],obj["new[patt1]"],obj["new[patt2]"],obj["new[patt3]"],obj["new[val]"]];  
+      var curPrf=document.getElementById("prflSlct").value;
+      console.log(curPrf);
+      addPath(arr,curPrf); 
       break;
       case "rmFld":
       //removes field from profiles, remove from meta_profile, redraw page.

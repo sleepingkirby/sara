@@ -92,8 +92,8 @@ chrome.storage.local.get(null,(d)=>{
         covers:["1"]
         },
         "alt":{
-        root:["copy"],
-        copy:["alt"]
+        root:["mail"],
+        mail:["prsnl_gmail", "prof_gmail", "hotmail"]
         }
       },
       settings:{
