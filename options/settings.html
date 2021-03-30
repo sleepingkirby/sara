@@ -40,13 +40,13 @@
             <select id="prflSlct">
             </select>
             <input id="prflDflt" type="checkbox" />
-            <label for="prflDflt" />
+            <label act="newDflt" for="prflDflt" />
           </div>
 
           <div>
             <div class="prflAdd">
-            <input type="text" placeholder="new profile name" />
-            <button>+</button>
+            <input id="newPrflInpt" type="text" placeholder="new profile name" />
+            <button act="newPrfl" for="newPrflInpt">+</button>
             </div>
           </div>
         </div>
@@ -69,24 +69,18 @@
           <div class="prflNewInpt">
           <input name="new[val]" type="text" placeholder="value" />
           </div>
-          <button id="prflNewAdd">+</button>
+          <button act="newFld" id="prflNewAdd">+</button>
         </div>
         <div id="prflFrm">
-         <div id="prflNewFrm">
-          <div class="prflNewInpt">
-          <input type="text" placeholder="category" />
-          </div>
-        </div>
-
          &nbsp;
         </div>
       </div>
       <div class="main" id="imprtMain">
-        <textarea placeholder="settings as json."></textarea>
+        <textarea id="imprtTA" placeholder="settings as json."></textarea>
         <div class="ctrl">
-          <button class="clear">clear</button>
-          <button class="export">export</button>
-          <button class="import">import</button>
+          <button act="imprtClr" for="imprtTA" class="clear">clear</button>
+          <button act="imprtExprt" for="imprtTA" class="export">export</button>
+          <button act="imprtImprt" for="imprtTA" class="import">import</button>
         </div>
       </div>
        <div class="main" id="sttngsMain">

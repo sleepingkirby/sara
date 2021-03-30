@@ -68,6 +68,13 @@ chrome.storage.local.get(null,(d)=>{
           covers:{
           1:""
           }
+        },
+        "alt":{
+          mail:{
+          prsnl_gmail: "",  
+          prof_gmail:"",
+          hotmail:""
+          }
         }
       },
       profile_meta:{
@@ -83,11 +90,16 @@ chrome.storage.local.get(null,(d)=>{
         "references":["ref"],
         "ref":["1","2"],
         covers:["1"]
+        },
+        "alt":{
+        root:["copy"],
+        copy:["alt"]
         }
       },
       settings:{
       autofill: false,
-      hoverId: false
+      hoverId: false,
+      def_profile: "default"
       }
     };
     chrome.storage.local.set(ind,(e)=>{console.log(e);});

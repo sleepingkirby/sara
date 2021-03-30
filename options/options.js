@@ -44,6 +44,22 @@ var max=nm.length;
 document.getElementById(id).classList.toggle("mainOn");
 }
 
+//
+function updtChckBx(selectEl, checkEl){
+  if(!selectEl || selectEl=="" || !checkEl|| checkEl==""){
+  return null;
+  }
+
+
+  if(settings && settings.hasOwnProperty("def_profile")){
+    document.getElementById(checkEl).checked=(settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==settings.def_profile);
+  }
+  else{
+    chrome.storage.local.get("settings", (e)=>{
+    document.getElementById(checkEl).checked=(e.hasOwnProperty("settings") && e.settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==e.settings.def_profile);
+    });
+  }
+}
 
 //main function
 function startListen(){
@@ -52,18 +68,67 @@ var max=swtchTbs.length;
   for(i=0; i<max; i++){
   swtchTbs[i].addEventListener("change",tabSwitch);
   }
+var prflSlct=document.getElementById("prflSlct");
+//for indicating the drop down for profiles is currently selected as the default profile.
+prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
+
+  document.addEventListener("click", (e)=>{
+    switch(e.target.getAttribute("act")){
+      case "newPrfl":
+      //add new profile to chrome.storage. Redraw page.
+      break;
+      case "newDflt":
+      //updates settings for def_profile to new profile name
+      break;
+      case "newFld":
+      //adds new Fld to profiles, update meta_profile, redraw page.
+      break;
+      case "rmFld":
+      //removes field from profiles, remove from meta_profile, redraw page.
+      break;
+      case "imprtClr":
+      //clear textarea
+      break;
+      case "imprtExprt":
+      //post JSON.stringify of chrome storage
+      break;
+      case "imprtImprt":
+      //convert json to object and import to chrome storage
+      break;
+      default:
+      break;
+    }
+  });
+
+  document.addEventListener("input", (e)=>{
+    switch(e.target.getAttribute("act")){
+      case "updtFld":
+      //updates value for field in updates. 
+      break;
+      case "rnFld":
+      //path was renamed. copy old to new name. 
+      break;
+      default:
+      break;
+    }
+  });
 }
 
 //fill out the select element 
-function fillSlct(id, prof){
+function fillSlct(id, prf){
   if(!id || id==""){
   return 0; 
   }
 
+  var prof=prf;
+
   var tmp=null;
-  chrome.storage.local.get("profiles", (e)=>{
+  chrome.storage.local.get({"profiles":null, "settings":null}, (e)=>{
     if(!e.hasOwnProperty("profiles")){
     return 0;
+    }
+    if(prf==""){
+    prof=e.settings.def_profile;
     }
   var arr=Object.keys(e.profiles);
   var tmp=null;
@@ -132,6 +197,8 @@ var t="";
 return rtrn+t+leaf;
 }
 
+
+
 //draw Profiles page
 function drawProfiles(prof){
 var p=prof;
@@ -143,7 +210,7 @@ stack.push({n:"root",i:0});
   p="default";
   }
 
-  chrome.storage.local.get({profiles:p, profile_meta:p},function(d){
+  chrome.storage.local.get(null,function(d){
     
     if(!d.hasOwnProperty("profiles")||!d.hasOwnProperty("profile_meta")){
     return 0;
@@ -157,7 +224,8 @@ stack.push({n:"root",i:0});
 
     prof=d.profiles[p];
     meta=d.profile_meta[p];
- 
+    settings=d.settings; 
+
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
     //using the tail end of stack as the current location 
@@ -208,15 +276,15 @@ stack.push({n:"root",i:0});
     }
     document.getElementById("prflFrm").innerHTML=rtrn;
   });
-console.log(idObj);
 }
 
 var urlPrf=getURLVar();
 var meta=null;
 var prof=null;
+var settings=null;
 var idObj={};
 
-
 fillSlct("prflSlct", urlPrf);
+updtChckBx("prflSlct", "prflDflt");
 drawProfiles(urlPrf);
 startListen();

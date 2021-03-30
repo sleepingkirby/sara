@@ -348,7 +348,8 @@ align-items: stretch;
 
 #imprtMain textarea{
 width: 100%;
-height: 50vw;
+min-height: 200px;
+height: 200px;
 }
 
 #imprtMain .ctrl{
