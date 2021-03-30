@@ -78,30 +78,41 @@ var ref=null;
   var max=a.length - 2;
     //profile_meta
     while(i<max){
-      console.log("========== "+i+": "+a[i]+" -> "+a[i+1]+" =========>>");
-      console.log(d.profile_meta[prf][a[i]]);
         //if the array doesn't exist, create it
         if(!d.profile_meta[prf].hasOwnProperty(a[i])){
         d.profile_meta[prf][a[i]]=[];
         }
         //if the array exists but doesn't have an entry, add it
-        if(!d.profile_meta[prf][a[i]].hasOwnProperty(a[i+1])){
+        if(!d.profile_meta[prf].hasOwnProperty(a[i+1])){
         d.profile_meta[prf][a[i]].push(a[i+1]);
         }
     i++;
     }
-    //profiles the first item is always the category, the last is always the value. do nothing on 0 and 4/
-  i=1;
+    //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
+  i=2;
   max=a.length - 1;
   var ref=d.profiles[prf];
     while(i<max){
-      if(a[i] && a[i]!="" && !ref.hasOwnProperty(a[i])){
+      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
+      console.log(ref);
+      if(!ref.hasOwnProperty(a[i])){
+      console.log("created new tier/array");
       ref[a[i]]={};
-      ref=ref[a[i]];
       }
+      if(i+1>=max){
+      console.log("end added "+a[max]);
+      ref[a[i]]=a[max];
+      }
+    ref=ref[a[i]];
     i++;
     }
-  console.log(d);
+    
+    console.log(d.profiles[prf]);
+    console.log(d.profile_meta[prf]);
+
+    chrome.storage.local.set(d,(e)=>{
+    drawProfiles(prf);
+    });
   });
 }
 
@@ -167,7 +178,6 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
         }
       var arr=[obj["new[categ]"],obj["new[patt1]"],obj["new[patt2]"],obj["new[patt3]"],obj["new[val]"]];  
       var curPrf=document.getElementById("prflSlct").value;
-      console.log(curPrf);
       addPath(arr,curPrf); 
       break;
       case "rmFld":

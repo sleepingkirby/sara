@@ -267,14 +267,15 @@ align-self: flex-start;
 }
 
 #prflNewFrm div.prflNewInpt{
-transition-property: margin-right, border, min-width, max-width;
+transition-property: margin-right, min-width, max-width;
 transition-duration: 0.8s;
+transition-delay: 1.5s;
 transition-timing-function: ease-in-out;
 width: 0px;
 max-width: 0px;
 min-width: 0px;
 margin-right:0px;
-border: 0px;
+border: 0px solid #888888;
 }
 
 #prflNewFrm:hover div.prflNewInpt{
@@ -283,6 +284,7 @@ width: 80px;
 max-width: 300px;
 min-width: 80px;
 margin-right: 10px;
+transition-delay: 0s;
 }
 
 #prflNewFrm .prflNewTtl{
