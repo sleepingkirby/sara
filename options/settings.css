@@ -81,6 +81,12 @@ align-items: center;
 padding: 0px;
 }
 
+#delPrfl{
+align-items: center;
+margin-left: 10px;
+padding: 2px 8px 2px 8px;
+}
+
 .pageWrap{
 display: table;
 width: 100%;

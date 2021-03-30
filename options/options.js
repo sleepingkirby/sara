@@ -50,15 +50,9 @@ function updtChckBx(selectEl, checkEl){
   return null;
   }
 
-
-  if(settings && settings.hasOwnProperty("def_profile")){
-    document.getElementById(checkEl).checked=(settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==settings.def_profile);
-  }
-  else{
-    chrome.storage.local.get("settings", (e)=>{
-    document.getElementById(checkEl).checked=(e.hasOwnProperty("settings") && e.settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==e.settings.def_profile);
-    });
-  }
+  chrome.storage.local.get("settings", (e)=>{
+  document.getElementById(checkEl).checked=(e.hasOwnProperty("settings") && e.settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==e.settings.def_profile);
+  });
 }
 
 //main function
@@ -76,9 +70,39 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
     switch(e.target.getAttribute("act")){
       case "newPrfl":
       //add new profile to chrome.storage. Redraw page.
+      var el=document.getElementById(e.target.getAttribute("forEl"));
+        if(el && el.value && el.value!=""){
+          chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
+          d.profiles[el.value]={};
+          d.profile_meta[el.value]={};
+            chrome.storage.local.set(d,(e)=>{
+            fillSlct("prflSlct", getURLVar());
+            alert("New Profile Added.");
+            });
+          });
+        }
+      break;
+      case "delPrfl":
+        chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+        var el=document.getElementById(e.target.getAttribute("forEl"));
+        var ans=confirm("Are you sure you want to delete the profile: \""+el.value+"\"");
+          if(ans){
+            delete d.profiles[el.value];
+            delete d.profile_meta[el.value];
+              chrome.storage.local.set(d, (e)=>{
+              fillSlct("prflSlct", getURLVar());
+              });
+            }
+        });
       break;
       case "newDflt":
       //updates settings for def_profile to new profile name
+      let fr=e.target.getAttribute("forEl");
+      let val=document.getElementById(fr).value;
+        chrome.storage.local.get("settings", (e)=>{
+          e.settings.def_profile=val;
+          chrome.storage.local.set({"settings":e.settings});
+        });
       break;
       case "newFld":
       //adds new Fld to profiles, update meta_profile, redraw page.
@@ -133,6 +157,7 @@ function fillSlct(id, prf){
   var arr=Object.keys(e.profiles);
   var tmp=null;
   var slct=document.getElementById(id);
+  slct.textContent=null;
     for(let i of arr){
     tmp=document.createElement("option");
     tmp.innerText=i;
@@ -142,6 +167,8 @@ function fillSlct(id, prf){
       }
     slct.appendChild(tmp);
     }
+  
+  updtChckBx("prflSlct", "prflDflt");
   });
 }
 

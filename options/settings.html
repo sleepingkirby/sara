@@ -40,14 +40,15 @@
             <select id="prflSlct">
             </select>
             <input id="prflDflt" type="checkbox" />
-            <label act="newDflt" for="prflDflt" />
+            <label act="newDflt" for="prflDflt" forEl="prflSlct" />
           </div>
 
           <div>
             <div class="prflAdd">
             <input id="newPrflInpt" type="text" placeholder="new profile name" />
-            <button act="newPrfl" for="newPrflInpt">+</button>
+            <button act="newPrfl" forEl="newPrflInpt">+</button>
             </div>
+            <button id="delPrfl" act="delPrfl" forEl="prflSlct">-</button>
           </div>
         </div>
         <div id="prflNewFrm">
@@ -69,7 +70,7 @@
           <div class="prflNewInpt">
           <input name="new[val]" type="text" placeholder="value" />
           </div>
-          <button act="newFld" id="prflNewAdd">+</button>
+          <button act="newFld" forEl="" id="prflNewAdd">+</button>
         </div>
         <div id="prflFrm">
          &nbsp;
@@ -78,9 +79,9 @@
       <div class="main" id="imprtMain">
         <textarea id="imprtTA" placeholder="settings as json."></textarea>
         <div class="ctrl">
-          <button act="imprtClr" for="imprtTA" class="clear">clear</button>
-          <button act="imprtExprt" for="imprtTA" class="export">export</button>
-          <button act="imprtImprt" for="imprtTA" class="import">import</button>
+          <button act="imprtClr" forEl="imprtTA" class="clear">clear</button>
+          <button act="imprtExprt" forEl="imprtTA" class="export">export</button>
+          <button act="imprtImprt" forEl="imprtTA" class="import">import</button>
         </div>
       </div>
        <div class="main" id="sttngsMain">
