@@ -56,9 +56,14 @@ function updtChckBx(selectEl, checkEl){
 }
 
 //requires drawProfiles();
-function addPath(arr,prf){
+function addPath(arr,val,prf){
   if(!arr||!Array.isArray(arr)){
   return null;
+  }
+//sanitizing the end value
+var v=val;
+  if(!v||v==null){
+  v="";
   }
 
 //"sanitizing" the array. Which means removing the empty stuff and adding "root" to the top
@@ -72,25 +77,35 @@ var max=arr.length;
   i++;
   }
 
-var ref=null;
+console.log("=========== starting =========>>");
+console.log(a);
   chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
   var i=0;
-  var max=a.length - 2;
+  var max=a.length - 1;
     //profile_meta
     while(i<max){
+      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
         //if the array doesn't exist, create it
         if(!d.profile_meta[prf].hasOwnProperty(a[i])){
+      console.log("meta: doesn't have own array");
+      console.log(d.profile_meta[prf]);
         d.profile_meta[prf][a[i]]=[];
+      console.log(d.profile_meta[prf]);
         }
         //if the array exists but doesn't have an entry, add it
         if(!d.profile_meta[prf].hasOwnProperty(a[i+1])){
+      console.log("meta: the next entry doesn't have an array ");
+      console.log(d.profile_meta[prf][a[i]]);
         d.profile_meta[prf][a[i]].push(a[i+1]);
+      console.log(d.profile_meta[prf][a[i]]);
         }
     i++;
     }
-    //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
+
+var ref=null;
+  //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
   i=2;
-  max=a.length - 1;
+  max=a.length;
   var ref=d.profiles[prf];
     while(i<max){
       console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
@@ -98,15 +113,24 @@ var ref=null;
       if(!ref.hasOwnProperty(a[i])){
       console.log("created new tier/array");
       ref[a[i]]={};
+      console.log(ref);
       }
+      
       if(i+1>=max){
-      console.log("end added "+a[max]);
-      ref[a[i]]=a[max];
-      }
+      console.log("applying value: "+v+" to ref");
+      console.log(ref);
+      ref[a[i]]=v;
+      console.log(ref);
+      }    
     ref=ref[a[i]];
     i++;
     }
+    console.log("applying value: "+v+" to ref");
+    console.log(ref);
+    ref=v;
+    console.log(ref);
     
+    console.log("----------- end --------------");
     console.log(d.profiles[prf]);
     console.log(d.profile_meta[prf]);
 
@@ -176,9 +200,9 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
         obj[cllct[i].name]=cllct[i].value;
         i++;
         }
-      var arr=[obj["new[categ]"],obj["new[patt1]"],obj["new[patt2]"],obj["new[patt3]"],obj["new[val]"]];  
+      var arr=[obj["new[categ]"],obj["new[patt1]"],obj["new[patt2]"],obj["new[patt3]"]]; 
       var curPrf=document.getElementById("prflSlct").value;
-      addPath(arr,curPrf); 
+      addPath(arr, obj["new[val]"], curPrf); 
       break;
       case "rmFld":
       //removes field from profiles, remove from meta_profile, redraw page.
@@ -221,10 +245,12 @@ function fillSlct(id, prf){
 
   var tmp=null;
   chrome.storage.local.get({"profiles":null, "settings":null}, (e)=>{
-    if(!e.hasOwnProperty("profiles")){
+    if(!e.hasOwnProperty("profiles") || e.profiles==null){
     return 0;
     }
-    if(prf==""){
+
+    //if(prf=="" && e.settings!=null && e.settings.hasOwnProperty("def_profile")){ I tried to check like this but this gives an error. that e.settings
+    if(prf=="" && e.settings!=null && e.settings.hasOwnProperty("def_profile")){
     prof=e.settings.def_profile;
     }
   var arr=Object.keys(e.profiles);
