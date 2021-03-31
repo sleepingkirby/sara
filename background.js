@@ -34,6 +34,16 @@ var cntxtCch={};//cache for the context menu id's
 mkCntxtMnu();
 
 //making a rule here. profiles and meta depth should not exceed double digits
+/*
+why have profiles and a meta data for profiles and not just one large structure?
+Because having it with a large structure with all that extra data (categories, for example)
+ would increase the amount of work via tree traversal when parsing through the pages. This way
+I can just grab the element's name (or other attributes) and apply to the top tier of 
+the profiles tree. And if none of those matches, we're done. I wouldn't have to traverse 
+down each categories, find the node, get the value and then see if it matches. Upfront 
+complexity for long term efficiency... hopefully. I haven't done the math/Big O on each 
+case yet
+*/
 chrome.storage.local.get(null,(d)=>{
   if(Object.keys(d).length <= 0){
     var ind={
@@ -78,7 +88,7 @@ chrome.storage.local.get(null,(d)=>{
           }
         }
       },
-      profile_meta:{
+      profile_meta:{ 
         "default":{
         0:{"ord":[1, 2, 3, 4], "hash":{"stat":1, "exp":2, "references":3, "others":4}, "nm":"root"},
         1:{"nm":"stat", "ord":[5, 6, 7, 8, 9, 10, 11, 12, 13],"hash":{"name":5, "addr":6, "city":7,"state":8, "province":9,"zip":10,"postal":11, "mail":12, "phone":13}},
@@ -88,7 +98,7 @@ chrome.storage.local.get(null,(d)=>{
         6:{"nm":"addr","ord":[17,18],"hash":{"1":17, "2":18}},
         13:{"nm":"phone","ord":[19,20],"hash":{"cell":19,"home":20}},
         21:{"nm":"job","ord":[22,23],"hash":{"1":22,"2":23}},
-        3:{"nm":"references","ord":{24},"hash":{"ref":24}},
+        3:{"nm":"references","ord":[24],"hash":{"ref":24}},
         24:{"nm":"ref","ord":[25,26],"hash":{"1":25,"2":26}},
         27:{"nm":"covers","ord":[28],"hash":{"1":28}},
         7:{"nm":"city","ord":[], "hash":{}},
@@ -108,7 +118,8 @@ chrome.storage.local.get(null,(d)=>{
         23:{"nm":"2","ord":[], "hash":{}},
         25:{"nm":"1","ord":[], "hash":{}},
         26:{"nm":"2","ord":[], "hash":{}},
-        28:{"nm":"1","ord":[], "hash":{}}
+        28:{"nm":"1","ord":[], "hash":{}},
+        last:28
         },
         "alt":{
         root:["mail"],

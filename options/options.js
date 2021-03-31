@@ -111,26 +111,42 @@ console.log(a);
     i++;
     }
 
-
+  
+  //------------------ profile_meta: do only when something new is added -----------------
   i=0;
-  max=a.length - 1;
-    //------------------ profile_meta: do only when something new is added -----------------
-    while(i<max && nw){
-      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
-        //if the array doesn't exist, create it
-        if(!d.profile_meta[prf].hasOwnProperty(a[i])){
-      console.log("meta: doesn't have own array");
-      console.log(d.profile_meta[prf]);
-        d.profile_meta[prf][a[i]]=[];
-      console.log(d.profile_meta[prf]);
-        }
-        //if the array exists but doesn't have an entry, add it
-        if(!d.profile_meta[prf].hasOwnProperty(a[i+1])){
-      console.log("meta: the next entry doesn't have an array ");
-      console.log(d.profile_meta[prf][a[i]]);
-        d.profile_meta[prf][a[i]].push(a[i+1]);
-      console.log(d.profile_meta[prf][a[i]]);
-        }
+  max=a.length-1; //because we're always looking one step ahead
+  mnw=false;
+  var pos=0; //starting at root
+  //d.profile_meta[prf].last; the last index number
+  //ex. root0 stat1 car2 model3 --> ""
+    while(i<max){
+    console.log("================ "+ i +"/"+max+" \""+pos+"\":"+ a[i]+" next: "+a[i+1]+"============>>");
+      //if nw is false, this means that the path provided via patterns is NOT unique. Hence, nothing was done in profiles.
+      //as such, short of creating the category, if that's new, we do nothing
+      if(i>=1 && !nw){
+      console.log("pattern path not unique. Exitting meta population loop");
+      break;
+      }
+      //if the current location's hash doesn't have the item. Add item to hash and append to ord
+      if(!d.profile_meta[prf][pos].hash.hasOwnProperty(a[i+1])){
+      console.log("meta: current pos: "+pos+"'s hash doesn't have \""+a[i+1]+"\"... adding to hash and ord.");
+
+      d.profile_meta[prf].last++; //new index
+
+      //new meta in current node
+      d.profile_meta[prf][pos].hash[a[i+1]]=d.profile_meta[prf].last;
+      d.profile_meta[prf][pos].ord.push(d.profile_meta[prf].last);
+     
+      console.log(d.profile_meta[prf][pos]);
+ 
+      //new obj for new meta
+      d.profile_meta[prf][d.profile_meta[prf].last]={"nm":a[i+1],"ord":[],"hash":{}}; //brand new obj. Nothing in it
+
+      console.log(d.profile_meta[prf][d.profile_meta[prf].last]);
+      
+      mnw=true;
+      }
+    pos=d.profile_meta[prf][pos].hash[a[i+1]];
     i++;
     }
 
@@ -333,10 +349,18 @@ return rtrn+t+leaf;
 
 //draw Profiles page
 function drawProfiles(prof){
+
+document.getElementById("prflFrm").innerHTML="stub";
+
+return 0;
+
+
+//stubbing all this for now as the traversal needs to be redone
 var p=prof;
 var elId="prflFrm";
 var stack=[];
 var rtrn="";
+
 stack.push({n:"root",i:0});
   if(!prof || prof==""){
   p="default";
