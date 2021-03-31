@@ -89,23 +89,20 @@ console.log(a);
   var ref=d.profiles[prf];
   var nw=false;
     while(i<max){
-      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
-      console.log(ref);
+      //console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
+      //console.log(ref);
       if(!ref.hasOwnProperty(a[i])){
-      console.log("created new tier/array");
+      //console.log("created new tier/array");
       ref[a[i]]={};
-      console.log(ref);
+      //console.log(ref);
       nw=true;
       }
       
       //if it's last item in the array, then apply value v
       //*note* if this path is old, do nothing. Making a rule to not allow redefining old paths or old leaf nodes.
       if(i+1>=max && nw){
-      console.log("applying value: "+v+" to ref");
-      console.log(typeof v);
-      console.log(ref);
+      //console.log("applying value: "+v+" to ref");
       ref[a[i]]=v;
-      console.log(ref);
       }    
     ref=ref[a[i]];
     i++;
@@ -120,16 +117,16 @@ console.log(a);
   //d.profile_meta[prf].last; the last index number
   //ex. root0 stat1 car2 model3 --> ""
     while(i<max){
-    console.log("================ "+ i +"/"+max+" \""+pos+"\":"+ a[i]+" next: "+a[i+1]+"============>>");
+    //console.log("================ "+ i +"/"+max+" \""+pos+"\":"+ a[i]+" next: "+a[i+1]+"============>>");
       //if nw is false, this means that the path provided via patterns is NOT unique. Hence, nothing was done in profiles.
       //as such, short of creating the category, if that's new, we do nothing
       if(i>=1 && !nw){
-      console.log("pattern path not unique. Exitting meta population loop");
+      //console.log("pattern path not unique. Exitting meta population loop");
       break;
       }
       //if the current location's hash doesn't have the item. Add item to hash and append to ord
       if(!d.profile_meta[prf][pos].hash.hasOwnProperty(a[i+1])){
-      console.log("meta: current pos: "+pos+"'s hash doesn't have \""+a[i+1]+"\"... adding to hash and ord.");
+      //console.log("meta: current pos: "+pos+"'s hash doesn't have \""+a[i+1]+"\"... adding to hash and ord.");
 
       d.profile_meta[prf].last++; //new index
 
@@ -137,25 +134,20 @@ console.log(a);
       d.profile_meta[prf][pos].hash[a[i+1]]=d.profile_meta[prf].last;
       d.profile_meta[prf][pos].ord.push(d.profile_meta[prf].last);
      
-      console.log(d.profile_meta[prf][pos]);
- 
+      //console.log(d.profile_meta[prf][pos]);
       //new obj for new meta
       d.profile_meta[prf][d.profile_meta[prf].last]={"nm":a[i+1],"ord":[],"hash":{}}; //brand new obj. Nothing in it
-
-      console.log(d.profile_meta[prf][d.profile_meta[prf].last]);
-      
+      //console.log(d.profile_meta[prf][d.profile_meta[prf].last]);
       mnw=true;
       }
     pos=d.profile_meta[prf][pos].hash[a[i+1]];
     i++;
     }
-
-
-    
+    /*
     console.log("----------- end --------------");
     console.log(d.profiles[prf]);
     console.log(d.profile_meta[prf]);
-
+    */
     chrome.storage.local.set(d,(e)=>{
     drawProfiles(prf);
     });
@@ -361,7 +353,6 @@ var elId="prflFrm";
 var stack=[];
 var rtrn="";
 
-stack.push({n:"root",i:0});
   if(!prof || prof==""){
   p="default";
   }
@@ -381,6 +372,7 @@ stack.push({n:"root",i:0});
     prof=d.profiles[p];
     meta=d.profile_meta[p];
     settings=d.settings; 
+    stack.push({n:0,i:0});
 
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.
@@ -391,7 +383,7 @@ stack.push({n:"root",i:0});
     while(stack.length>0){
 
       //if current location's index is beyond the arr.length, pop the stack
-      if(stack[stack.length-1].i>(meta[stack[stack.length-1].n].length-1)){
+      if(stack[stack.length-1].i>(meta[stack[stack.length-1].n].ord.length-1)){
       stack.pop();
         if(stack.length>0){
         stack[stack.length-1].i = stack[stack.length-1].i +1;
@@ -402,30 +394,34 @@ stack.push({n:"root",i:0});
       }
       else{
         //if the current location and index is object, push to stack.
-        if(meta.hasOwnProperty(meta[stack[stack.length-1].n][stack[stack.length-1].i])){
+        if(meta.hasOwnProperty(meta[stack[stack.length-1].n].ord[stack[stack.length-1].i])){
         var pathIndx=idPre+idNum;
         idNum++;
-        var pathTtl=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        idObj[pathIndx]=pathTtl;
+        //var pathTtl=genStkPath(stack, meta[stack[stack.length-1].n].ord[stack[stack.length-1].i]);
+        //idObj[pathIndx]=pathTtl;
+        var metaId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
+        var ttlVal=meta[id].nm;
         rtrn+="<div class=\"prflCtg\"> \
                 <div class=\"prflCtgTtlWrap\"> \
                   <div class=\"prflCtgTtl\"> \
-                    <input id=\""+pathIndx+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /> \
+                    <input id=\""+pathIndx+"\" type=\"text\" value=\""+ttlVal+"\" /> \
                   </div> \
                   <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button> \
                 </div> \
                 <div class=\"prflGrp\"> \
               ";
-        stack.push({n:meta[stack[stack.length-1].n][stack[stack.length-1].i],i:0});
+        stack.push({n:meta[stack[stack.length-1].n].ord[stack[stack.length-1].i],i:0});
         }
         else{
         //else,it's a leaf node
         //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
         var pathIndx=idPre+idNum;
         idNum++;
-        var pathVar=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        idObj[pathIndx]=pathVar;
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathIndx+"\" type=\"text\" value=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" /></div> <input forInpt=\""+pathIndx+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n][stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button></div>";
+        //var pathVar=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
+        //idObj[pathIndx]=pathVar;
+        var metaId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
+        var ttlVal=meta[id].nm;
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathIndx+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathIndx+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n].ord[stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
