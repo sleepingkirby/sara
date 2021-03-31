@@ -80,10 +80,42 @@ var max=arr.length;
 console.log("=========== starting =========>>");
 console.log(a);
   chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
-  var i=0;
-  var max=a.length - 1;
-    //profile_meta
+  
+  var ref=null;
+  //---------------- profiles: adding something new to the profiles tree. traverse and add only when something new is created ---------------
+  //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
+  var i=2;
+  var max=a.length;
+  var ref=d.profiles[prf];
+  var nw=false;
     while(i<max){
+      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
+      console.log(ref);
+      if(!ref.hasOwnProperty(a[i])){
+      console.log("created new tier/array");
+      ref[a[i]]={};
+      console.log(ref);
+      nw=true;
+      }
+      
+      //if it's last item in the array, then apply value v
+      //*note* if this path is old, do nothing. Making a rule to not allow redefining old paths or old leaf nodes.
+      if(i+1>=max && nw){
+      console.log("applying value: "+v+" to ref");
+      console.log(typeof v);
+      console.log(ref);
+      ref[a[i]]=v;
+      console.log(ref);
+      }    
+    ref=ref[a[i]];
+    i++;
+    }
+
+
+  i=0;
+  max=a.length - 1;
+    //------------------ profile_meta: do only when something new is added -----------------
+    while(i<max && nw){
       console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
         //if the array doesn't exist, create it
         if(!d.profile_meta[prf].hasOwnProperty(a[i])){
@@ -102,33 +134,7 @@ console.log(a);
     i++;
     }
 
-var ref=null;
-  //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
-  i=2;
-  max=a.length;
-  var ref=d.profiles[prf];
-    while(i<max){
-      console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
-      console.log(ref);
-      if(!ref.hasOwnProperty(a[i])){
-      console.log("created new tier/array");
-      ref[a[i]]={};
-      console.log(ref);
-      }
-      
-      if(i+1>=max){
-      console.log("applying value: "+v+" to ref");
-      console.log(ref);
-      ref[a[i]]=v;
-      console.log(ref);
-      }    
-    ref=ref[a[i]];
-    i++;
-    }
-    console.log("applying value: "+v+" to ref");
-    console.log(ref);
-    ref=v;
-    console.log(ref);
+
     
     console.log("----------- end --------------");
     console.log(d.profiles[prf]);

@@ -33,6 +33,7 @@ function mkCntxtMnu(func){
 var cntxtCch={};//cache for the context menu id's
 mkCntxtMnu();
 
+//making a rule here. profiles and meta depth should not exceed double digits
 chrome.storage.local.get(null,(d)=>{
   if(Object.keys(d).length <= 0){
     var ind={
@@ -79,17 +80,35 @@ chrome.storage.local.get(null,(d)=>{
       },
       profile_meta:{
         "default":{
-        root:["stat", "exp", "references", "others"],
-        stat:["name","addr", "city", "state", "province", "zip", "postal", "mail", "phone"],
-        exp:["job"],
-        others:["covers"],
-        name:["last", "first", "m"],
-        addr:["1", "2"],
-        phone:["cell","home"],
-        "job":["1","2"],
-        "references":["ref"],
-        "ref":["1","2"],
-        covers:["1"]
+        0:{"ord":[1, 2, 3, 4], "hash":{"stat":1, "exp":2, "references":3, "others":4}, "nm":"root"},
+        1:{"nm":"stat", "ord":[5, 6, 7, 8, 9, 10, 11, 12, 13],"hash":{"name":5, "addr":6, "city":7,"state":8, "province":9,"zip":10,"postal":11, "mail":12, "phone":13}},
+        2:{"nm":"exp","ord":[21],"hash":{"job":21}},
+        4:{"nm":"others","ord":[27],"hash":{"covers":27}},
+        5:{"nm":"name","ord":[14, 15, 16],"hash":{"last":14,"first":15,"m":16}},
+        6:{"nm":"addr","ord":[17,18],"hash":{"1":17, "2":18}},
+        13:{"nm":"phone","ord":[19,20],"hash":{"cell":19,"home":20}},
+        21:{"nm":"job","ord":[22,23],"hash":{"1":22,"2":23}},
+        3:{"nm":"references","ord":{24},"hash":{"ref":24}},
+        24:{"nm":"ref","ord":[25,26],"hash":{"1":25,"2":26}},
+        27:{"nm":"covers","ord":[28],"hash":{"1":28}},
+        7:{"nm":"city","ord":[], "hash":{}},
+        8:{"nm":"state","ord":[], "hash":{}},
+        9:{"nm":"province","ord":[], "hash":{}},
+        10:{"nm":"zip","ord":[], "hash":{}},
+        11:{"nm":"postal","ord":[], "hash":{}},
+        12:{"nm":"mail","ord":[], "hash":{}},
+        14:{"nm":"last","ord":[], "hash":{}},
+        15:{"nm":"first","ord":[], "hash":{}},
+        16:{"nm":"m","ord":[], "hash":{}},
+        17:{"nm":"1","ord":[], "hash":{}},
+        18:{"nm":"2","ord":[], "hash":{}},
+        19:{"nm":"cell","ord":[], "hash":{}},
+        20:{"nm":"home","ord":[], "hash":{}},
+        22:{"nm":"1","ord":[], "hash":{}},
+        23:{"nm":"2","ord":[], "hash":{}},
+        25:{"nm":"1","ord":[], "hash":{}},
+        26:{"nm":"2","ord":[], "hash":{}},
+        28:{"nm":"1","ord":[], "hash":{}}
         },
         "alt":{
         root:["mail"],
