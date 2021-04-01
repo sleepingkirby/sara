@@ -1,14 +1,8 @@
 
-function setMsg(el){
-    document.getElementById(el.getAttribute("msgId")).innerText=el.getAttribute("info");
-    document.getElementById(el.getAttribute("msgId")).style=el.getAttribute("msgStyl");
+function setMsg(id,txt){
+  document.getElementById(id).innerText+="- "+txt+"\n";
+  document.getElementById(id).style.cssText="animation: opac 5s;";
 }
-
-function clearMsg(el){
-    document.getElementById(el.getAttribute("msgId")).innerText="";
-    document.getElementById(el.getAttribute("msgId")).style="";
-}
-
 
 //gets hostname from url
 function hostFromURL(str){
@@ -60,11 +54,31 @@ function addPath(arr,val,prf){
   if(!arr||!Array.isArray(arr)){
   return null;
   }
+
+  var err=false;
+  //category empty. It's required.
+  if(arr[0]==null||arr[0]==""){
+  setMsg("msgPrfl", "Category not set in adding new field. Category is required.");
+  err=true;
+  }
+
+  //if no pattern and there's a value, that's not valid. 
+  if((arr[1]==null||arr[1]=="")&&(arr[2]==null||arr[2]=="")&&(arr[3]==null||arr[3]=="")&&val!=null&&val!=""){
+  setMsg("msgPrfl", "Value entered for new field, but no pattern was set. At least 1 pattern must accompany value.");
+  err=true;
+  }
+
+  if(err){
+  return null;
+  }
+
 //sanitizing the end value
 var v=val;
   if(!v||v==null){
   v="";
   }
+
+  
 
 //"sanitizing" the array. Which means removing the empty stuff and adding "root" to the top
 var a=["root"];
@@ -80,7 +94,6 @@ var max=arr.length;
 //console.log("=========== starting =========>>");
 //console.log(a);
   chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
-  
   var ref=null;
   //---------------- profiles: adding something new to the profiles tree. traverse and add only when something new is created ---------------
   //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
@@ -101,7 +114,8 @@ var max=arr.length;
       //if it's last item in the array, then apply value v
       //*note* if this path is old, do nothing. Making a rule to not allow redefining old paths or old leaf nodes.
       if(i+1>=max && nw){
-      //console.log("applying value: "+v+" to ref");
+      //console.log("applying value: \""+v+"\" to ref");
+      //console.log(typeof v);
       ref[a[i]]=v;
       }    
     ref=ref[a[i]];
@@ -148,9 +162,42 @@ var max=arr.length;
     console.log(d.profiles[prf]);
     console.log(d.profile_meta[prf]);
     */
+    
     chrome.storage.local.set(d,(e)=>{
     drawProfiles(prf);
+      if(nw){
+      setMsg("msgPrfl", "New field added");
+      return null;
+      }
+      if(mnw){
+      setMsg("msgPrfl", "New category added.");
+      return null;
+      }
+      setMsg("msgPrfl", "New field and/or category already exists.");
     });
+  });
+}
+
+//deletes the field and/or value and/or path 
+function delPath(path, prf){
+  if(!path || path==null || path==""||!prf||prf==null||prf==""){
+  return null;
+  }
+var p=path;
+var arrm=p.split("|"); //turning path into an array
+arrm.shift(); //getting rid of root. Never give them option to delete root. 
+var arr=arrm.slice(1); //removing the first element as that's the category.
+
+  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  var prof=d.profiles[prf];
+  var meta=d.profile_meta[prf];
+
+    //translate arr from id's into names for the profiles tree;
+    var max=arr.length;
+    for(let i=0; i<max; i++){
+    arr[i]=meta[arr[i]].nm;
+    }
+  console.log(arr);
   });
 }
 
@@ -165,6 +212,14 @@ var prflSlct=document.getElementById("prflSlct");
 //for indicating the drop down for profiles is currently selected as the default profile.
 prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
 
+//msg div listener
+var msgPrfl=document.getElementById("msgPrfl");
+  msgPrfl.addEventListener("animationend", ()=>{
+  msgPrfl.innerText="";
+  msgPrfl.style.cssText="";
+  });
+
+
   document.addEventListener("click", (e)=>{
     switch(e.target.getAttribute("act")){
       case "newPrfl":
@@ -173,7 +228,7 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
         if(el && el.value && el.value!=""){
           chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
           d.profiles[el.value]={};
-          d.profile_meta[el.value]={};
+          d.profile_meta[el.value]={0:{"nm":"root","ord":[],"hash":{}},last:0};
             chrome.storage.local.set(d,(e)=>{
             fillSlct("prflSlct", getURLVar());
             alert("New Profile Added.");
@@ -190,6 +245,7 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
             delete d.profile_meta[el.value];
               chrome.storage.local.set(d, (e)=>{
               fillSlct("prflSlct", getURLVar());
+              drawProfiles();
               });
             }
         });
@@ -220,6 +276,7 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
       break;
       case "rmFld":
       //removes field from profiles, remove from meta_profile, redraw page.
+      
       break;
       case "imprtClr":
       //clear textarea
@@ -242,6 +299,9 @@ prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
       break;
       case "rnFld":
       //path was renamed. copy old to new name. 
+      break;
+      case "updtDrwPrfl":
+      drawProfiles(e.target.value);
       break;
       default:
       break;
@@ -288,6 +348,7 @@ function fillSlct(id, prf){
 //get value from profile data object and stack
 function getVal(prf, meta, stk, leaf){
   if(!prf || !meta || !stk || !leaf){
+  
   return null;
   }
 
@@ -320,8 +381,6 @@ generate path string. For the javascript to know where the items is in the hash 
 function genStkPath(stk, leaf){
 var tkn="|";
 var rtrn="";
-console.log(JSON.stringify(stk));
-console.log(leaf); 
 //assume root is there. if not, return nothing.
   if(!leaf || leaf=="" || !stk || stk.length<=0||stk[0].n!="0"){
   return "";
@@ -364,10 +423,20 @@ var rtrn="";
     return 0;
     }
 
-    prof=d.profiles[p];
-    meta=d.profile_meta[p];
-    settings=d.settings; 
-    stack.push({n:0,i:0});
+  prof=d.profiles[p];
+  meta=d.profile_meta[p];
+  settings=d.settings; 
+  stack.push({n:0,i:0});
+
+    if(!prof || prof==""){
+    p=settings.def_profile;
+    }
+
+    document.getElementById("prflFrm").textContent="";
+
+    if(Object.keys(prof).length<=0||Object.keys(meta).length<=0){
+    return 0;
+    }
 
     var tmp=null;
     //this is a depth first tree traversal. Not using recursive due to the high memory involved in recursive functison.

@@ -81,8 +81,8 @@ chrome.storage.local.get(null,(d)=>{
           }
         },
         "alt":{
-          mail:{
-          prsnl_gmail: "",  
+          gmail:{
+          prsnl_gmail: "",
           prof_gmail:"",
           hotmail:""
           }
@@ -122,8 +122,13 @@ chrome.storage.local.get(null,(d)=>{
         last:28
         },
         "alt":{
-        root:["mail"],
-        mail:["prsnl_gmail", "prof_gmail", "hotmail"]
+        0:{"nm":"root","ord":[1],"hash":{"mail":1}},
+        1:{"nm":"mail","ord":[5],"hash":{"gmail":5}},
+        5:{"nm":"gmail","ord":[2,3,4],"hash":{"prsnl_gmail":2, "prof_gmail":3, "hotmail":4}},
+        2:{"nm":"prsnl_gmail","ord":[],"hash":{}},
+        3:{"nm":"prof_gmail","ord":[],"hash":{}},
+        4:{"nm":"hotmail","ord":[],"hash":{}},
+        last:5
         }
       },
       settings:{

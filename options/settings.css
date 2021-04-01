@@ -378,191 +378,23 @@ flex-direction: column;
 justify-content: flex-end;
 }
 
-.openToolTip{
-display: flex;
-justify-content: space-around;
-align-items: center;
-}
 
-.toolTip{
-position: absolute;
-z-index: 99;
+#msgPrfl{
+margin: 0px 0px 0px 0px;
+padding: 0px 6px 0px 6px;
+border: 0px solid #888888;
+border-radius: 4px;
+opacity: 0;
+max-height: 0px;
 background-color: #aaaaaa;
 color: #061c5c;
-justify-content: center;
-align-items: center;
-font-size: small;
-opacity: 0.9;
-overflow: hidden;
-transition: max-height 0.5s ease-in-out, padding-top 0.5s ease-in-out, padding-bottom 0.5s ease-in-out;
-max-height: 0px;
-height: auto;
-max-width: 95%;
-border-radius: 4px;
-padding: 0px 8px 0px 8px;
+justify-content: space-between;
 }
 
-.toolTipFull{
-max-height: 200px;
-padding: 6px 8px 6px 8px;
-margin-top: 1px;
-}
-
-.toolTipFullA{
-animation-name: toolTipFullAKF;
-animation-duration: 5s;
-}
-
-@keyframes toolTipFullAKF{
-0% {max-height: 200px;padding: 6px 8px 6px 8px;margin-top: 1px;}
-98% {max-height: 200px;}
-99% {max-height: 0px;}
-100%{padding: 0px 8px 0px 8px; margin-top: 0px;}
-} 
-
-.toolTipH{
-justify-content: center;
-align-items: center;
-font-size: small;
-overflow: hidden;
-transition: all 0.5s ease-in-out;
-max-width: 0px;
-width: auto;
-height: 100%;
-white-space: nowrap;
-margin-left: 8px;
-}
-
-.toolTipHFull{
-max-width: 100%;
-}
-
-
-
-.olBox{
-display: block;
-border: 1px solid #888888;
-border-radius: 8px;
-padding-bottom: 6px;
-margin-top: 8px;
-}
-
-.olBox > div{
-margin-bottom: 6px;
-}
-
-
-.header{
-justify-content: flex-start;
-align-items: center;
-padding: 4px 6px 4px 6px;
-background-color: #333333;
-border-radius: 8px 8px 0px 0px;
-flex-direction: row;
-}
-
-.header > div {
-}
-
-.subHeader{
-padding: 2px 6px 2px 6px;
-justify-content: flex-start;
-align-items: center;
-background-color: #333333;
-}
-
-.chckLst{
-padding: 0px 10px 0px 10px;
-justify-content: flex-start;
-flex-wrap: wrap;
-}
-
-.fRow{
-margin-right: 10px;
-margin-bottom: 4px;
-}
-
-.fRow > input[type="checkbox"]{
-margin-left: 4px;
-}
-
-.fRow > div:first-child{
-margin-right: 4px;
-}
-
-.fCol{
-flex-direction: column;
-justify-content: center;
-flex-align: center;
-}
-
-.addLstn{
-justify-content: flex-start;
-}
-
-.addLstn div{
-padding-left: 4px;
-}
-
-.addLstn input[type=submit]{
-border: 1px solid #888888;
-border-radius: 4px;
-background-color: #000000;
-color: #888888;
-}
-
-.addLstn select{
-margin-left: 6px;
-color: #888888;
-background-color: #000000;
-border-radius: 4px;
-}
-
-.addLstn select > option{
-justify-content: center;
-color: #888888;
-background-color: #000000;
-}
-
-.addLstnTxt{
-padding: 0px 6px 0px 6px;
-}
-
-.addLstnTxt input{
-border-radius: 4px;
-padding: 4px; 
-margin: 0px 4px 0px 4px;
-}
-
-.addLstnTxtSbmt{
-justify-content: flex-end;
-margin: 6px 6px 6px 6px;
-}
-
-.ignrLst{
-flex-direction: column;
-padding: 6px 6px 0px 6px;
-}
-
-.ignrLst textarea{
-padding: 4px;
-min-height: 120px;
-}
-
-.ignrLst #ignrLstSbmt{
-width: 100%;
-justify-content: flex-end;
-margin-top: 6px;
-}
-
-.btnChng{
-border-color: #ffffff;
-color: #ffffff;
-background-color: #31B0D5;
-}
 
 @keyframes opac{
-0%{opacity:1; max-height: 200px; margin-bottom: 20px;}
-99%{opacity:0; max-height: 200px; margin-bottom: 20px;}
-100%{max-height: 0px; margin-bottom: 0px;}
+0%{opacity:1; border-width: 1px; max-height: 200px; margin-bottom: 20px; padding-top:4px; padding-bottom: 4px;}
+50%{opacity:1; border-width: 1px; max-height: 200px; margin-bottom: 20px; padding-top:4px; padding-bottom: 4px;}
+99%{opacity:0; max-height: 200px; margin-bottom: 20px; padding-top: 4px; padding-bottom: 4px;}
+100%{max-height: 0px; ;margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;}
 }
