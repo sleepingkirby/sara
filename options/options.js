@@ -77,8 +77,8 @@ var max=arr.length;
   i++;
   }
 
-console.log("=========== starting =========>>");
-console.log(a);
+//console.log("=========== starting =========>>");
+//console.log(a);
   chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
   
   var ref=null;
@@ -286,8 +286,8 @@ function fillSlct(id, prf){
 }
 
 //get value from profile data object and stack
-function getVal(prf, stk, leaf){
-  if(!prf || !stk || !leaf){
+function getVal(prf, meta, stk, leaf){
+  if(!prf || !meta || !stk || !leaf){
   return null;
   }
 
@@ -300,13 +300,13 @@ function getVal(prf, stk, leaf){
 
 var val=prf;
   for(i=1; i<stk.length; i++){
-    if(val.hasOwnProperty(stk[i].n)){
-    val=val[stk[i].n];
+    if(val.hasOwnProperty(meta[stk[i].n].nm)){
+    val=val[meta[stk[i].n].nm];
     }
   }
  
-  if(val.hasOwnProperty(leaf)){
-  return val[leaf];
+  if(val.hasOwnProperty(meta[leaf].nm)){
+  return val[meta[leaf].nm];
   }
 
 return null;
@@ -318,11 +318,12 @@ post: none
 generate path string. For the javascript to know where the items is in the hash trees.
 ---------------------------------*/ 
 function genStkPath(stk, leaf){
-var tkn="|||";
+var tkn="|";
 var rtrn="";
- 
+console.log(JSON.stringify(stk));
+console.log(leaf); 
 //assume root is there. if not, return nothing.
-  if(!leaf || leaf=="" || !stk || stk.length<=0||stk[0].n!="root"){
+  if(!leaf || leaf=="" || !stk || stk.length<=0||stk[0].n!="0"){
   return "";
   }
 
@@ -342,12 +343,6 @@ return rtrn+t+leaf;
 //draw Profiles page
 function drawProfiles(prof){
 
-document.getElementById("prflFrm").innerHTML="stub";
-
-return 0;
-
-
-//stubbing all this for now as the traversal needs to be redone
 var p=prof;
 var elId="prflFrm";
 var stack=[];
@@ -393,35 +388,32 @@ var rtrn="";
             ";
       }
       else{
-        //if the current location and index is object, push to stack.
-        if(meta.hasOwnProperty(meta[stack[stack.length-1].n].ord[stack[stack.length-1].i])){
-        var pathIndx=idPre+idNum;
+        //if the current location and index is object and hash and ord is not empty, push to stack.
+        //assume first item is always a category
+        var curId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
+        if(meta.hasOwnProperty(curId) && ((meta[curId].ord.length>0 && Object.keys(meta[curId].hash).length>0)||stack.length<=1)){
         idNum++;
-        //var pathTtl=genStkPath(stack, meta[stack[stack.length-1].n].ord[stack[stack.length-1].i]);
+        var pathId=genStkPath(stack, curId);
         //idObj[pathIndx]=pathTtl;
-        var metaId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
-        var ttlVal=meta[id].nm;
+        var ttlVal=meta[curId].nm;
         rtrn+="<div class=\"prflCtg\"> \
                 <div class=\"prflCtgTtlWrap\"> \
                   <div class=\"prflCtgTtl\"> \
-                    <input id=\""+pathIndx+"\" type=\"text\" value=\""+ttlVal+"\" /> \
+                    <input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /> \
                   </div> \
-                  <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button> \
+                  <button action=\"remove\" forInpt=\""+pathId+"\">-</button> \
                 </div> \
                 <div class=\"prflGrp\"> \
               ";
-        stack.push({n:meta[stack[stack.length-1].n].ord[stack[stack.length-1].i],i:0});
+        stack.push({n:curId,i:0});
         }
         else{
         //else,it's a leaf node
         //console.log(meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        var pathIndx=idPre+idNum;
         idNum++;
-        //var pathVar=genStkPath(stack, meta[stack[stack.length-1].n][stack[stack.length-1].i]);
-        //idObj[pathIndx]=pathVar;
-        var metaId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
-        var ttlVal=meta[id].nm;
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathIndx+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathIndx+"\" type=\"text\" name=\""+meta[stack[stack.length-1].n].ord[stack[stack.length-1].i]+"\" value=\""+getVal(prof,stack,meta[stack[stack.length-1].n][stack[stack.length-1].i])+"\" /> <button action=\"remove\" forInpt=\""+pathIndx+"\">-</button></div>";
+        var pathId=genStkPath(stack, curId);
+        var ttlVal=meta[curId].nm;
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button action=\"remove\" forInpt=\""+pathId+"\">-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
