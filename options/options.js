@@ -178,26 +178,129 @@ var max=arr.length;
   });
 }
 
-//deletes the field and/or value and/or path 
+//deletes the field and/or value and/or path
+//requires drawProfile() 
 function delPath(path, prf){
+  
   if(!path || path==null || path==""||!prf||prf==null||prf==""){
   return null;
   }
 var p=path;
 var arrm=p.split("|"); //turning path into an array
-arrm.shift(); //getting rid of root. Never give them option to delete root. 
-var arr=arrm.slice(1); //removing the first element as that's the category.
+var arr=arrm.slice(2); //removing the first element as that's the category.
+
+  //end if there are no path in meta. Why not profile? In case they're deleting JUST category
+  if(arrm.length<=0){
+  setMsg("msgPrfl", "No information provided to delete data.");
+  return null;
+  }
 
   chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
   var prof=d.profiles[prf];
   var meta=d.profile_meta[prf];
+
+    //exit if there's nothing to delete
+    if(meta.length<=0||Object.keys(prof).length<=0){
+    setMsg("msgPrfl", "No data available to delete.");
+    return null;
+    }
 
     //translate arr from id's into names for the profiles tree;
     var max=arr.length;
     for(let i=0; i<max; i++){
     arr[i]=meta[arr[i]].nm;
     }
-  console.log(arr);
+
+    //this is if just category is being deleted. Natrually, that will mean there's not a path
+    //for profiles to delete, but a lot needs to be deleted. This prepares for that.
+  var prfBuff=[];
+    if(arrm.length==2){
+    prfBuff=meta[arrm[1]].ord.slice(0);
+    var max=prfBuff.length;
+      for(let i=0; i<max; i++){
+      prfBuff[i]=meta[prfBuff[i]].nm;
+      }
+    }
+
+  //================== remove from meta ============================
+  var id="";
+  var nm="";
+    //if arrm has more 2 or more elements, need to modify parent.
+    if(arrm.length>=2){
+    id=arrm[arrm.length-1];
+    nm=meta[arrm[arrm.length-1]].nm;
+      if(meta[arrm[arrm.length-2]].hash.hasOwnProperty(nm)){
+      //console.log("meta: ====> deleting from parent's id:"+arrm[arrm.length-2]+", parent:"+meta[arrm[arrm.length-2]].nm+", from hash name:"+nm);
+      delete meta[arrm[arrm.length-2]].hash[nm];
+      //console.log(meta[arrm[arrm.length-2]].hash);
+      }
+    var max=meta[arrm[arrm.length-2]].ord.length;
+      for(let i=0; i<max; i++){
+      //console.log("======= meta i:"+i+"/"+max+", "+meta[arrm[arrm.length-2]].ord[i]+" looking for "+id+"   ========");
+        if(meta[arrm[arrm.length-2]].ord[i]==id){
+        //console.log("matched. Deleting id:"+id+" at index:"+i);
+        meta[arrm[arrm.length-2]].ord.splice(i,1); //deleting from array.
+        //console.log(meta[arrm[arrm.length-2]]);
+        break;//done
+        }
+      }
+    }
+
+    //delete the node in meta and all it's children.
+    if(meta.hasOwnProperty(arrm[arrm.length-1]) && arrm[arrm.length-1]!=0){
+    //console.log("deleting from meta:"+arrm[arrm.length-1]);
+    var buff=[];
+    var i=null;
+    buff=buff.concat(meta[arrm[arrm.length-1]].ord);
+    //console.log(" initial buff:");
+    //console.log(arrm);
+    //console.log(buff);
+    delete meta[arrm[arrm.length-1]];
+      while(buff.length>=1){
+      i=buff.shift();
+      //console.log("adding id:"+i+", name:"+meta[i].nm+"'s children to buffer. Deleting said node");
+      buff=buff.concat(meta[i].ord);
+      delete meta[i];
+      }
+    }
+
+  //================== removing from profiles ======================
+  var ref=prof;
+  var pRef=prof;
+  var pId="";
+  var max=arr.length;
+  //console.log(ref);
+    for(let i=0;i<max;i++){
+    //console.log("======= profiles i:"+i+"/"+max+", "+arr[i]+" ========");
+    //console.log(arr);
+    //console.log(ref);
+      if((i+1)==max&&ref.hasOwnProperty(arr[i])){
+      delete ref[arr[i]];
+      console.log(ref);
+      console.log(Object.keys(ref).length);
+        if(Object.keys(ref).length<=0 && max>=2){
+        pRef[pId]="";
+        }
+      //console.log(prof);
+      break;
+      }
+      if(ref.hasOwnProperty(arr[i])){
+      pId=arr[i];
+      pRef=ref;
+      ref=ref[arr[i]];
+      }
+    } 
+
+  //removing from profiles when only category was deleted
+  //console.log(prfBuff);
+  var max=prfBuff.length;
+    for(let i=0;i<max;i++){
+    delete prof[prfBuff[i]];
+    }
+
+    chrome.storage.local.set(d,(e)=>{
+    drawProfiles(prf); 
+    });
   });
 }
 
@@ -276,7 +379,8 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "rmFld":
       //removes field from profiles, remove from meta_profile, redraw page.
-      
+      var curPrf=document.getElementById("prflSlct").value;
+      delPath(e.target.getAttribute("forInpt"),curPrf); 
       break;
       case "imprtClr":
       //clear textarea
@@ -470,7 +574,7 @@ var rtrn="";
                   <div class=\"prflCtgTtl\"> \
                     <input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /> \
                   </div> \
-                  <button action=\"remove\" forInpt=\""+pathId+"\">-</button> \
+                  <button act=\"rmFld\" forInpt=\""+pathId+"\">-</button> \
                 </div> \
                 <div class=\"prflGrp\"> \
               ";
@@ -482,7 +586,7 @@ var rtrn="";
         idNum++;
         var pathId=genStkPath(stack, curId);
         var ttlVal=meta[curId].nm;
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button action=\"remove\" forInpt=\""+pathId+"\">-</button></div>";
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button act=\"rmFld\" forInpt=\""+pathId+"\">-</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
