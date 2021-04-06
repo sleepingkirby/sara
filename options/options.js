@@ -35,6 +35,11 @@ var max=nm.length;
   for(i=0;i<max;i++){
   document.getElementById(nm[i].getAttribute("tabMain")).classList.remove("mainOn");
   }
+  if(id=="prflMain"){
+  updtChckBx("prflSlct", "prflDflt");
+  var prf=document.getElementById("prflSlct").value;
+  drawProfiles(prf);
+  }
 document.getElementById(id).classList.toggle("mainOn");
 }
 
@@ -315,6 +320,32 @@ var arr=arrm.slice(2); //removing the first element as that's the category.
   });
 }
 
+
+
+function exprtSttngs(elId){
+var el=document.getElementById(elId);
+  if(el==false || !elId || elId=="" ){ 
+  return null;
+  }
+  chrome.storage.local.get(null, (e)=>{
+  el.textContent=JSON.stringify(e);
+  });
+}
+
+function imprtSttngs(elId){
+var el=document.getElementById(elId);
+  if(el==false || !elId || elId=="" ){ 
+  return null;
+  }
+
+var d=JSON.parse(el.value);
+
+  chrome.storage.local.set(d, (e)=>{
+  setMsg("msgPrfl", "JSON settings imported.");
+  });
+}
+
+
 //main function
 function startListen(){
 var swtchTbs=document.getElementsByClassName("swtchTb");
@@ -324,7 +355,10 @@ var max=swtchTbs.length;
   }
 var prflSlct=document.getElementById("prflSlct");
 //for indicating the drop down for profiles is currently selected as the default profile.
-prflSlct.addEventListener("change", (e)=>{updtChckBx("prflSlct", "prflDflt");});
+  prflSlct.addEventListener("change", (e)=>{
+  updtChckBx("prflSlct", "prflDflt");
+
+  });
 
 //msg div listener
 var msgPrfl=document.getElementById("msgPrfl");
@@ -395,12 +429,16 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "imprtClr":
       //clear textarea
+      document.getElementById(e.target.getAttribute("forEl")).textContent="";
       break;
       case "imprtExprt":
       //post JSON.stringify of chrome storage
+      exprtSttngs(e.target.getAttribute("forEl"));
       break;
       case "imprtImprt":
       //convert json to object and import to chrome storage
+      var d=document.getElementById(e.target.getAttribute("forEl").value);
+      imprtSttngs(e.target.getAttribute("forEl"), "msgPrfl");
       break;
       default:
       break;
@@ -605,6 +643,8 @@ var rtrn="";
     document.getElementById("prflFrm").innerHTML=rtrn;
   });
 }
+
+
 
 var urlPrf=getURLVar();
 var meta=null;

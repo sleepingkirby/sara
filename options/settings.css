@@ -356,8 +356,9 @@ align-items: stretch;
 
 #imprtMain textarea{
 width: 100%;
-min-height: 200px;
-height: 200px;
+min-height: 50vh;
+height: 80px;
+max-height: 100vh;
 }
 
 #imprtMain .ctrl{
@@ -388,6 +389,10 @@ opacity: 0;
 max-height: 0px;
 background-color: #aaaaaa;
 color: #061c5c;
+position: fixed;
+left: 0px;
+top: 0px;
+width: 100%;
 justify-content: space-between;
 }
 
