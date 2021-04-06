@@ -101,13 +101,22 @@ var max=arr.length;
   var max=a.length;
   var ref=d.profiles[prf];
   var nw=false;
+  var pRef=ref;
+  var pId=null;
     while(i<max){
       //console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
       //console.log(ref);
       if(!ref.hasOwnProperty(a[i])){
-      //console.log("created new tier/array");
-      ref[a[i]]={};
-      //console.log(ref);
+        if(typeof ref=="string"){
+        //console.log("new create");
+        pRef[pId]={};
+        ref=pRef[pId];
+        }
+        else{
+        //console.log("created new tier/array");
+        ref[a[i]]={};
+        //console.log(ref);
+        }
       nw=true;
       }
       
@@ -117,7 +126,9 @@ var max=arr.length;
       //console.log("applying value: \""+v+"\" to ref");
       //console.log(typeof v);
       ref[a[i]]=v;
-      }    
+      }
+    pRef=ref;
+    pId=a[i];
     ref=ref[a[i]];
     i++;
     }
@@ -276,8 +287,8 @@ var arr=arrm.slice(2); //removing the first element as that's the category.
     //console.log(ref);
       if((i+1)==max&&ref.hasOwnProperty(arr[i])){
       delete ref[arr[i]];
-      console.log(ref);
-      console.log(Object.keys(ref).length);
+      //console.log(ref);
+      //console.log(Object.keys(ref).length);
         if(Object.keys(ref).length<=0 && max>=2){
         pRef[pId]="";
         }
@@ -538,7 +549,7 @@ var rtrn="";
 
     document.getElementById("prflFrm").textContent="";
 
-    if(Object.keys(prof).length<=0||Object.keys(meta).length<=0){
+    if(Object.keys(meta).length<=0){
     return 0;
     }
 
@@ -574,7 +585,7 @@ var rtrn="";
                   <div class=\"prflCtgTtl\"> \
                     <input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /> \
                   </div> \
-                  <button act=\"rmFld\" forInpt=\""+pathId+"\">-</button> \
+                  <button act=\"rmFld\" forInpt=\""+pathId+"\">x</button> \
                 </div> \
                 <div class=\"prflGrp\"> \
               ";
@@ -586,7 +597,7 @@ var rtrn="";
         idNum++;
         var pathId=genStkPath(stack, curId);
         var ttlVal=meta[curId].nm;
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button act=\"rmFld\" forInpt=\""+pathId+"\">-</button></div>";
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button act=\"rmFld\" forInpt=\""+pathId+"\">x</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
