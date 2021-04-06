@@ -320,7 +320,97 @@ var arr=arrm.slice(2); //removing the first element as that's the category.
   });
 }
 
+function updtFld(prfl, pth, val){
+  if(!pth||pth==""||!prfl||prfl==""){
+  return null;
+  }
 
+
+  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+    if(!d.profiles.hasOwnProperty(prfl)){
+    return null;
+    }
+
+  var prof=d.profiles[prfl];
+  var meta=d.profile_meta[prfl];
+  var ref=prof;
+  var arrm=[];
+  arrm=pth.split("|");
+  arr=arrm.slice(2);
+
+  var max=arr.length;
+    for(let i=0; i<max; i++){
+      //console.log("======== "+i+"/"+max+" "+arr[i]+" "+meta[arr[i]].nm+" val:"+val+"========");
+      //console.log(ref);
+      if(i+1>=max && ref.hasOwnProperty(meta[arr[i]].nm) && typeof ref[meta[arr[i]].nm]=="string"){
+      ref[meta[arr[i]].nm]=val;
+      }
+      ref=ref[meta[arr[i]].nm];
+    }
+    chrome.storage.local.set(d, (e)=>{
+    });
+  });
+}
+
+
+function rnFld(prfl, pth, v){
+  if(!pth||pth==""||!prfl||prfl==""){
+  return null;
+  }
+
+  var val=v;
+  if(!val||val==""){
+  setMsg("msgPrfl", "Value entered CANNOT be empty/nothing. Restored to default value.");
+  document.getElementById(pth).value=document.getElementById(pth).getAttribute("dfltVal");
+  val=document.getElementById(pth).getAttribute("dfltVal");
+  }
+
+
+  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+    if(!d.profiles.hasOwnProperty(prfl)){
+    return null;
+    }
+
+  var prof=d.profiles[prfl];
+  var meta=d.profile_meta[prfl];
+  var ref=prof;
+  var arrm=[];
+  arrm=pth.split("|");
+  arr=arrm.slice(2);
+
+  
+//================ updating profiles ================
+  var max=arr.length;
+    for(let i=0; i<max; i++){
+      //console.log("======== "+i+"/"+max+" "+arr[i]+" "+meta[arr[i]].nm+" val:"+val+"========");
+      //console.log(ref);
+      if(i+1>=max && ref.hasOwnProperty(meta[arr[i]].nm)){
+      ref[val]=ref[meta[arr[i]].nm];
+      delete ref[meta[arr[i]].nm];
+      }
+      ref=ref[meta[arr[i]].nm];
+    }
+    //chrome.storage.local.set(d, (e)=>{});
+
+//================ updating meta =====================
+  max=arrm.length;
+  var id="";
+  var nm="";
+    //if arrm has more 2 or more elements, need to modify parent.
+    if(arrm.length>=2){
+    id=arrm[arrm.length-1];
+    nm=meta[arrm[arrm.length-1]].nm;
+      if(meta[arrm[arrm.length-2]].hash.hasOwnProperty(nm)){
+      //console.log("meta: ====> deleting from parent's id:"+arrm[arrm.length-2]+", parent:"+meta[arrm[arrm.length-2]].nm+", from hash name:"+nm);
+      meta[arrm[arrm.length-2]].hash[val]=meta[arrm[arrm.length-2]].hash[nm];
+      delete meta[arrm[arrm.length-2]].hash[nm];
+      //console.log(meta[arrm[arrm.length-2]].hash);
+      }
+    meta[id].nm=val;
+    }
+  chrome.storage.local.set(d, (e)=>{});
+  });
+}
 
 function exprtSttngs(elId){
 var el=document.getElementById(elId);
@@ -446,12 +536,16 @@ var msgPrfl=document.getElementById("msgPrfl");
   });
 
   document.addEventListener("input", (e)=>{
+  var prfl=prflSlct.value;
     switch(e.target.getAttribute("act")){
       case "updtFld":
-      //updates value for field in updates. 
+      //updates value for field in updates.
+      //var prflSlct=document.getElementById("prflSlct");
+      updtFld(prfl, e.target.getAttribute("forInpt"), e.target.value); 
       break;
       case "rnFld":
       //path was renamed. copy old to new name. 
+      rnFld(prfl, e.target.id, e.target.value); 
       break;
       case "updtDrwPrfl":
       drawProfiles(e.target.value);
@@ -621,7 +715,7 @@ var rtrn="";
         rtrn+="<div class=\"prflCtg\"> \
                 <div class=\"prflCtgTtlWrap\"> \
                   <div class=\"prflCtgTtl\"> \
-                    <input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /> \
+                    <input id=\""+pathId+"\" act=\"rnFld\" type=\"text\" dfltVal=\""+ttlVal+"\" value=\""+ttlVal+"\" /> \
                   </div> \
                   <button act=\"rmFld\" forInpt=\""+pathId+"\">x</button> \
                 </div> \
@@ -635,7 +729,7 @@ var rtrn="";
         idNum++;
         var pathId=genStkPath(stack, curId);
         var ttlVal=meta[curId].nm;
-        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" type=\"text\" value=\""+ttlVal+"\" /></div> <input forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" value=\""+getVal(prof,meta,stack,curId)+"\" /> <button act=\"rmFld\" forInpt=\""+pathId+"\">x</button></div>";
+        rtrn+="<div class=\"prflInpt\"><div class=\"prflInptTtl\"><input id=\""+pathId+"\" act=\"rnFld\"type=\"text\" dfltVal=\""+ttlVal+"\"value=\""+ttlVal+"\" /></div> <textarea id=\""+pathId+"-val\" act=\"updtFld\"forInpt=\""+pathId+"\" type=\"text\" name=\""+curId+"\" class=\"prflInptTA\" />"+getVal(prof,meta,stack,curId)+"</textarea><button act=\"rmFld\" forInpt=\""+pathId+"\">x</button></div>";
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
