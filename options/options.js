@@ -550,6 +550,18 @@ var msgPrfl=document.getElementById("msgPrfl");
       case "updtDrwPrfl":
       drawProfiles(e.target.value);
       break;
+      case "sttngsIgnrLst":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.ignrLst=e.target.value;
+          chrome.storage.local.set(d);
+        });
+      break;
+      case "sttngsApplyLst":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.applyLst=e.target.value;
+          chrome.storage.local.set(d);
+        });
+      break;
       default:
       break;
     }
