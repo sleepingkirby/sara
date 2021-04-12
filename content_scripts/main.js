@@ -144,8 +144,6 @@ return false;
     });
 
     document.onmousemove=function(e){
-
-    console.log(rnFlg); 
       if(rnFlg){
       document.body.appendChild(el);
         if(!el.isEqualNode(e.target)){
@@ -164,7 +162,6 @@ return false;
         }
 
         if((e.clientY + el.clientHeight + mrgn) > window.innerHeight){
-        console.log("over");
         el.style.maxWidth=window.innerHeight+"px";
         el.style.top= (e.clientY - mrgn - el.clientHeight) +"px";
         }
@@ -176,12 +173,27 @@ return false;
     };
   }
 
+  function strToHsh(str){
+    if(typeof str !="string" || str=="" ||!str){
+    return null;
+    }
+  var s=str;
+  var arr=s.trim().split("\n");
+  var rtrn={};
+  var max=arr.length;
+    for(let i=0; i<max; i++){
+    rtrn[arr[i]]=true;
+    }
+  return rtrn;
+  }
 
 //================================================= main code run ====================================================
 
 var conf={};
 var onEl;
 var ignErr=null;
+var ignrHsh={};
+
 
 //set event so that right click will capture the element it's over
 /* this doesn't work because context menu is render at the same time the code to update it is sent off.
@@ -194,8 +206,9 @@ window.oncontextmenu=(e) => {
 document.addEventListener("mouseover", elObjToBG);
 
 chrome.storage.local.get(null, function(d){
-
 //generate domain hashs
+ignrHsh=strToHsh(d.settings.ignrLst);
+console.log(ignrHsh);
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
 
