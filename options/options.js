@@ -40,6 +40,16 @@ var max=nm.length;
   var prf=document.getElementById("prflSlct").value;
   drawProfiles(prf);
   }
+
+  if(id=="sttngsMain"){
+    chrome.storage.local.get(null, (d)=>{
+    document.getElementById("ignrLst").value=d.settings.ignrLst;
+    document.getElementById("applyLst").value=d.settings.applyLst;
+    document.getElementById("hvrId").checked=d.settings.hoverId;
+    document.getElementById("autoFll").checked=d.settings.autoFill;
+    });
+  }
+
 document.getElementById(id).classList.toggle("mainOn");
 }
 
@@ -443,6 +453,7 @@ var max=swtchTbs.length;
   for(i=0; i<max; i++){
   swtchTbs[i].addEventListener("change",tabSwitch);
   }
+
 var prflSlct=document.getElementById("prflSlct");
 //for indicating the drop down for profiles is currently selected as the default profile.
   prflSlct.addEventListener("change", (e)=>{
@@ -562,7 +573,21 @@ var msgPrfl=document.getElementById("msgPrfl");
           chrome.storage.local.set(d);
         });
       break;
+      case "setHoverId":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.hoverId=e.target.checked;
+          chrome.storage.local.set(d);
+        });
+      break;
+      case "setAutoFill":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.autoFill=e.target.checked;
+        console.log(d);
+          chrome.storage.local.set(d);
+        });
+      break;
       default:
+      console.log(e.target);
       break;
     }
   });

@@ -132,14 +132,14 @@ chrome.storage.local.get(null,(d)=>{
         }
       },
       settings:{
-      autofill: false,
+      autoFill: false,
       hoverId: false,
       def_profile: "default",
       applyLst: "",
       ignrLst: ""
       }
     };
-    chrome.storage.local.set(ind,(e)=>{console.log(e);});
+    chrome.storage.local.set(ind,(e)=>{});
   }
 });
 

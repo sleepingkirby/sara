@@ -29,18 +29,18 @@ return false;
 
 
 //gets hostname from url
-function hostFromURL(str){
-var rtrn=str;
-var proto=rtrn.match(/[a-z]+:\/\/+/g);
-rtrn=rtrn.substr(proto[0].length,rtrn.length);
+  function hostFromURL(str){
+  var rtrn=str;
+  var proto=rtrn.match(/[a-z]+:\/\/+/g);
+  rtrn=rtrn.substr(proto[0].length,rtrn.length);
 
-var end=rtrn.search('/');
-  if(end>=0){
-  rtrn=rtrn.substr(0,end);
+  var end=rtrn.search('/');
+    if(end>=0){
+    rtrn=rtrn.substr(0,end);
+    }
+
+  return rtrn;
   }
-
-return rtrn;
-}
 
 
   /*--------------------------
@@ -98,7 +98,6 @@ return rtrn;
       sendResponse(true);
       break;
       default:
-      sendResponse("clicked default");
       break;
     }
   }
@@ -125,6 +124,58 @@ return rtrn;
   }
 
 
+  function hoverId(hoverId){
+  var rnFlg=hoverId;
+    if(typeof rnFlg != "boolean"){
+    rnFlg=false;
+    }
+
+  var mrgn=18;
+  var el=document.createElement("div");
+  el.style.cssText="display:inline-block;position:fixed;color:#cccccc;background-color:black;left:0px;top:0px;border:1px solid #cccccc;border-radius:6px;padding: 6px 6px 6px 6px;opacity:.75;z-index:999999999;margin:"+mrgn+"px;white-space:pre-wrap;max-width:"+window.innerWidth+"px;min-width:50px;"
+  el.textContent="loading...";
+  el.id="extIdNmSARA";
+
+    chrome.storage.onChanged.addListener(function(c,n){
+    rnFlg=c.settings.newValue.hoverId;
+      if(!rnFlg){
+      document.body.removeChild(el);
+      }
+    });
+
+    document.onmousemove=function(e){
+
+    console.log(rnFlg); 
+      if(rnFlg){
+      document.body.appendChild(el);
+        if(!el.isEqualNode(e.target)){
+        el.textContent=e.target.tagName.toLowerCase();
+        var arr=e.target.getAttributeNames();
+        arr.forEach( (i,n)=>{el.textContent+="\r\n"+i+": "+e.target.getAttribute(i);});
+        }
+          
+        if((e.clientX + el.clientWidth + mrgn) > window.innerWidth){
+        el.style.maxWidth=window.innerWidth+"px";
+        el.style.left= (e.clientX - mrgn - el.clientWidth) +"px";
+        }
+        else{
+        el.style.maxWidth=window.innerWidth+"px";
+        el.style.left=e.clientX+"px";
+        }
+
+        if((e.clientY + el.clientHeight + mrgn) > window.innerHeight){
+        console.log("over");
+        el.style.maxWidth=window.innerHeight+"px";
+        el.style.top= (e.clientY - mrgn - el.clientHeight) +"px";
+        }
+        else{
+        el.style.maxWidth=window.innerHeight+"px";
+        el.style.top=e.clientY+"px";
+        }
+      }
+    };
+  }
+
 
 //================================================= main code run ====================================================
 
@@ -142,7 +193,21 @@ window.oncontextmenu=(e) => {
 */
 document.addEventListener("mouseover", elObjToBG);
 
-chrome.storage.local.get(null, function(d){});
+chrome.storage.local.get(null, function(d){
+
+//generate domain hashs
+//see if need to make hoverid. element.
+hoverId(d.settings.hoverId);
+
+//if auto fill on see if domain is not in ignore list, if true, do nothing, if not, find fields and apply
+//if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
+
+
+});
+
+
+
+
 
 
 //get message from other parts
