@@ -138,7 +138,8 @@ return false;
 
     chrome.storage.onChanged.addListener(function(c,n){
     rnFlg=c.settings.newValue.hoverId;
-      if(!rnFlg){
+    oldFlg=c.settings.oldValue.hoverId;
+      if(!rnFlg && document.getElementById(el.id)){
       document.body.removeChild(el);
       }
     });
@@ -187,13 +188,29 @@ return false;
   return rtrn;
   }
 
+  function strToApplyLst(str){
+    if(typeof str !="string" || str=="" ||!str){
+    return null;
+    }
+  var s=str;
+  var arr=s.trim().split("\n");
+  var rtrn={};
+  var max=arr.length;
+    for(let i=0; i<max; i++){
+    let pos=arr[i].indexOf("|");
+    rtrn[arr[i].substr(0,pos)]=arr[i].substr(pos+1);
+    }
+  return rtrn;
+  }
+
+
 //================================================= main code run ====================================================
 
 var conf={};
 var onEl;
 var ignErr=null;
 var ignrHsh={};
-
+var applyHsh={};
 
 //set event so that right click will capture the element it's over
 /* this doesn't work because context menu is render at the same time the code to update it is sent off.
@@ -207,8 +224,11 @@ document.addEventListener("mouseover", elObjToBG);
 
 chrome.storage.local.get(null, function(d){
 //generate domain hashs
+
 ignrHsh=strToHsh(d.settings.ignrLst);
+applyHsh=strToApplyLst(d.settings.applyLst);
 console.log(ignrHsh);
+console.log(applyHsh);
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
 
