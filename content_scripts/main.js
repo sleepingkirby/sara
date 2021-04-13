@@ -188,6 +188,8 @@ return false;
   return rtrn;
   }
 
+
+  //convert string to Apply List object
   function strToApplyLst(str){
     if(typeof str !="string" || str=="" ||!str){
     return null;
@@ -201,6 +203,93 @@ return false;
     rtrn[arr[i].substr(0,pos)]=arr[i].substr(pos+1);
     }
   return rtrn;
+  }
+
+  //match string to the hash
+  function mtchAgnstHsh(str, hsh){
+    if(!str || str=="" || typeof str !="string"){
+    return false;
+    }
+
+    if(typeof hsh!="object" || Object.keys(hsh).length <= 0){
+    return false;
+    } 
+
+  console.log(str);
+  console.log(hsh);
+
+  var h=hsh;
+  var s=str;
+  var ks=Object.keys(h);
+  var hsh_ind="";
+  var rtrn=null;
+    while(typeof h=="object" && ks.length>0 && rtrn==null){
+    hsh_ind=ks.shift();
+    let patt=new RegExp(hsh_ind);
+      if(patt.test(s)){
+        //if the pattern matches and the pattern is an index for an object, traverse down
+        if(typeof h[hsh_ind]=="object"){
+        h=h[hsh_ind];
+        ks=Object.keys(h);
+        }
+        else{
+        //if the pattern matches and the pattern is an index for not an object, it's the final value.
+        rtrn=h[hsh_ind];
+        }
+      }
+    }
+  return rtrn;
+  }
+
+
+  //find elements and fill it with proper values.
+  function fndNFll(hsh){
+    if(typeof hsh!="object" || Object.keys(hsh) <=0){
+    return false;
+    }
+  var h=hsh;
+  var inpts=documents.getElementsByTagName("input");
+  var tas=documents.getElementsByTagName("textarea");
+  var slcts=documents.getElementsByTagName("select");
+ /*
+  var arr=el.getAttributeNames();
+  arr.forEach( (i,n)=>{rtrn.attr[i]=el.getAttribute(i);});
+  rtrn["tagName"]=el.tagName.toLowerCase();
+*/
+
+  var val=null;
+  let max=inpts.length;
+    for(let i=0;i<max;i++){
+    let arr=inpts[i].getAttributeNames();
+    let arrm=arr.length;
+      for(let j=0;j<arrm;j++){ 
+      //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
+      //checked when value=checkbox, radio
+      val=mtchAgnstHsh(inpts[i].getAttribute(arr[j]),hsh));
+        //if, for some bizarre reason, the input element doens't have a type, assume value
+        if(!inpts[i].hasOwnProperty("type")){
+        inpts[i].value=val;
+        break;
+        }
+        else{
+          if(inpts[i].type=="text"||inpts[i].type=="email"||inpts[i].type=="hidden"||inpts[i].type=="month"||inpts[i].type=="number"||inpts[i].type=="date"||inpts[i].type=="datetime-local"||inpts[i].type=="color"||inpts[i].type=="vol"||inpts[i].type=="image"||inpts[i].type=="password"||inpts[i].type=="tel"||inpts[i].type=="time"||inpts[i].type=="url"||inpts[i].type=="week"){
+          inpts[i].value=val;
+          break;
+          }
+          if(inpts[i].type=="radio"&&inpts[i].value==val){//why only if the value match? With radios, multiple inputs are linked together via name and has to provide a value to distinguish the choices from each other.
+          inpts[i].checked=true;
+          break;
+          }
+          if(inpts[i].type=="checkbox"&&val!="false"&&val!=""){
+          inpts[i].checked=true;
+          break;
+          }
+        }
+      }
+    }     
+      
+
+
   }
 
 
@@ -227,14 +316,25 @@ chrome.storage.local.get(null, function(d){
 
 ignrHsh=strToHsh(d.settings.ignrLst);
 applyHsh=strToApplyLst(d.settings.applyLst);
-console.log(ignrHsh);
-console.log(applyHsh);
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
 
-//if auto fill on see if domain is not in ignore list, if true, do nothing, if not, find fields and apply
-//if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
 
+var dmn=window.location.host;
+  //if auto fill on see if domain is not in ignore list, if true, do nothing, if not, find fields and apply
+  if(d.settings.autoFill){
+    if(!ignrHsh.hasOwnProperty(dmn)){
+    //find and fill
+    console.log("auto fill on, not in ignore list");
+    }
+  }
+  //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
+  else{
+    if(applyHsh.hasOwnProperty(dmn)){
+    //find and fill
+    console.log("autofill off, in apply list");
+    }
+  }
 
 });
 
