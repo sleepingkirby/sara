@@ -15,7 +15,7 @@ function mkCntxtMnu(func){
     });
     chrome.contextMenus.create({
           id: "clip",
-          title: "To Clipboard",
+          title: "Copy Value",
           contexts: ["all"],
           parentId: "root"
     });
@@ -31,6 +31,7 @@ function mkCntxtMnu(func){
 //======================== functional code =============================
 
 var cntxtCch={};//cache for the context menu id's
+var curEl=null;
 mkCntxtMnu();
 
 //making a rule here. profiles and meta depth should not exceed double digits
@@ -181,14 +182,6 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 });
 
 
-//initializing the extension settings if no settings exists
-chrome.storage.local.get(null, (d) => {
-  if(Object.keys(d).length <= 0){
-  }
-  else{
-  }
-});
-
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
   if (changeInfo.status == 'complete') {   
@@ -200,13 +193,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
           chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
           });
         }
-        /*
-        else if(){
+        else{
           chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-          chrome.tabs.sendMessage(tabs[0].id, {action: "paste"}, function(response) { console.log("======bg===>>"); console.log(response);});  
+          chrome.tabs.sendMessage(tabs[0].id, {action: "default"}, function(response) { console.log("======bg===>>"); console.log(info); console.log(response);});
+          
           });
         }
-        */
+        
     });
   }
 });

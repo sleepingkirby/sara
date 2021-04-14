@@ -75,6 +75,16 @@ return false;
   return rtrn;
   }
 
+  //a hack function to copy to clipboard
+  function copyHack(str){
+  var ta=document.createElement("textarea");
+  ta.textContent=str;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy', false, null);
+  document.body.removeChild(ta);
+  }
+
   /*--------------------
   pre: everything above here
   post: everything modified as a result of running functions above here
@@ -82,22 +92,21 @@ return false;
   ---------------------*/
   function runOnMsg(request, sender, sendResponse){
     switch(request.action){
+      /*
       case 'getEl':
       //sends current hovered over element to the background script to populate the right click menu
-      var obj=elToObj(onEl); 
+      var obj=elToObj(onEl);
+      console.log(obj); 
       sendResponse(JSON.stringify(obj));
       break;
+      */
       case 'sendInfo':
       //copies the proper attribute of the desire element into the clipboard
-      var ta=document.createElement("textarea");
-      ta.textContent=request.msg.val;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy', false, null);
-      document.body.removeChild(ta);
+      copyHack(request.msg.val);
       sendResponse(true);
       break;
       default:
+      sendResponse("default");
       break;
     }
   }
@@ -215,9 +224,6 @@ return false;
     return false;
     } 
 
-  console.log(str);
-  console.log(hsh);
-
   var h=hsh;
   var s=str;
   var ks=Object.keys(h);
@@ -248,47 +254,81 @@ return false;
     return false;
     }
   var h=hsh;
-  var inpts=documents.getElementsByTagName("input");
-  var tas=documents.getElementsByTagName("textarea");
-  var slcts=documents.getElementsByTagName("select");
- /*
-  var arr=el.getAttributeNames();
-  arr.forEach( (i,n)=>{rtrn.attr[i]=el.getAttribute(i);});
-  rtrn["tagName"]=el.tagName.toLowerCase();
-*/
+  var inpts=document.getElementsByTagName("input");
+  var tas=document.getElementsByTagName("textarea");
+  var slcts=document.getElementsByTagName("select");
 
+
+  //inputs
   var val=null;
   let max=inpts.length;
     for(let i=0;i<max;i++){
     let arr=inpts[i].getAttributeNames();
     let arrm=arr.length;
+    console.log("===============>>");
+    console.log(inpts[i]);
+    console.log(arr);
       for(let j=0;j<arrm;j++){ 
+
+        console.log("inputs "+" "+arr[j]+" "+inpts[i].getAttribute(arr[j]));
       //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
       //checked when value=checkbox, radio
-      val=mtchAgnstHsh(inpts[i].getAttribute(arr[j]),hsh));
+      val=mtchAgnstHsh(inpts[i].getAttribute(arr[j]),hsh);
+        if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
         //if, for some bizarre reason, the input element doens't have a type, assume value
-        if(!inpts[i].hasOwnProperty("type")){
-        inpts[i].value=val;
-        break;
-        }
-        else{
-          if(inpts[i].type=="text"||inpts[i].type=="email"||inpts[i].type=="hidden"||inpts[i].type=="month"||inpts[i].type=="number"||inpts[i].type=="date"||inpts[i].type=="datetime-local"||inpts[i].type=="color"||inpts[i].type=="vol"||inpts[i].type=="image"||inpts[i].type=="password"||inpts[i].type=="tel"||inpts[i].type=="time"||inpts[i].type=="url"||inpts[i].type=="week"){
+          if(!inpts[i].hasOwnProperty("type")){
           inpts[i].value=val;
           break;
           }
-          if(inpts[i].type=="radio"&&inpts[i].value==val){//why only if the value match? With radios, multiple inputs are linked together via name and has to provide a value to distinguish the choices from each other.
-          inpts[i].checked=true;
-          break;
-          }
-          if(inpts[i].type=="checkbox"&&val!="false"&&val!=""){
-          inpts[i].checked=true;
-          break;
+          else{
+            if((inpts[i].type=="text"||inpts[i].type=="email"||inpts[i].type=="hidden"||inpts[i].type=="month"||inpts[i].type=="number"||inpts[i].type=="date"||inpts[i].type=="datetime-local"||inpts[i].type=="color"||inpts[i].type=="vol"||inpts[i].type=="image"||inpts[i].type=="password"||inpts[i].type=="tel"||inpts[i].type=="time"||inpts[i].type=="url"||inpts[i].type=="week")){
+            inpts[i].value=val;
+            break;
+            }
+            if(inpts[i].type=="radio"&&inpts[i].value==val){//why only if the value match? With radios, multiple inputs are linked together via name and has to provide a value to distinguish the choices from each other.
+            inpts[i].checked=true;
+            break;
+            }
+            if(inpts[i].type=="checkbox"&&val!="false"&&val!=""){
+            inpts[i].checked=true;
+            break;
+            }
           }
         }
       }
     }     
-      
 
+  //textarea value 
+  val=null;
+  max=tas.length;
+    for(let i=0;i<max;i++){
+    let arr=tas[i].getAttributeNames();
+    let arrm=arr.length;
+      for(let j=0;j<arrm;j++){ 
+      //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
+      //checked when value=checkbox, radio
+      val=mtchAgnstHsh(tas[i].getAttribute(arr[j]),hsh);
+        if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
+        tas[i].value=val;
+        }
+      }
+    }
+
+  //select
+  val=null;
+  max=slcts.length;
+    for(let i=0;i<max;i++){
+    let arr=slcts[i].getAttributeNames();
+    let arrm=arr.length;
+      for(let j=0;j<arrm;j++){ 
+      //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
+      //checked when value=checkbox, radio
+      val=mtchAgnstHsh(slcts[i].getAttribute(arr[j]),hsh);
+        if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
+        slcts[i].value=val;
+        }
+      }
+    }
 
   }
 
@@ -313,19 +353,26 @@ document.addEventListener("mouseover", elObjToBG);
 
 chrome.storage.local.get(null, function(d){
 //generate domain hashs
+var curPrfl=""; //current profile.
 
 ignrHsh=strToHsh(d.settings.ignrLst);
 applyHsh=strToApplyLst(d.settings.applyLst);
+
+var dmn=window.location.host;
+
+curPrfl=applyHsh.hasOwnProperty(dmn)?applyHsh[dmn]:d.settings.def_profile;
+//need to add function to change curPrfl based off of popup menu
+
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
 
 
-var dmn=window.location.host;
   //if auto fill on see if domain is not in ignore list, if true, do nothing, if not, find fields and apply
   if(d.settings.autoFill){
     if(!ignrHsh.hasOwnProperty(dmn)){
     //find and fill
     console.log("auto fill on, not in ignore list");
+    console.log(fndNFll(d.profiles[dmn]));
     }
   }
   //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
@@ -333,6 +380,7 @@ var dmn=window.location.host;
     if(applyHsh.hasOwnProperty(dmn)){
     //find and fill
     console.log("autofill off, in apply list");
+    console.log(fndNFll(d.profiles[curPrfl]));
     }
   }
 
