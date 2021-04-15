@@ -60,12 +60,12 @@ function fillSlct(id, arr, prf){
 function startListen(){
 var act=null;
   document.addEventListener("click", (e) => {
+  act=e.target.getAttribute("act");
     switch(e.target.id){
       case 'settingsPage':
         chrome.runtime.openOptionsPage();     
       break;
       default:
-
       //console.log(e.target);
       break;
     }
@@ -78,6 +78,11 @@ var act=null;
         chrome.storage.local.get({"settings":null},(d)=>{
         d.settings.hoverId=e.target.checked;
         chrome.storage.local.set(d);
+        });
+      break;
+      case 'setPgPrfl':
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}});
         });
       break;
       default:
@@ -154,6 +159,11 @@ function getCurHost(fnc, fncPrms){
 
   }
 
+  //figures out what profile to set
+  function dtrmnPrfl(ps){
+  //assume ps.
+  }
+
 //================================ main ==========================
 var host=""
 var ignrHsh={};
@@ -173,13 +183,15 @@ getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", d:
 
 
 /*
-there are 4 selected profile possibilities. page selected profile, current profile, default profile and applylist domain profile.
-if there is a page selected profile, use that.
+there are 3 selected profile possibilities and a marker. applylist domain profile marker,  current profile, default profile and applylist domain profile.
+if(
 else if applist domain profile exists for domain, use that,
 else if current profile exists as profile, use that,
-else use default profile.
+else if default profile exist, use that
+else, no profile selected, pick first one.
 
 */
+
 
 fillSlct("prflSlct", Object.keys(d.profiles),d.settings.def_profile); 
 startListen();

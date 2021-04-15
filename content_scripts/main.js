@@ -105,7 +105,17 @@ return false;
       copyHack(request.msg.val);
       sendResponse(true);
       break;
+      case 'setPgPrfl':
+      console.log(request);
+      console.log(applyHsh);
+      //rcrdPgPrfl(request.msg.val);
+      sendResponse(true);
+      break;
+      case 'getPgPrfl':
+      sendResponse(getPgPrfl());
+      break;
       default:
+      console.log(request);
       sendResponse("default");
       break;
     }
@@ -132,7 +142,87 @@ return false;
     }
   }
 
+  /*---------------------------------------------------
+  pre:
+  post: html element that is not visible.
+  adds an invisible element to the page to keep track 
+  of what profile was set for this page.
+  ---------------------------------------------------*/
+  function rcrdPgPrfl(prfl){
+    if(typeof prfl != "string" || prfl=="" ||!prfl){
+    return false;
+    }
 
+  var id="extIdNmSARAPgPrfl";
+  var el=document.getElementById(id);
+    if(el){
+    //el.setAttribute("profile",prfl);
+    return true;
+    }
+
+  el=document.createElement("div");
+  el.style.cssText="display:none;max-height: 0px; max-width: 0px; opacity:0;";
+  //el.setAttribute("profile",prfl);
+  el.id=id;
+  document.body.appendChild(el);
+  return true;
+  }
+
+  /*-------------------------------------------------
+  pre:
+  post:
+  checks if page profile marker was set
+  --------------------------------------------------*/
+  function getPgPrfl(){
+  let el=document.getElementById("extIdNmSARAPgPrfl");
+    if(el && el.hasAttribute("profile")){
+    return true;
+    }
+  return false;
+  }
+
+  /*---------------------------------------------------
+  pre:
+  post:
+  returns which profile to use. Meant for first time 
+  the page is ran. Subsequent changes depend on popup 
+  to tell us (content_script) which profile to use.
+  ---------------------------------------------------*/
+  function dtrmnPrfl(dmn, d, hsh){
+    //if that doesn't exist, return error, ask to create new profile or reinstall (outside of this function). Nothing is done until then
+    if(Object.keys(d).length<=0 || Object.keys(d.profiles).length<=0 ){
+    return false;
+    }
+
+
+    //since always runs on page start and only on page start, the profile marker is NEVER set
+    //if in applyHsh, get profile name
+    if(Object.keys(hsh).length>=1&&hsh.hasOwnProperty[dmn]&&d.profiles.hasOwnProperty(dmn)){
+    return hsh[dmn];
+    }
+
+    //if that profile doesn't exist/workout, use current profile.
+    if(d.settings.hasOwnProperty("cur_profile") && d.profiles.hasOwnProperty(d.settings.cur_profile)){
+    return d.settings.cur_profile;
+    }
+
+    //if that profile doesn't exist/workout, use default profile.
+    if(d.settings.hasOwnProperty("def_profile") && d.profiles.hasOwnProperty(d.settings.def_profile)){
+    return d.settings.def_profile;
+    }
+
+    //if default doesn't exist, set to first profile in list. 
+  return Object.keys(d.profiles)[0];
+  }
+
+  /*---------------------------------------------------
+  pre: hoverId(value to know if it needs to run)
+  post: hoverId added or removed.
+  the main logic for the hover Id'ing element. This 
+  generates the element, adds listeners to know when to
+  add the element, when to remove the element, when to
+  start adding, etc.
+  ---------------------------------------------------*/
   function hoverId(hoverId){
   var rnFlg=hoverId;
     if(typeof rnFlg != "boolean"){
@@ -341,36 +431,39 @@ return false;
 
 //================================================= main code run ====================================================
 
-var conf={};
 var onEl;
 var ignErr=null;
-var ignrHsh={};
-var applyHsh={};
+var ignrHsh={}; //hash for ignore list
+var applyHsh={}; //hash for apply list
+var isApply=false; //is this domain in apply list?
+var curPrfl=null; //profile name to apply for this page 
+var dmn=window.location.host;//domain of current page/
 
-//set event so that right click will capture the element it's over
-/* this doesn't work because context menu is render at the same time the code to update it is sent off.
-as such, the contextmenu shown to the user is always one selection behind.
-window.oncontextmenu=(e) => {
-  onEl=e.path[0];
-  chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
-};
-*/
+
 document.addEventListener("mouseover", elObjToBG);
 
 chrome.storage.local.get(null, function(d){
-//generate domain hashs
-var curPrfl=""; //current profile.
+  if(Object.keys(d).length<=0){
+  console.log("SARA: No settings found. Not able to do anything. Reinstall recommended.");
+  return false;
+  }
 
+//set the hashs for east access
 ignrHsh=strToHsh(d.settings.ignrLst);
 applyHsh=strToApplyLst(d.settings.applyLst);
 
-var dmn=window.location.host;
-
-curPrfl=applyHsh.hasOwnProperty(dmn)?applyHsh[dmn]:d.settings.def_profile;
-//need to add function to change curPrfl based off of popup menu
-
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
+
+isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
+
+curPrfl=dtrmnPrfl(dmn, d, applyHsh);
+  //if this fails, we can't do the rest. Stop here
+  if(curPrfl==false){
+  console.log("SARA: No profiles found. Nothing to do.");
+  chrome.runtime.onMessage.addListener(runOnMsg);
+  return false;
+  }
 
 
   //if auto fill on see if domain is not in ignore list, if true, do nothing, if not, find fields and apply
@@ -378,26 +471,21 @@ hoverId(d.settings.hoverId);
     if(!ignrHsh.hasOwnProperty(dmn)){
     //find and fill
     console.log("auto fill on, not in ignore list");
-    console.log(fndNFll(d.profiles[dmn]));
+    console.log(fndNFll(d.profiles[curPrfl]));
     }
   }
   //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
   else{
-    if(applyHsh.hasOwnProperty(dmn)){
+    if(isApply){
     //find and fill
     console.log("autofill off, in apply list");
     console.log(fndNFll(d.profiles[curPrfl]));
     }
   }
 
-});
-
-
-
-
-
 
 //get message from other parts
 chrome.runtime.onMessage.addListener(runOnMsg);
+});
 
 })();
