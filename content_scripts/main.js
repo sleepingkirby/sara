@@ -139,15 +139,15 @@ return false;
     rnFlg=false;
     }
 
-  var mrgn=18;
+  var mrgn=16;
   var el=document.createElement("div");
-  el.style.cssText="display:inline-block;position:fixed;color:#cccccc;background-color:black;left:0px;top:0px;border:1px solid #cccccc;border-radius:6px;padding: 6px 6px 6px 6px;opacity:.75;z-index:999999999;margin:"+mrgn+"px;white-space:pre-wrap;max-width:"+window.innerWidth+"px;min-width:50px;"
+  el.style.cssText="display:inline-block;position:fixed;color:#cccccc;background-color:black;left:0px;top:0px;border:1px solid #cccccc;border-radius:6px;padding: 6px 6px 6px 6px;opacity:.75;z-index:999999999;margin:"+mrgn+"px;white-space:pre-wrap;word-break:break-all;max-width:"+window.innerWidth+"px;min-width:50px;"
   el.textContent="loading...";
   el.id="extIdNmSARA";
 
     chrome.storage.onChanged.addListener(function(c,n){
-    rnFlg=c.settings.newValue.hoverId;
-    oldFlg=c.settings.oldValue.hoverId;
+    rnFlg=c.settings.hasOwnProperty("newValue")?c.settings.newValue.hoverId:false;
+    oldFlg=c.settings.hasOwnProperty("oldValue")?c.settings.oldValue.hoverId:false;
       if(!rnFlg && document.getElementById(el.id)){
       document.body.removeChild(el);
       }
@@ -164,7 +164,7 @@ return false;
           
         if((e.clientX + el.clientWidth + mrgn) > window.innerWidth){
         el.style.maxWidth=window.innerWidth+"px";
-        el.style.left= (e.clientX - mrgn - el.clientWidth) +"px";
+        el.style.left= (e.clientX - mrgn - 10 - el.clientWidth) +"px";
         }
         else{
         el.style.maxWidth=window.innerWidth+"px";
@@ -172,13 +172,19 @@ return false;
         }
 
         if((e.clientY + el.clientHeight + mrgn) > window.innerHeight){
-        el.style.maxWidth=window.innerHeight+"px";
-        el.style.top= (e.clientY - mrgn - el.clientHeight) +"px";
+        el.style.maxHeight=window.innerHeight+"px";
+        el.style.top= (e.clientY - mrgn - 10 - el.clientHeight) +"px";
         }
         else{
-        el.style.maxWidth=window.innerHeight+"px";
+        el.style.maxHeight=window.innerHeight+"px";
         el.style.top=e.clientY+"px";
         }
+      }
+    };
+    //when mouse leaves the webpage, remove hover
+    document.onmouseout=function(e){
+      if(document.getElementById(el.id)){
+      document.body.removeChild(el);
       }
     };
   }
@@ -265,12 +271,12 @@ return false;
     for(let i=0;i<max;i++){
     let arr=inpts[i].getAttributeNames();
     let arrm=arr.length;
-    console.log("===============>>");
-    console.log(inpts[i]);
-    console.log(arr);
+    //console.log("===============>>");
+    //console.log(inpts[i]);
+    //console.log(arr);
       for(let j=0;j<arrm;j++){ 
 
-        console.log("inputs "+" "+arr[j]+" "+inpts[i].getAttribute(arr[j]));
+        //console.log("inputs "+" "+arr[j]+" "+inpts[i].getAttribute(arr[j]));
       //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
       //checked when value=checkbox, radio
       val=mtchAgnstHsh(inpts[i].getAttribute(arr[j]),hsh);
@@ -329,7 +335,7 @@ return false;
         }
       }
     }
-
+  return true;
   }
 
 

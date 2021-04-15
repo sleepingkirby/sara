@@ -587,7 +587,7 @@ var msgPrfl=document.getElementById("msgPrfl");
         });
       break;
       default:
-      console.log(e.target);
+      //console.log(e.target);
       break;
     }
   });

@@ -117,14 +117,9 @@ padding: 2px 4px 2px 4px;
 .prflSlctDmn{
 }
 
-.notify{
-margin: 0px;
-padding: 0px;
-} 
-
 #dmnTypes > label{
 flex-grow: 3;
-border-radius: 4pt;
+border-radius: 4px;
 margin-right: 4px;
 justify-content: center;
 text-align: center;
@@ -134,120 +129,20 @@ text-align: center;
 margin-right: 0px;
 }
 
+.msg{
+border-radius: 4px;
+background-color: #aaaaaa;
+color: #061c5c;
+justify-content: center;
+align-items: center;
+opacity: 0.9;
+flex-grow: 5;
+max-height: 0px;
+}
+
 #notify{
 margin: 0px;
 padding: 0px;
-}
-
-
-#mstrSwtch.glbl{
-justify-content: space-between;
-}
-
-.glblLst{
-display: flex;
-border: 1px solid #555555;
-border-radius: 6px;
-padding-left: 4px;
-flex-grow: 3;
-margin: 0px 0px 0px 4px;
-background-color: #000000;
-min-height: 24px;
-transition: all 0.5s ease-in-out;
-}
-
-
-.glblLst > div{
-display: block;
-min-width: 200px;
-max-width: 200px;
-color: #555555;
-max-height: 24px;
-overflow: hidden;
-white-space:nowrap;
-text-overflow: ellipsis;
-word-break: break-word;
-background-color: #000000; 
-transition: all 0.5s ease-in-out;
-}
-
-
-.glblLst:hover > div{
-max-width: 400px;
-color: #666666;
-max-height: 800px;
-white-space: normal;
-text-overflow: clip;
-overflow: auto;
-}
-
-
-.ignrTtl{
-border: 1px solid #888888;
-padding: 5px 3px 5px 3px;
-border-radius: 6px 0px 0px 6px;
-margin-right: 1px;
-}
-
-.ignrHst{
-background-color: #000000;
-padding: 5px 3px 5px 4px;
-color: #888888;
-flex-grow: 3;
-border: 1px solid #888888;
-border-radius: 0px 6px 6px 0px;
-}
-
-.ignrHstYes{
-background-color: #888888;
-color: #000000;
-}
-
-.wdCol{
-width:100%;
-flex-direction: column;
-justify-content: flex-start;
-align-items: stretch;
-}
-
-.wdCol > div{
-padding: 3px 3px 3px 3px;
-
-}
-
-.wdColHd{
-border-radius:6px 6px 0px 0px;
-background-color: #888888;
-color: #000000;
-justify-content: flex-start;
-margin-bottom: 1px;
-}
-
-.wdColInpt{
-max-height: 24px;
-color: #555555;
-display: block;
-min-width: 200px;
-max-width: 200px;
-overflow: hidden;
-white-space:nowrap;
-text-overflow: ellipsis;
-word-break: break-word;
-transition: all 0.5s ease-in-out;
-}
-
-.wdColInpt:hover{
-max-width: 400px;
-color: #666666;
-max-height: 800px;
-white-space: normal;
-text-overflow: clip;
-overflow: auto;
-}
-
-.wdColInptYes{
-background-color: #888888;
-color: #000000;
 }
 
 #fadeOut{

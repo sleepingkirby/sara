@@ -8,23 +8,28 @@
 
 <body>
   <div class="pageWrap">
+    <div class="row">
+      <div id="notify" class="msg">&nbsp;</div>
+    </div>
     <div class="row rowRght" style="margin-bottom: 12px;">
       <input id="atFllId" class="tgglBtn" type="checkbox" />
       <label act="tglAtFll" class="tgglBtn" for="atFllId">autofill</label>
     </div>
-    <div class="row rowCntr" style="border: 1px solid #888888;">
+    <div class="row rowCntr" style="background-color: #888888; color: black; border-radius: 4px;">
       <div id="dmn" class="lbl" >loading...</div>
     </div>
     <div id="dmnTypes" class="row rowFll" style="margin-bottom: 16px;" >
       <input id="dmnTypeIgnr" class="tgglBtn" type="checkbox" />
-      <label act="addDmnIgn" class="tgglBtn" for="atFllId">ignore</label>
+      <label act="addDmnIgnr" class="tgglBtn" for="dmnTypeIgnr">ignore</label>
       <input id="dmnTypeApply" class="tgglBtn" type="checkbox" />
-      <label act="addDmnApply" class="tgglBtn" for="atFllId">apply</label>
+      <label act="addDmnApply" class="tgglBtn" for="dmnTypeApply">apply</label>
     </div>
     <div class="row rowRght" style="margin-bottom: 22px;">
       <div style="margin-right: 6px;">Current Profile: </div><select id="prflSlct" class="prflSlctDmn"></select>
     </div>
-    <div class="row rowRght" style="padding-top: 8px; border-top: 1px solid #888888;">
+    <div class="row" style="padding-top: 8px; border-top: 1px solid #888888; justify-content: space-between;">
+      <input id="hvrId" act="tglHvr" class="tgglBtn" type="checkbox" />
+      <label act="tglHvr" class="tgglBtn" for="hvrId">hover</label>
       <button id="btnFllId" act="fill" >fill form</button>
     </div>
   </div>
