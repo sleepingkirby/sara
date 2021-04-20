@@ -46,6 +46,7 @@ var max=nm.length;
     document.getElementById("ignrLst").value=d.settings.ignrLst;
     document.getElementById("applyLst").value=d.settings.applyLst;
     document.getElementById("hvrId").checked=d.settings.hoverId;
+    document.getElementById("curDef").checked=d.settings.curDef;
     document.getElementById("autoFll").checked=d.settings.autoFill;
     });
   }
@@ -585,6 +586,13 @@ var msgPrfl=document.getElementById("msgPrfl");
         console.log(d);
           chrome.storage.local.set(d);
         });
+      break;
+      case "setCurDef":
+      chrome.storage.local.get(null, (d)=>{
+      d.settings.curDef=e.target.checked;
+      console.log(d);
+        chrome.storage.local.set(d);
+      });
       break;
       default:
       //console.log(e.target);

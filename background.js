@@ -137,6 +137,7 @@ chrome.storage.local.get(null,(d)=>{
       hoverId: false,
       def_profile: "default",
       cur_profile: "default",
+      curDef: false,
       applyLst: "",
       ignrLst: ""
       }

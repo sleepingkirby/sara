@@ -42,6 +42,11 @@ function fillSlct(id, arr, prf){
   return 0;
   }
 
+  var p=prf;
+  if(typeof p !="string"){
+  p=false;
+  }
+
   var tmp=null;
   var slct=document.getElementById(id);
   slct.textContent=null;
@@ -49,7 +54,7 @@ function fillSlct(id, arr, prf){
     tmp=document.createElement("option");
     tmp.innerText=i;
     tmp.value=i;
-      if(i==prf){
+      if(p && i==p){
       tmp.selected=true;
       }
     slct.appendChild(tmp);
@@ -81,8 +86,10 @@ var act=null;
         });
       break;
       case 'setPgPrfl':
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}});
+        chrome.storage.local.get(null, (d)=>{
+          chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}});
+          });
         });
       break;
       default:
@@ -115,7 +122,8 @@ function getCurHost(fnc, fncPrms){
 }
 
   function strToHsh(str){
-    if(typeof str !="string" || str=="" ||!str){
+    if(typeof str !="string"){
+    console.log("not strin?");
     return null;
     }
   var s=str;
@@ -131,7 +139,7 @@ function getCurHost(fnc, fncPrms){
 
   //convert string to Apply List object
   function strToApplyLst(str){
-    if(typeof str !="string" || str=="" ||!str){
+    if(typeof str !="string"){
     return null;
     }
   var s=str;
@@ -159,18 +167,65 @@ function getCurHost(fnc, fncPrms){
 
   }
 
-  //figures out what profile to set
-  function dtrmnPrfl(ps){
-  //assume ps.
+
+  /*---------------------------------------------------
+  pre:
+  post:
+  returns which profile to use. this version is for 
+  popup only.
+
+  all actions by right click menu or popup menu needs to send the current/proper profile to the content script
+  ---------------------------------------------------*/
+  function dtrmnPrfl(cur, def, hst, hsh, mrk, prfls, curDef){
+
+    //if no profiles exist,do nothing. Nothing can be done.
+    if(Object.keys(hsh).length<=0 || Object.keys(prfls).length<=0){
+    return false;
+    }
+    
+    var curPrfl=null;
+
+    //else if applist domain profile marker exists and host in applyList, use cur,
+    if(mrk==true){
+    curPrfl=cur;
+    }
+    //else if applylist domain profile marker doesn't exist but host in applyList, user applist prof.
+    else if(hsh.hasOwnProperty(hst)){
+    curPrfl=hsh[hst];
+    }
+    //all other conditions, use current or default based on choice
+    else{
+    curPrfl=curDef?cur:def;
+    }
+
+
+    //the below does sanity checks. Makes sure the profile actually exists.And, if it doesn't tries to find the best alternative
+    //if current profile (which can the default profile) doesn't exist, use the default profile
+    if(!prfls.hasOwnProperty(curPrfl)){
+    curPrfl=def;
+    }
+
+    //if the default profile doesn't exist, get the first available profile.
+    if(!prfls.hasOwnProperty(curPrfl)){
+    curPrfl=Object.keys(prfls[0]);
+    }
+
+
+  return curPrfl;
   }
+
+
 
 //================================ main ==========================
 var host=""
 var ignrHsh={};
 var applyHsh={};
+var curPrfl=null;
 
 //variable checks
 chrome.storage.local.get( null,(d) => {
+  
+
 
 var af=document.getElementById("atFllId");
 af.checked=d.settings.autoFill;
@@ -179,20 +234,32 @@ var hov=document.getElementById("hvrId");
 hov.checked=d.settings.hoverId;
 
 //fill div with domain and the buttons that match
-getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", d:d});
-
+getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d":d});
 
 /*
 there are 3 selected profile possibilities and a marker. applylist domain profile marker,  current profile, default profile and applylist domain profile.
-if(
-else if applist domain profile exists for domain, use that,
+if no profiles exist,do nothing. Nothing can be done.
+else if applist domain profile marker exists for domain, use that,
 else if current profile exists as profile, use that,
 else if default profile exist, use that
 else, no profile selected, pick first one.
 
+all actions by right click menu or popup menu needs to send the current/proper profile to the content script
 */
+  chrome.tabs.query({active: true, currentWindow: true},(tabs) => {
+  
+  let h=hostFromURL(tabs[0].url);
+  let aHsh=strToApplyLst(d.settings.applyLst);
+  
+    chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
+    curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+    console.log(e);
+    console.log(curPrfl);
+
+    fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
+    });
+  });
 
 
-fillSlct("prflSlct", Object.keys(d.profiles),d.settings.def_profile); 
 startListen();
 });

@@ -106,9 +106,7 @@ return false;
       sendResponse(true);
       break;
       case 'setPgPrfl':
-      console.log(request);
-      console.log(applyHsh);
-      //rcrdPgPrfl(request.msg.val);
+      rcrdPgPrfl(request.msg.val);
       sendResponse(true);
       break;
       case 'getPgPrfl':
@@ -175,7 +173,7 @@ return false;
   --------------------------------------------------*/
   function getPgPrfl(){
   let el=document.getElementById("extIdNmSARAPgPrfl");
-    if(el && el.hasAttribute("profile")){
+    if(el){
     return true;
     }
   return false;
@@ -280,7 +278,7 @@ return false;
   }
 
   function strToHsh(str){
-    if(typeof str !="string" || str=="" ||!str){
+    if(typeof str !="string"){
     return null;
     }
   var s=str;
@@ -296,7 +294,7 @@ return false;
 
   //convert string to Apply List object
   function strToApplyLst(str){
-    if(typeof str !="string" || str=="" ||!str){
+    if(typeof str !="string"){
     return null;
     }
   var s=str;

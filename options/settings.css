@@ -333,6 +333,10 @@ min-height: 150px;
 height: 150px;
 }
 
+.chckBs input[type=checkbox]{
+margin-right: 8px;
+}
+
 #prflNewFrm button{
 border-radius: 4px;
 height: 100%;
