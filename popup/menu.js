@@ -88,7 +88,12 @@ var act=null;
       case 'setPgPrfl':
         chrome.storage.local.get(null, (d)=>{
           chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-          chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}});
+            chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
+              if(r){
+              d.settings.cur_profile=e.target.value;
+              chrome.storage.local.set(d);
+              }
+            });
           });
         });
       break;
