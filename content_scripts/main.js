@@ -115,8 +115,8 @@ return false;
       case 'fillForm':
         chrome.storage.local.get({'profiles':null},(d)=>{
           if(d.profiles.hasOwnProperty(request.msg.val)){
-          sendResponse(fndNFll(d.profiles[request.msg.val]));
-          setMsg("Form filled [default]");
+          let num=fndNFll(d.profiles[request.msg.val]);
+          setMsg("Fields filled: "+num+"\r\nProfile: "+request.msg.val);
           }
           else{
           sendResponse(false);
@@ -364,18 +364,18 @@ return false;
   var sty=document.createElement("style");
   sty.type="text/css";
   sty.className="extIdNmSARAMsgSty";
-  sty.textContent="@keyframes extIdNmSARAMsgStyAni{0%{opacity:0.8;}100%{opacity:0;}}";
+  sty.textContent="@keyframes extIdNmSARAMsgStyAni{0%{opacity:0.85;}100%{opacity:0;}}";
   sty.id=sty.className;
 
   document.head.appendChild(sty);
 
   var id="extIdNmSARAMsg";
   el=document.createElement("div");
-  el.style.cssText="position:fixed; box-sizing: border-box; top: 0px; left: 0px; width:100%; display:flex; justify-content: center; opacity: 0.8; z-index:999999; animation: extIdNmSARAMsgStyAni 1s ease-in-out 3.5s forwards;";
+  el.style.cssText="position:fixed; box-sizing: border-box; top: 0px; left: 0px; width:100%; display:flex; justify-content: center; opacity: 0.85; z-index:999999; animation: extIdNmSARAMsgStyAni 1.5s ease-in-out 3.5s forwards;";
   el.id=id;
   
   el.appendChild(document.createElement("div"));
-  el.firstChild.style.cssText="padding: 8px 12px 8px 12px; border-radius: 0px 0px 6px 6px; background-color:#606060; color:#ffffff; font-weight:700; white-space:pre-wrap;";
+  el.firstChild.style.cssText="padding: 8px 12px 8px 12px; border-radius: 0px 0px 6px 6px; background-color:#606060; color:#ffffff; font-weight:700; font-size: x-large; white-space:pre-wrap; ";
   el.firstChild.textContent=msg;
 
     el.onanimationend=(e)=>{
