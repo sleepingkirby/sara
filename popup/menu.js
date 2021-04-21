@@ -61,7 +61,11 @@ function fillSlct(id, arr, prf){
     }
 }
 
-
+/*---------------------------------------------------------------------
+pre: none 
+post: updates chrome.storage.local
+function to set up listeners for events.
+---------------------------------------------------------------------*/
 function startListen(){
 var act=null;
   document.addEventListener("click", (e) => {
@@ -77,8 +81,16 @@ var act=null;
   });
   document.addEventListener("change", (e) => {
   var obj={};
+  var prfl="";
+  var dmn="";
   act=e.target.getAttribute("act");
     switch(act){
+      case 'tglAtFll':
+        chrome.storage.local.get({"settings":null},(d)=>{
+          d.settings.autoFill=document.getElementById("atFllId").checked;
+          chrome.storage.local.set(d);
+        });
+      break;
       case "tglHvr":
         chrome.storage.local.get({"settings":null},(d)=>{
         d.settings.hoverId=e.target.checked;
@@ -86,7 +98,7 @@ var act=null;
         });
       break;
       case 'setPgPrfl':
-        chrome.storage.local.get(null, (d)=>{
+        chrome.storage.local.get({"settings":null}, (d)=>{
           chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
               if(r){
@@ -95,6 +107,31 @@ var act=null;
               }
             });
           });
+        });
+      break;
+      case 'addDmnIgnr':
+      dmn=document.getElementById("dmn");
+        chrome.storage.local.get({"settings":null}, (d)=>{
+          if(d.settings.ignrLst.trim()==""){
+          d.settings.ignrLst=dmn.textContent;
+          }
+          else{
+          d.settings.ignrLst+="\n"+dmn.textContent;
+          }
+          chrome.storage.local.set(d);
+        });
+      break;
+      case 'addDmnApply':
+      prfl=document.getElementById("prflSlct");
+      dmn=document.getElementById("dmn");
+        chrome.storage.local.get({"settings":null}, (d)=>{
+          if(d.settings.applyLst.trim()==""){
+          d.settings.applyLst=dmn.textContent+"|"+prfl.value;
+          }
+          else{
+          d.settings.applyLst+="\n"+dmn.textContent+"|"+prfl.value;
+          }
+          chrome.storage.local.set(d);
         });
       break;
       default:
@@ -241,16 +278,8 @@ hov.checked=d.settings.hoverId;
 //fill div with domain and the buttons that match
 getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d":d});
 
-/*
-there are 3 selected profile possibilities and a marker. applylist domain profile marker,  current profile, default profile and applylist domain profile.
-if no profiles exist,do nothing. Nothing can be done.
-else if applist domain profile marker exists for domain, use that,
-else if current profile exists as profile, use that,
-else if default profile exist, use that
-else, no profile selected, pick first one.
 
-all actions by right click menu or popup menu needs to send the current/proper profile to the content script
-*/
+  //figure out what profile to have in the profiles drop down as well as fill the drop down. 
   chrome.tabs.query({active: true, currentWindow: true},(tabs) => {
   
   let h=hostFromURL(tabs[0].url);
@@ -258,12 +287,11 @@ all actions by right click menu or popup menu needs to send the current/proper p
   
     chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
     curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
-    console.log(e);
-    console.log(curPrfl);
 
     fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
     });
   });
+
 
 
 startListen();
