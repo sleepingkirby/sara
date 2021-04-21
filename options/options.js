@@ -590,6 +590,9 @@ var msgPrfl=document.getElementById("msgPrfl");
       case "setCurDef":
       chrome.storage.local.get(null, (d)=>{
       d.settings.curDef=e.target.checked;
+        if(!e.target.checked){
+        d.settings.cur_profile=d.settings.def_profile;
+        }
       console.log(d);
         chrome.storage.local.set(d);
       });

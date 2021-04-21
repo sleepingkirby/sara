@@ -112,6 +112,18 @@ return false;
       case 'getPgPrfl':
       sendResponse(getPgPrfl());
       break;
+      case 'fillForm':
+        chrome.storage.local.get({'profiles':null},(d)=>{
+          if(d.profiles.hasOwnProperty(request.msg.val)){
+          sendResponse(fndNFll(d.profiles[request.msg.val]));
+          setMsg("Form filled [default]");
+          }
+          else{
+          sendResponse(false);
+          }
+        });
+        sendResponse(true);
+      break;
       default:
       console.log(request);
       sendResponse("default");
@@ -195,7 +207,7 @@ return false;
 
     //since always runs on page start and only on page start, the profile marker is NEVER set
     //if in applyHsh, get profile name
-    if(Object.keys(hsh).length>=1&&hsh.hasOwnProperty[dmn]&&d.profiles.hasOwnProperty(dmn)){
+    if(Object.keys(hsh).length>=1&&hsh.hasOwnProperty(dmn)&&d.profiles.hasOwnProperty(hsh[dmn])){
     return hsh[dmn];
     }
 
@@ -342,6 +354,40 @@ return false;
   }
 
 
+  /*----------------------------------------------------------
+  pre:
+  post:
+
+  ----------------------------------------------------------*/
+  function setMsg(msg){
+
+  var sty=document.createElement("style");
+  sty.type="text/css";
+  sty.className="extIdNmSARAMsgSty";
+  sty.textContent="@keyframes extIdNmSARAMsgStyAni{0%{opacity:0.8;}100%{opacity:0;}}";
+  sty.id=sty.className;
+
+  document.head.appendChild(sty);
+
+  var id="extIdNmSARAMsg";
+  el=document.createElement("div");
+  el.style.cssText="position:fixed; box-sizing: border-box; top: 0px; left: 0px; width:100%; display:flex; justify-content: center; opacity: 0.8; z-index:999999; animation: extIdNmSARAMsgStyAni 1s ease-in-out 3.5s forwards;";
+  el.id=id;
+  
+  el.appendChild(document.createElement("div"));
+  el.firstChild.style.cssText="padding: 8px 12px 8px 12px; border-radius: 0px 0px 6px 6px; background-color:#606060; color:#ffffff; font-weight:700; white-space:pre-wrap;";
+  el.firstChild.textContent=msg;
+
+    el.onanimationend=(e)=>{
+    document.body.removeChild(el);
+    document.head.removeChild(sty);
+    };
+
+  document.body.appendChild(el);
+
+  };
+
+
   //find elements and fill it with proper values.
   function fndNFll(hsh){
     if(typeof hsh!="object" || Object.keys(hsh) <=0){
@@ -356,6 +402,7 @@ return false;
   //inputs
   var val=null;
   let max=inpts.length;
+  var cnt=0;
     for(let i=0;i<max;i++){
     let arr=inpts[i].getAttributeNames();
     let arrm=arr.length;
@@ -372,19 +419,23 @@ return false;
         //if, for some bizarre reason, the input element doens't have a type, assume value
           if(!inpts[i].hasOwnProperty("type")){
           inpts[i].value=val;
+          cnt++;
           break;
           }
           else{
             if((inpts[i].type=="text"||inpts[i].type=="email"||inpts[i].type=="hidden"||inpts[i].type=="month"||inpts[i].type=="number"||inpts[i].type=="date"||inpts[i].type=="datetime-local"||inpts[i].type=="color"||inpts[i].type=="vol"||inpts[i].type=="image"||inpts[i].type=="password"||inpts[i].type=="tel"||inpts[i].type=="time"||inpts[i].type=="url"||inpts[i].type=="week")){
             inpts[i].value=val;
+            cnt++;
             break;
             }
             if(inpts[i].type=="radio"&&inpts[i].value==val){//why only if the value match? With radios, multiple inputs are linked together via name and has to provide a value to distinguish the choices from each other.
             inpts[i].checked=true;
+            cnt++;
             break;
             }
             if(inpts[i].type=="checkbox"&&val!="false"&&val!=""){
             inpts[i].checked=true;
+            cnt++;
             break;
             }
           }
@@ -404,6 +455,7 @@ return false;
       val=mtchAgnstHsh(tas[i].getAttribute(arr[j]),hsh);
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
         tas[i].value=val;
+        cnt++;
         }
       }
     }
@@ -420,10 +472,11 @@ return false;
       val=mtchAgnstHsh(slcts[i].getAttribute(arr[j]),hsh);
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
         slcts[i].value=val;
+        cnt++;
         }
       }
     }
-  return true;
+  return cnt;
   }
 
 
@@ -468,16 +521,14 @@ curPrfl=dtrmnPrfl(dmn, d, applyHsh);
   if(d.settings.autoFill){
     if(!ignrHsh.hasOwnProperty(dmn)){
     //find and fill
-    console.log("auto fill on, not in ignore list");
-    console.log(fndNFll(d.profiles[curPrfl]));
+    fndNFll(d.profiles[curPrfl]);
     }
   }
   //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
   else{
     if(isApply){
     //find and fill
-    console.log("autofill off, in apply list");
-    console.log(fndNFll(d.profiles[curPrfl]));
+    fndNFll(d.profiles[curPrfl]);
     }
   }
 

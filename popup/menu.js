@@ -74,8 +74,14 @@ var act=null;
       case 'settingsPage':
         chrome.runtime.openOptionsPage();     
       break;
+      case 'btnFllId':
+      console.log(e);
+      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, {action: 'fillForm', msg:{val:document.getElementById("prflSlct").value}});
+      });
+      break;
       default:
-      //console.log(e.target);
+      console.log(e);
       break;
     }
   });
@@ -112,26 +118,54 @@ var act=null;
       case 'addDmnIgnr':
       dmn=document.getElementById("dmn");
         chrome.storage.local.get({"settings":null}, (d)=>{
-          if(d.settings.ignrLst.trim()==""){
-          d.settings.ignrLst=dmn.textContent;
+          if(e.target.checked){
+            if(d.settings.ignrLst.trim()==""){
+            d.settings.ignrLst=dmn.textContent;
+            }
+            else{
+            d.settings.ignrLst+="\n"+dmn.textContent;
+            }
+          chrome.storage.local.set(d);
           }
           else{
-          d.settings.ignrLst+="\n"+dmn.textContent;
+            if(d.settings.ignrLst.indexOf("\n"+dmn.textContent)>=0){
+            d.settings.ignrLst=d.settings.ignrLst.replace("\n"+dmn.textContent,"");
+            chrome.storage.local.set(d);
+            }
+            else if(d.settings.ignrLst.indexOf(dmn.textContent)>=0){
+            d.settings.ignrLst=d.settings.ignrLst.replace(dmn.textContent,"").trim();
+            chrome.storage.local.set(d);
+            }
           }
-          chrome.storage.local.set(d);
         });
       break;
       case 'addDmnApply':
       prfl=document.getElementById("prflSlct");
       dmn=document.getElementById("dmn");
         chrome.storage.local.get({"settings":null}, (d)=>{
-          if(d.settings.applyLst.trim()==""){
-          d.settings.applyLst=dmn.textContent+"|"+prfl.value;
+        let aHsh=strToApplyLst(d.settings.applyLst);
+          if(e.target.checked){
+            if(d.settings.applyLst.trim()==""){
+            d.settings.applyLst=dmn.textContent+"|"+prfl.value;
+            }
+            else{
+            d.settings.applyLst+="\n"+dmn.textContent+"|"+prfl.value;
+            }
+          chrome.storage.local.set(d);
           }
           else{
-          d.settings.applyLst+="\n"+dmn.textContent+"|"+prfl.value;
+            if(!aHsh.hasOwnProperty(dmn.textContent)){
+            return false;
+            }
+            if(d.settings.applyLst.indexOf("\n"+dmn.textContent+"|"+aHsh[dmn.textContent])>=0){
+            d.settings.applyLst=d.settings.applyLst.replace("\n"+dmn.textContent+"|"+aHsh[dmn.textContent],"");
+            chrome.storage.local.set(d);
+            }
+            else if(d.settings.applyLst.indexOf(dmn.textContent+"|"+aHsh[dmn.textContent])>=0){
+            d.settings.applyLst=d.settings.applyLst.replace(dmn.textContent+"|"+aHsh[dmn.textContent],"").trim();
+            chrome.storage.local.set(d);
+            }
           }
-          chrome.storage.local.set(d);
         });
       break;
       default:
