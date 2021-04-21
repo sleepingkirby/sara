@@ -168,6 +168,12 @@ var act=null;
           }
         });
       break;
+      case 'tglCurDef':
+        chrome.storage.local.get({"settings":null},(d)=>{
+          d.settings.curDef=document.getElementById("curDefId").checked;
+          chrome.storage.local.set(d);
+        });
+      break;
       default:
       console.log(e.target);
       break;
@@ -308,6 +314,10 @@ af.checked=d.settings.autoFill;
 
 var hov=document.getElementById("hvrId");
 hov.checked=d.settings.hoverId;
+
+var curDef=document.getElementById("curDefId");
+curDef.checked=d.settings.curDef;
+
 
 //fill div with domain and the buttons that match
 getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d":d});
