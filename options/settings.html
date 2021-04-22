@@ -47,15 +47,15 @@
             <select id="prflSlct" act="updtDrwPrfl">
             </select>
             <input id="prflDflt" type="checkbox" />
-            <label act="newDflt" for="prflDflt" forEl="prflSlct" />
+            <label act="newDflt" for="prflDflt" forel="prflSlct" />
           </div>
 
           <div>
             <div class="prflAdd">
             <input id="newPrflInpt" type="text" placeholder="new profile name" />
-            <button act="newPrfl" forEl="newPrflInpt">+</button>
+            <button act="newPrfl" forel="newPrflInpt">+</button>
             </div>
-            <button id="delPrfl" act="delPrfl" forEl="prflSlct">x</button>
+            <button id="delPrfl" act="delPrfl" forel="prflSlct">x</button>
           </div>
         </div>
         <div id="prflNewFrm">
@@ -77,7 +77,7 @@
           <div class="prflNewInpt">
           <input name="new[val]" type="text" placeholder="value" />
           </div>
-          <button act="newFld" forEl="prflNewFrm" id="prflNewAdd">+</button>
+          <button act="newFld" forel="prflNewFrm" id="prflNewAdd">+</button>
         </div>
         <div id="prflFrm">
          &nbsp;
@@ -86,9 +86,9 @@
       <div class="main" id="imprtMain">
         <textarea id="imprtTA" placeholder="settings as json."></textarea>
         <div class="ctrl">
-          <button act="imprtClr" forEl="imprtTA" class="clear">clear</button>
-          <button act="imprtExprt" forEl="imprtTA" class="export">export</button>
-          <button act="imprtImprt" forEl="imprtTA" class="import">import</button>
+          <button act="imprtClr" forel="imprtTA" class="clear">clear</button>
+          <button act="imprtExprt" forel="imprtTA" class="export">export</button>
+          <button act="imprtImprt" forel="imprtTA" class="import">import</button>
         </div>
       </div>
       <div class="main" id="sttngsMain">
@@ -113,9 +113,9 @@
       <div class="main" id="abtMain" style="padding-left: 16px;">
         <div class="text">
           <div class="version">Version: 1.0</div>
-          <div class="version">*WARNING: DO NOT SAVE PASSWORDS INTO THIS PROGRAM. IT IS NOT MEANT FOR INFORMATION LIKE PASSWORDS OR SECURITY CODES.*</div>
+          <div class="version">*WARNING: DO NOT SAVE PASSWORDS INTO THIS PROGRAM. IT IS NOT MEANT FOR ANY DATA THAT ARE MEANT TO BE ENCRYPTED. IF IT IS INFO YOU DON'T FEEL COMFORTABLE IN SHARING WITH JOB RECRUITERS, INTERVIEWERS OR THE HR DEPARTMENT OF ANOTHER COMPANY, DO NOT SAVE IT HERE.*</div>
           <div class="title">How to use: </div>
-          <div class="body">Every form field should have a name and/or id attached. For this example, we just care about "<span style="font-weight:bold">first_name</span>":</div>
+          <div class="body" style="margin-top: 32px;">Every form field should have a name and/or id attached. For this example, we just care about "<span style="font-weight:bold">first_name</span>":</div>
           <div class="pic" style="opacity: 0.75;">
           <img src="./pics/form_empty.png" />
           </div>
@@ -134,19 +134,32 @@
           <div class="qs">Q: <span style="font-weight:bold;">Should I make every pattern unique?</span><br/>A: <span style="font-weight:bold;">Yes, yes, a thousand times yes.</span> Though it is possible (though manual editting of the settings. This should not be possible via this interface.) to have duplicate patterns, it provides <span style="font-weight:bold;">no benefit for the user to have duplicate patterns.</span></div>
           <div class="qs">Q: What if I want to make duplicates anyways?<br/>A: Sure, if you want. SARA should still work. But keep in mind that the search and fill functionality will probably not work as you intend it. See next question for explanation.</div>
           <div class="qs">Q: If 2 patterns match the same field, which has priority/how is it prioritized?<br/>A: None. The data structure that holds the pattern has no explicit order or priority (search "Does JavaScript guarantee object property order?" if you want to know more). So if 2 patterns matches the same field, there's no guarantee that the same pattern will be used every time. As such, I <span style="font-weight:bold;">HIGHLY RECOMMEND THAT EVERY PATTERN BE UNIQUE.</span></div>
-          <div class="qs">Q: Everything's so dark? Is there a light mode?<br/>A: By default, I try to make all of my projects' colors and themes dark. Most people that I know that work on computers a lot prefer dark mode by default, myself included. If this is a hinderance to you, contact me and we can try to work something out.</div>
+          <div class="qs">Q: Why can't I auto fill those fields that asks you to attach a file/resume? <br/>A: This actually is a purposeful limitation of the browser. It's a security measure from the makers of the browser (both firefox and chrome do this) to prevent malicious scripts from uploading files from your computer to some other location without your knowledge. (there's a way, via javascript, to do a button click.)</div>
+          <div class="qs">Q: Why isn't there a way to auto click buttons? <br/>A: That would make this extension too close to a web form bot, which can be used maliciously. To avoid that, I've purposely not programmed that in.</div>
+          <div class="qs">Q: How do I do autofill for checkboxes?<br/>A: If the value for the pattern is anything but and empty value or the word "false", it'll check the box. Conversely, an empty value or the word "false" will <span style="font-weight:bold;">UNCHECK</span> the box.</div>
+          <div class="qs">Q: How do I do autofill for radio buttons?<br/>A: Since radios give you a list of options to only choose one of, if the value matches the values of one of the choices, that's the radio it'll select.</div>
+          <div class="qs">Q: What about drop downs?<br/>A: Same idea. If the value is an option in the drop down, it'll select it.</div>
+          <div class="qs">Q: What can't this auto fill?<br/>A: There's a few:
+            <ol>
+              <li>Custom-made fields. There's a thousand and one ways to make those. I have no good way to detect them.</li>
+              <li> Fields in iframes. Iframes are an older html element that essentially puts a webpage within a webpage. Nearly universally scorned by web developers, there shouldn't be many left that are of any interest. That said, if my assumption is incorrect and there's enough people that want it, I'd more than happy to implement it.</li>
+              <li>Multi-select lists. Code-wise, these are the same as dropdowns but with a single difference. They have the attribute "multiple". It'd be inaccurate to say that it won't fill a multi-select list as it definitely will, but it will only fill with 1 value as there is only one value allowed per pattern. The idea is, a pattern can match a text field on one page, but a multi-select on another. As such, we don't want an array of choices to be entered for page one so page two can have multiple options select.</li>
+            </ol>
+          </div>
+          <div class="qs">Q: When I press the "export" button in the "Import/Export" section, a bunch of code showed up! What is that all that? What do I do with it?<br/>A: That's a text presentation(JSON) for all the settings for the plugin. This way, in case you ever need to, you can transfer or back up all your settings, patterns and values for this extension. If you have a friend or colleague that also uses this extension, you can also share your settings.</div>
+          <div class="qs">Q: Everything's so dark? Is there a light mode?<br/>A: By default, I try to make all of my projects' colors and themes dark. Most people that I know that work on computers a lot prefer dark mode by default, myself included. If this is a hinderance to you, contact me and we can discuss what you need.</div>
           <div class="qs">Q: Does this program track anything? Do you capture and/or send any personal data? <br/>A: No. I know a lot of cheap or free programs like to, but I hate that and have no interest in people's personal info or data. Though, since this is a google chrome extension, there may be some tracking through the chrome browser itself. But, as long as I'm in charge of this extension, there will be no user tracking/gathering of personal data/information.</div>
-          <div class="qs">Q: I found a bug!/I would like to request a new feature! Where can I contact you?<br/>A: My contact information is in the "About" section below. Please keep in mind that any unsolicated advertisement or bulk business inquries will promptly be marked as spam and deleted.</div>
+          <div class="qs">Q: I found a bug/I would like to request a new feature! Where can I contact you?<br/>A: My contact information is in the "About" section below. Please keep in mind that any unsolicated advertisement or bulk business inquries will promptly be marked as spam and deleted.</div>
           <div class="qs">Q: SARA is almost what I'm looking for. I just need a small tweak here or there. Can I talk to you about it?<br/>A: Yes! I'm okay with making personalized versions if the conditions are right. There are logistics involved so keep in mind I can't always say yes or no to the tweaks. But feel free to contact me about it.</div>
           <div class="qs">Q: I would like to provide your program for my entire company to use. Do you provide a volume license or something similar?<br/>A: At the moment, there's nothing in place to provide things similar to volume licensing. However, this is possible. Feel free to contact me and we can discuss what is needed.</div>
           <div class="qs">Q: I'm a student/disadvantaged person. Can I get a discount on your program?<br/>A: At the moment of this writing, I plan to charge 4 USD for this program. Though I highly doubt that that's too expensive for anyone, if you feel that that's the case for you, feel free to contact me and we can work something out. Please keep in mind any emails or requests that are rude, threatening, insulting, and/or made in bad faith will promptly be marked as spam and deleted.</div>
           <div class="qs">Q: I'm a student/disadvantaged person/broke. Can I get a discount on your program?<br/>A: At the moment of this writing, I plan to charge 4 USD for this program. Though I doubt that that's too expensive for anyone, if you feel that that's the case for you, feel free to contact me and we can work something out. Please keep in mind any emails or requests that are rude, threatening, insulting, and/or made in bad faith will promptly be marked as spam and deleted.</div>
-          <div class="qs">Q: I'm a[n] influencer/CEO/extremely wealthy person with a ton of influence/followers/clout. If you give me this extension for free, I can repay you with exposur--<br/>A: No.</div>
+          <div class="qs">Q: I'm a[n] influencer/CEO/extremely wealthy person with a ton of influence/followers/clout. If you give me this extension for free, I can pay you in exposur--<br/>A: No.</div>
           <div class="qs">Q: I like what you do so much I'd like to support you more than just an one time fee. Is this possible?<br/>A: Yes. Feel free to join my <a href="https://blue3.locals.com" target="_blank">locals community</a>. Each member helps in allowing me to keep doing what I'm doing. Also, every member will be given a free copy of any paid programs/extensions/new versions/etc that I release.</div>
           <div class="qs">Q: I like what you're doing. Can I commission you to make something for me? / I'm starting a project of my own. Can I hire you as a freelancer?<br/>A: Possibly, schedules and logistics permitting. Contact me and we can discuss it.</div>
           <div class="qs">Q: You seem like a cool dude. Can I just talk to you?<br/>A: Yeah, sure. Just keep in mind I may not be able to reply.</div>
           
-          <div class="title" style="margin-top:100px;">About: </div>
+          <div class="title" style="margin-top:20px;">About: </div>
           <div class="qs" style="margin-bottom: 20px;">Author: <a href="https://www.linkedin.com/in/peiti-ying/" target="_blank">Peiti "Patrick" Ying</a> for <a href="https://blue3.locals.com" target="_blank">Blue 3 Studios</a><br/>Email: <a href="mailto:blue3studios@gmail.com">blue3studios@gmail.com</a></div>
         </div>
       </div>

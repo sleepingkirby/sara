@@ -474,7 +474,7 @@ var msgPrfl=document.getElementById("msgPrfl");
     switch(e.target.getAttribute("act")){
       case "newPrfl":
       //add new profile to chrome.storage. Redraw page.
-      var el=document.getElementById(e.target.getAttribute("forEl"));
+      var el=document.getElementById(e.target.getAttribute("forel"));
         if(el && el.value && el.value!=""){
           chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
           d.profiles[el.value]={};
@@ -488,7 +488,7 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "delPrfl":
         chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
-        var el=document.getElementById(e.target.getAttribute("forEl"));
+        var el=document.getElementById(e.target.getAttribute("forel"));
         var ans=confirm("Are you sure you want to delete the profile: \""+el.value+"\"");
           if(ans){
             delete d.profiles[el.value];
@@ -502,7 +502,7 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "newDflt":
       //updates settings for def_profile to new profile name
-      let fr=e.target.getAttribute("forEl");
+      let fr=e.target.getAttribute("forel");
       let val=document.getElementById(fr).value;
         chrome.storage.local.get("settings", (e)=>{
           e.settings.def_profile=val;
@@ -531,16 +531,19 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "imprtClr":
       //clear textarea
-      document.getElementById(e.target.getAttribute("forEl")).textContent="";
+      console.log(e.target);
+      console.log(e.target.getAttribute("forel"));
+      console.log(document.getElementById(e.target.getAttribute("forel")).textContent);
+      document.getElementById(e.target.getAttribute("forel")).textContent="dasdfa";
       break;
       case "imprtExprt":
       //post JSON.stringify of chrome storage
-      exprtSttngs(e.target.getAttribute("forEl"));
+      exprtSttngs(e.target.getAttribute("forel"));
       break;
       case "imprtImprt":
       //convert json to object and import to chrome storage
-      var d=document.getElementById(e.target.getAttribute("forEl").value);
-      imprtSttngs(e.target.getAttribute("forEl"), "msgPrfl");
+      var d=document.getElementById(e.target.getAttribute("forel").value);
+      imprtSttngs(e.target.getAttribute("forel"), "msgPrfl");
       break;
       default:
       break;

@@ -245,10 +245,12 @@ return false;
   el.id="extIdNmSARA";
 
     chrome.storage.onChanged.addListener(function(c,n){
-    rnFlg=c.settings.hasOwnProperty("newValue")?c.settings.newValue.hoverId:false;
-    oldFlg=c.settings.hasOwnProperty("oldValue")?c.settings.oldValue.hoverId:false;
-      if(!rnFlg && document.getElementById(el.id)){
-      document.body.removeChild(el);
+      if(c.hasOwnProperty("settings")){
+      rnFlg=c.settings.hasOwnProperty("newValue")?c.settings.newValue.hoverId:false;
+      oldFlg=c.settings.hasOwnProperty("oldValue")?c.settings.oldValue.hoverId:false;
+        if(!rnFlg && document.getElementById(el.id)){
+        document.body.removeChild(el);
+        }
       }
     });
 
@@ -408,15 +410,16 @@ return false;
     //console.log("===============>>");
     //console.log(inpts[i]);
     //console.log(arr);
+      //iterating through attributes of the element
       for(let j=0;j<arrm;j++){ 
 
-        //console.log("inputs "+" "+arr[j]+" "+inpts[i].getAttribute(arr[j]));
+      //console.log("inputs "+" "+arr[j]+" "+inpts[i].getAttribute(arr[j]));
       //value when type=text, email, hidden, month, number, date, datetime-local,color,vol, image, password,tel, time,url, week
       //checked when value=checkbox, radio
       val=mtchAgnstHsh(inpts[i].getAttribute(arr[j]),hsh);
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
         //if, for some bizarre reason, the input element doens't have a type, assume value
-          if(!inpts[i].hasOwnProperty("type")){
+          if(!inpts[i].hasAttribute("type")){
           inpts[i].value=val;
           cnt++;
           break;
@@ -432,10 +435,15 @@ return false;
             cnt++;
             break;
             }
-            if(inpts[i].type=="checkbox"&&val!="false"&&val!=""){
-            inpts[i].checked=true;
-            cnt++;
-            break;
+            if(inpts[i].type=="checkbox"){
+              if(val!="false"&&val!=""){
+              inpts[i].checked=true;
+              }
+              else{
+              inpts[i].checked=false;
+              }
+              cnt++;
+              break;
             }
           }
         }
