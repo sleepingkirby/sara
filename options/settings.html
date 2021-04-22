@@ -29,6 +29,13 @@
           Settings
           </div>
         </label>
+
+        <input type="radio" name="switchTab" class="swtchTb" tabMain="abtMain" id="abtInpt" />
+        <label for="abtInpt">
+          <div id="about">
+          Help/About
+          </div>
+        </label>
       </div>
       <div id="msgPrfl" ></div>
       <div class="main mainOn" id="prflMain">
@@ -84,7 +91,7 @@
           <button act="imprtImprt" forEl="imprtTA" class="import">import</button>
         </div>
       </div>
-       <div class="main" id="sttngsMain">
+      <div class="main" id="sttngsMain">
         <div class="chckBs">
           <input id="autoFll" act="setAutoFill" name="autofill" type="checkbox" />Auto Fill
         </div>
@@ -101,6 +108,46 @@
         <div class="sttngsTA">
           <div class="sttngsTtl">Apply List: (applies when autofill if off)</div>
           <textarea id="applyLst" act="sttngsApplyLst" placeholder="e.g. domain host|profile name"></textarea>
+        </div>
+      </div>
+      <div class="main" id="abtMain" style="padding-left: 16px;">
+        <div class="text">
+          <div class="version">Version: 1.0</div>
+          <div class="version">*WARNING: DO NOT SAVE PASSWORDS INTO THIS PROGRAM. IT IS NOT MEANT FOR INFORMATION LIKE PASSWORDS OR SECURITY CODES.*</div>
+          <div class="title">How to use: </div>
+          <div class="body">Every form field should have a name and/or id attached. For this example, we just care about "<span style="font-weight:bold">first_name</span>":</div>
+          <div class="pic" style="opacity: 0.75;">
+          <img src="./pics/form_empty.png" />
+          </div>
+          <div class="body">In this case, it will match "<span style="font-weight:bold">first_name</span>" by "<span style="font-weight:bold">name</span>" then "<span style="font-weight:bold">first</span>" (order doesn't matter):</div>
+          <div class="pic">
+          <img src="./pics/options.png" style="border-bottom: 1px solid #303443;" />
+          </div>
+          <div class="body">Once it fills out the form for you, it'll tell you as such:</div>
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/form_filled.png">
+          </div>
+
+          <div class="title" style="margin-top:42px;">FAQ: </div>
+          <div class="qs">Q: Is it matching case sensitive or case insensitive?<br/>A: Case <span style="font-weight:bold">IN</span>sensitive. If there is enough demand for allowing users to set case sensitivity, I'll go back and add the feature.</div>
+          <div class="qs">Q: Can the patterns be regular expression?<br/>A: Yes, but it hasn't been fully tested. I forsee no functional problems with using regular expression patterns, but it may be possible to escape the HTML with regex values. (If you have no idea what any of this means, don't worry about it. It won't apply to you.)</div>
+          <div class="qs">Q: <span style="font-weight:bold;">Should I make every pattern unique?</span><br/>A: <span style="font-weight:bold;">Yes, yes, a thousand times yes.</span> Though it is possible (though manual editting of the settings. This should not be possible via this interface.) to have duplicate patterns, it provides <span style="font-weight:bold;">no benefit for the user to have duplicate patterns.</span></div>
+          <div class="qs">Q: What if I want to make duplicates anyways?<br/>A: Sure, if you want. SARA should still work. But keep in mind that the search and fill functionality will probably not work as you intend it. See next question for explanation.</div>
+          <div class="qs">Q: If 2 patterns match the same field, which has priority/how is it prioritized?<br/>A: None. The data structure that holds the pattern has no explicit order or priority (search "Does JavaScript guarantee object property order?" if you want to know more). So if 2 patterns matches the same field, there's no guarantee that the same pattern will be used every time. As such, I <span style="font-weight:bold;">HIGHLY RECOMMEND THAT EVERY PATTERN BE UNIQUE.</span></div>
+          <div class="qs">Q: Everything's so dark? Is there a light mode?<br/>A: By default, I try to make all of my projects' colors and themes dark. Most people that I know that work on computers a lot prefer dark mode by default, myself included. If this is a hinderance to you, contact me and we can try to work something out.</div>
+          <div class="qs">Q: Does this program track anything? Do you capture and/or send any personal data? <br/>A: No. I know a lot of cheap or free programs like to, but I hate that and have no interest in people's personal info or data. Though, since this is a google chrome extension, there may be some tracking through the chrome browser itself. But, as long as I'm in charge of this extension, there will be no user tracking/gathering of personal data/information.</div>
+          <div class="qs">Q: I found a bug!/I would like to request a new feature! Where can I contact you?<br/>A: My contact information is in the "About" section below. Please keep in mind that any unsolicated advertisement or bulk business inquries will promptly be marked as spam and deleted.</div>
+          <div class="qs">Q: SARA is almost what I'm looking for. I just need a small tweak here or there. Can I talk to you about it?<br/>A: Yes! I'm okay with making personalized versions if the conditions are right. There are logistics involved so keep in mind I can't always say yes or no to the tweaks. But feel free to contact me about it.</div>
+          <div class="qs">Q: I would like to provide your program for my entire company to use. Do you provide a volume license or something similar?<br/>A: At the moment, there's nothing in place to provide things similar to volume licensing. However, this is possible. Feel free to contact me and we can discuss what is needed.</div>
+          <div class="qs">Q: I'm a student/disadvantaged person. Can I get a discount on your program?<br/>A: At the moment of this writing, I plan to charge 4 USD for this program. Though I highly doubt that that's too expensive for anyone, if you feel that that's the case for you, feel free to contact me and we can work something out. Please keep in mind any emails or requests that are rude, threatening, insulting, and/or made in bad faith will promptly be marked as spam and deleted.</div>
+          <div class="qs">Q: I'm a student/disadvantaged person/broke. Can I get a discount on your program?<br/>A: At the moment of this writing, I plan to charge 4 USD for this program. Though I doubt that that's too expensive for anyone, if you feel that that's the case for you, feel free to contact me and we can work something out. Please keep in mind any emails or requests that are rude, threatening, insulting, and/or made in bad faith will promptly be marked as spam and deleted.</div>
+          <div class="qs">Q: I'm a[n] influencer/CEO/extremely wealthy person with a ton of influence/followers/clout. If you give me this extension for free, I can repay you with exposur--<br/>A: No.</div>
+          <div class="qs">Q: I like what you do so much I'd like to support you more than just an one time fee. Is this possible?<br/>A: Yes. Feel free to join my <a href="https://blue3.locals.com" target="_blank">locals community</a>. Each member helps in allowing me to keep doing what I'm doing. Also, every member will be given a free copy of any paid programs/extensions/new versions/etc that I release.</div>
+          <div class="qs">Q: I like what you're doing. Can I commission you to make something for me? / I'm starting a project of my own. Can I hire you as a freelancer?<br/>A: Possibly, schedules and logistics permitting. Contact me and we can discuss it.</div>
+          <div class="qs">Q: You seem like a cool dude. Can I just talk to you?<br/>A: Yeah, sure. Just keep in mind I may not be able to reply.</div>
+          
+          <div class="title" style="margin-top:100px;">About: </div>
+          <div class="qs" style="margin-bottom: 20px;">Author: <a href="https://www.linkedin.com/in/peiti-ying/" target="_blank">Peiti "Patrick" Ying</a> for <a href="https://blue3.locals.com" target="_blank">Blue 3 Studios</a><br/>Email: <a href="mailto:blue3studios@gmail.com">blue3studios@gmail.com</a></div>
         </div>
       </div>
     </div>

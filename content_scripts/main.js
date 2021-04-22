@@ -115,8 +115,7 @@ return false;
       case 'fillForm':
         chrome.storage.local.get({'profiles':null},(d)=>{
           if(d.profiles.hasOwnProperty(request.msg.val)){
-          let num=fndNFll(d.profiles[request.msg.val]);
-          setMsg("Fields filled: "+num+"\r\nProfile: "+request.msg.val);
+          fillNMsg(d.profiles[request.msg.val], "Fields Filled: ##num##\r\nProfile: "+request.msg.val);
           }
           else{
           sendResponse(false);
@@ -337,7 +336,7 @@ return false;
   var rtrn=null;
     while(typeof h=="object" && ks.length>0 && rtrn==null){
     hsh_ind=ks.shift();
-    let patt=new RegExp(hsh_ind);
+    let patt=new RegExp(hsh_ind, "i");
       if(patt.test(s)){
         //if the pattern matches and the pattern is an index for an object, traverse down
         if(typeof h[hsh_ind]=="object"){
@@ -479,6 +478,22 @@ return false;
   return cnt;
   }
 
+/*---------------------------------------------------
+pre: fndNFll(),setMsg()
+post:html forms filled, message set (##num##)
+params: hash for fndNFll and profile for message
+wrapper for fndNFll and setMsg so only 1 
+function needs to be called to both fill and setMsg
+---------------------------------------------------*/
+function fillNMsg(hsh, msg){
+  if(typeof hsh!="object"){
+  return false;
+  }
+let num=fndNFll(hsh);
+let m=msg.replace("##num##", num);
+setMsg(m);
+return true;
+}
 
 //================================================= main code run ====================================================
 
@@ -521,14 +536,14 @@ curPrfl=dtrmnPrfl(dmn, d, applyHsh);
   if(d.settings.autoFill){
     if(!ignrHsh.hasOwnProperty(dmn)){
     //find and fill
-    fndNFll(d.profiles[curPrfl]);
+    fillNMsg(d.profiles[curPrfl], "Autofill ON\r\nFields Filled: ##num##\r\nProfile: "+curPrfl);
     }
   }
   //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
   else{
     if(isApply){
     //find and fill
-    fndNFll(d.profiles[curPrfl]);
+    fillNMsg(d.profiles[curPrfl], "Apply List Fill\r\nFields Filled: ##num##\r\nProfile: "+curPrfl);
     }
   }
 

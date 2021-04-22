@@ -170,8 +170,11 @@ var act=null;
       break;
       case 'tglCurDef':
         chrome.storage.local.get({"settings":null},(d)=>{
-          d.settings.curDef=document.getElementById("curDefId").checked;
-          chrome.storage.local.set(d);
+        d.settings.curDef=document.getElementById("curDefId").checked;
+          if(!e.target.checked){
+          d.settings.cur_profile=d.settings.def_profile;
+          }
+        chrome.storage.local.set(d);
         });
       break;
       default:

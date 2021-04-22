@@ -583,7 +583,6 @@ var msgPrfl=document.getElementById("msgPrfl");
       case "setAutoFill":
         chrome.storage.local.get(null, (d)=>{
         d.settings.autoFill=e.target.checked;
-        console.log(d);
           chrome.storage.local.set(d);
         });
       break;
@@ -593,7 +592,6 @@ var msgPrfl=document.getElementById("msgPrfl");
         if(!e.target.checked){
         d.settings.cur_profile=d.settings.def_profile;
         }
-      console.log(d);
         chrome.storage.local.set(d);
       });
       break;

@@ -147,8 +147,8 @@ chrome.storage.local.get(null,(d)=>{
 });
 
 
+chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });//setting badge bg color
 
-chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
 //listener for contentScript
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
@@ -181,6 +181,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         });
     });
   }
+  else{
+  console.log(msg);
+  }
 });
 
 
@@ -195,13 +198,14 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
           chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
           });
         }
+        /*
         else{
           chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
           chrome.tabs.sendMessage(tabs[0].id, {action: "default"}, function(response) { console.log("======bg===>>"); console.log(info); console.log(response);});
           
           });
         }
-        
+        */
     });
   }
 });

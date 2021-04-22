@@ -337,6 +337,54 @@ height: 150px;
 margin-right: 8px;
 }
 
+.text{
+display:flex;
+flex-direction:column;
+justify-content: flex-start;
+align-items: stretch;
+}
+
+.text > div{
+flex-direction: row;
+justify-content: flex-start;
+}
+
+.text > .version{
+font-weight: bolder;
+font-size: large;
+margin-bottom: 14px;
+}
+
+.text > .title{
+border-top: 1px solid #888888;
+padding-top: 12px;
+margin-top: 16px;
+margin-bottom: 4px;
+font-weight: bolder;
+font-size: large;
+}
+
+.text > .body{
+display: block;
+font-size:larger;
+margin-top: 42px;
+margin-bottom: 10px;
+padding: 0px 6px 0px 12px;
+}
+
+.text > .pic{
+padding: 0px 6px 0px 12px;
+margin-bottom: 8px;
+}
+
+.text > .qs{
+display: block;
+font-size:larger;
+margin-top: 10px;
+margin-bottom: 24px;
+padding: 0px 6px 0px 12px;
+}
+
 #prflNewFrm button{
 border-radius: 4px;
 height: 100%;
