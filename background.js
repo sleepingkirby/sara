@@ -51,23 +51,24 @@ chrome.storage.local.get(null,(d)=>{
       profiles: {
         "default":{
           name:{
-          last: "",
-          first: "",
-          m: ""
+          last: "Surname",
+          first: "FirstName",
+          m: "M."
           },
           addr:{
-          1:"",
-          2:""
+          1:"123 street road",
+          2:"apt. A123",
+          ess:""
           },
         city: "",
         state: "",
         province: "",
-        zip: "",
-        postal: "",
-        mail: "",
+        zip: "11001",
+        postal: "101",
+        mail: "name@email.com",
           phone: {
-          cell: "",
-          home: ""
+          cell: "1234567",
+          home: "8901234"
           },
           job:{
           1:"",
@@ -181,8 +182,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         });
     });
   }
+  else if((msg.hasOwnProperty('setPrfl')){
+    chrome.storage.local.get({'profiles':null}, (d)=>{
+      if(typeof d=="object" && d.hasOwnPropertry('profiles') && d.profiles.hasOwnProperty(msg.setPrfl)){
+     //build contextmenu 
+      }
+    }); 
+  }
   else{
-  console.log(msg);
+  //console.log(msg);
   }
 });
 

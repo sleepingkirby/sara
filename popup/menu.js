@@ -81,7 +81,6 @@ var act=null;
       });
       break;
       default:
-      console.log(e);
       break;
     }
   });
@@ -109,6 +108,7 @@ var act=null;
             chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
               if(r){
               d.settings.cur_profile=e.target.value;
+              chrome.runtime.sendMessage({'setPrfl':e.target.value});
               chrome.storage.local.set(d);
               }
             });
@@ -173,6 +173,7 @@ var act=null;
         d.settings.curDef=document.getElementById("curDefId").checked;
           if(!e.target.checked){
           d.settings.cur_profile=d.settings.def_profile;
+          chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
           }
         chrome.storage.local.set(d);
         });

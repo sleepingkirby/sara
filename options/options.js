@@ -531,9 +531,6 @@ var msgPrfl=document.getElementById("msgPrfl");
       break;
       case "imprtClr":
       //clear textarea
-      console.log(e.target);
-      console.log(e.target.getAttribute("forel"));
-      console.log(document.getElementById(e.target.getAttribute("forel")).textContent);
       document.getElementById(e.target.getAttribute("forel")).textContent="dasdfa";
       break;
       case "imprtExprt":
@@ -594,6 +591,7 @@ var msgPrfl=document.getElementById("msgPrfl");
       d.settings.curDef=e.target.checked;
         if(!e.target.checked){
         d.settings.cur_profile=d.settings.def_profile;
+        chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
         }
         chrome.storage.local.set(d);
       });
