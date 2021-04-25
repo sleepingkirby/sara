@@ -182,7 +182,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         });
     });
   }
-  else if((msg.hasOwnProperty('setPrfl')){
+  else if(msg.hasOwnProperty('setPrfl')){
     chrome.storage.local.get({'profiles':null}, (d)=>{
       if(typeof d=="object" && d.hasOwnPropertry('profiles') && d.profiles.hasOwnProperty(msg.setPrfl)){
      //build contextmenu 
