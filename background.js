@@ -14,23 +14,211 @@ function mkCntxtMnu(func){
           parentId: "root"
     });
     chrome.contextMenus.create({
-          id: "clip",
-          title: "Copy Value",
-          contexts: ["all"],
-          parentId: "root"
-    });
-    chrome.contextMenus.create({
           id: "info",
           title: "Element: none",
           contexts: ["all"],
           parentId: "root"
-    },func);
+    });
   });
+}
+
+//generates id path from prtnIdHsh from mkPstCntxtMnu()
+function genHshPth(prfl, obj, num){
+  if(typeof obj!="object"){
+  return "";
+  }
+
+let n=num;
+let hd="paste";
+let tkn='-';
+let tkn2='|';
+let tk='';
+var rtrn="";
+ 
+  while(obj.hasOwnProperty(n)){
+  n=obj[n];
+    if(n==0){
+    rtrn=hd+tkn+rtrn;
+    }
+    else{
+    rtrn=n+tkn+rtrn;
+    }
+
+  }
+  rtrn=rtrn+num;
+
+    if(rtrn==0){
+    return hd;
+    }
+return rtrn+tkn2+prfl;
+}
+
+/*---------------------------------------
+pre: genHshPth, profile_meta existing, profile name, cntxtMnuCchPst (caching variable for these context menu items)
+post: cntxtMnuCchPst is updated
+generate context menu via profile name and filles out the cache variable cntxtMnuCchPst
+---------------------------------------*/
+function mkPstCntxtMnu(prfl){
+  if(typeof prfl !="string" || !prfl || prfl==""){
+  return null;
+  }
+  chrome.storage.local.get({"profile_meta":prfl},(d)=>{
+    var p=d.profile_meta[prfl];
+    var buff=[0];
+    var prntIdHsh={};
+    var pos=0;
+    var defPrnt="paste";
+
+    while(buff.length>0){
+    pos=buff.shift();
+    //console.log("=============>>"+pos);
+    //prntIdHsh.hasOwnProperty(pos)?console.log("my parent: "+genHshPth(prfl,prntIdHsh,prntIdHsh[pos])):console.log("no parent");
+
+      //if not root, make menu
+      if(pos!=0){
+      //console.log("my id:"+genHshPth(prfl,prntIdHsh,pos));
+        let id=genHshPth(prfl,prntIdHsh,pos);
+        let prnt=genHshPth(prfl,prntIdHsh,prntIdHsh[pos])
+        chrome.contextMenus.create({
+        id: id,
+        title: p[pos].nm,
+        contexts: ["all"],
+        parentId: prnt
+        });
+        if(prnt=="paste"){
+        cntxtCchPst.push(id);
+        }
+      }
+
+      //add to prntIdHsh as well add to buffer.
+      let max=p[pos].ord.length-1;
+      if(max>=0){
+        for(let i=max; i>=0;i--){
+        prntIdHsh[p[pos].ord[i]]=pos;
+        //console.log(p[pos].ord[i]+"-->"+pos);
+        buff.unshift(p[pos].ord[i]);
+        }
+      }
+    }
+
+    chrome.contextMenus.update("paste",{
+      title: "Paste from profile: "+prfl
+    });
+    
+  });
+}
+
+
+/*----------------------------------
+pre: everything mkPstCntxtMnu() requires
+post: everything mkPstCntctMnu() needs
+wrapper for mkPstCntxtMnu() to both erase existing context menu 
+and remake it
+---------------------------------*/
+function remakePstCntxtMnu(prfl){
+//build contextmenu 
+let max=cntxtCchPst.length;
+  for(let i=0; i<max; i++){
+  chrome.contextMenus.remove(cntxtCchPst[i]);
+  }
+cntxtCchPst=[];
+mkPstCntxtMnu(prfl);
+}
+
+
+//convert string to Apply List object
+function strToApplyLst(str){
+  if(typeof str !="string"){
+  return null;
+  }
+var s=str;
+var arr=s.trim().split("\n");
+var rtrn={};
+var max=arr.length;
+  for(let i=0; i<max; i++){
+  let pos=arr[i].indexOf("|");
+  rtrn[arr[i].substr(0,pos)]=arr[i].substr(pos+1);
+  }
+return rtrn;
+}
+
+
+/*---------------------------------------------------
+pre:
+post:
+returns which profile to use. this version is for 
+popup only.
+
+all actions by right click menu or popup menu needs to send the current/proper profile to the content script
+---------------------------------------------------*/
+function dtrmnPrfl(cur, def, hst, hsh, mrk, prfls, curDef){
+
+  //if no profiles exist,do nothing. Nothing can be done.
+  if(Object.keys(hsh).length<=0 || Object.keys(prfls).length<=0){
+  return false;
+  }
+
+  var curPrfl=null;
+  //else if applist domain profile marker exists and host in applyList, use cur,
+  if(mrk!=null){
+  curPrfl=cur;
+  }
+  //else if applylist domain profile marker doesn't exist but host in applyList, user applist prof.
+  else if(hsh.hasOwnProperty(hst)){
+  curPrfl=hsh[hst];
+  }
+  //all other conditions, use current or default based on choice
+  else{
+  curPrfl=curDef?cur:def;
+  }
+
+
+  //the below does sanity checks. Makes sure the profile actually exists.And, if it doesn't tries to find the best alternative
+  //if current profile (which can the default profile) doesn't exist, use the default profile
+  if(!prfls.hasOwnProperty(curPrfl)){
+  curPrfl=def;
+  }
+
+  //if the default profile doesn't exist, get the first available profile.
+  if(!prfls.hasOwnProperty(curPrfl)){
+  curPrfl=Object.keys(prfls[0]);
+  }
+
+return curPrfl;
+}
+
+
+//gets hostname from url
+function hostFromURL(str){
+var rtrn=str;
+var proto=rtrn.match(/^[a-z]+:\/\/+/g);
+  if(proto==null){
+  return false;
+  }
+rtrn=rtrn.substr(proto[0].length,rtrn.length);
+
+var end=rtrn.search('/');
+  if(end>=0){
+  rtrn=rtrn.substr(0,end);
+  }
+
+return rtrn;
+}
+
+/*----------------------------------
+pre:
+post:
+traverses the profile's data, gets the value
+and send to content script
+----------------------------------*/
+function sendPrflVal(pth){
+console.log(pth);
 }
 
 //======================== functional code =============================
 
 var cntxtCch={};//cache for the context menu id's
+var cntxtCchPst=[]; //cache for context menu -> paste
 var curEl=null;
 mkCntxtMnu();
 
@@ -45,6 +233,7 @@ down each categories, find the node, get the value and then see if it matches. U
 complexity for long term efficiency... hopefully. I haven't done the math/Big O on each 
 case yet
 */
+//-------checking for empty install and initializing values-----------
 chrome.storage.local.get(null,(d)=>{
   if(Object.keys(d).length <= 0){
     var ind={
@@ -143,20 +332,28 @@ chrome.storage.local.get(null,(d)=>{
       ignrLst: ""
       }
     };
-    chrome.storage.local.set(ind,(e)=>{});
+    chrome.storage.local.set(ind,(e)=>{
+    mkPstCntxtMnu(ind.settings.def_profile); //on first run, default the paste context menu to default profile
+    });
   }
+  else{
+  mkPstCntxtMnu(d.settings.def_profile); //on startup, default the paste context menu to default profile
+  }
+
 });
 
 
-chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });//setting badge bg color
+//chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
 
-//listener for contentScript
+//--------------- listener for messages from other parts of the extension -------------------------
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+  /*
   if(msg.hasOwnProperty('bdgNm')) {
     chrome.browserAction.setBadgeText({text: msg.bdgNm});
   }
-  else if(msg.hasOwnProperty('onEl') && msg.onEl.hasOwnProperty('tagName') && msg.onEl.hasOwnProperty('attr')){
+  */
+  if(msg.hasOwnProperty('onEl') && msg.onEl.hasOwnProperty('tagName') && msg.onEl.hasOwnProperty('attr')){
   var arr=Object.keys(msg.onEl.attr);
     //change the menu item title
     chrome.contextMenus.update("info",{
@@ -182,10 +379,17 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         });
     });
   }
+  //on popup menu profile set, do the following
   else if(msg.hasOwnProperty('setPrfl')){
-    chrome.storage.local.get({'profiles':null}, (d)=>{
-      if(typeof d=="object" && d.hasOwnPropertry('profiles') && d.profiles.hasOwnProperty(msg.setPrfl)){
+    chrome.storage.local.get({'profile_meta':null}, (d)=>{
+      if(d && typeof d=="object" && d.hasOwnProperty('profile_meta') && typeof d.profile_meta =="object" && d.profile_meta.hasOwnProperty(msg.setPrfl)){
      //build contextmenu 
+      let max=cntxtCchPst.length;
+        for(let i=0; i<max; i++){
+        chrome.contextMenus.remove(cntxtCchPst[i]);
+        }
+      cntxtCchPst=[]; 
+      mkPstCntxtMnu(msg.setPrfl);
       }
     }); 
   }
@@ -195,7 +399,30 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 });
 
 
+//----determines how to evaluate which profile to use (for the paste context menu) when changing existing tabs--
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+  //console.log(tabs);
+    if(tabs[0].url==""||tabs[0].url.indexOf("chrome:")==0){
+    //url not loaded or not a valid URL do nothing.
+    return null;
+    }
+    chrome.storage.local.get(null, (d)=>{
+    let h=hostFromURL(tabs[0].url);
+    let aHsh=strToApplyLst(d.settings.applyLst);
+        chrome.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
 
+        let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+        //console.log("applying profile:"+ curPrfl);
+        remakePstCntxtMnu(curPrfl);
+        });
+    });
+  });
+
+});
+
+
+//------------ adding contextMenu listener on click ----------------------------
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
   if (changeInfo.status == 'complete') {   
     //adds listeners for the right click/context menu so we know what to do if something is clicked
@@ -206,15 +433,26 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
           chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
           });
         }
-        /*
         else{
-          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-          chrome.tabs.sendMessage(tabs[0].id, {action: "default"}, function(response) { console.log("======bg===>>"); console.log(info); console.log(response);});
-          
-          });
+        //console.log(info);
+        //console.log(tabs);
+         
+        chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
         }
-        */
     });
+  
+    //set proper paste context menu on page load/reload
+    if(tab.url!=""&&tab.url.indexOf("chrome:")!=0){
+      chrome.storage.local.get(null, (d)=>{
+      let h=hostFromURL(tab.url);
+      let aHsh=strToApplyLst(d.settings.applyLst);
+          chrome.tabs.sendMessage(tabId,{action: "getPgPrfl"},(e)=>{
+
+          let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+          remakePstCntxtMnu(curPrfl);
+          });
+      });
+    }
   }
 });
 

@@ -132,11 +132,10 @@ return false;
 
   /*-------------------------
   pre: onEl exists, mouseover event passed down, elToObj()
-  post: mouseover event listener addedi
+  post: mouseover event listener added, updating global curX and curY
   sends message current element as object to background script
   -------------------------*/
   function elObjToBG(e){
-  onEl=e.path[0];
     try{
     chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
     }
@@ -165,13 +164,13 @@ return false;
   var id="extIdNmSARAPgPrfl";
   var el=document.getElementById(id);
     if(el){
-    //el.setAttribute("profile",prfl);
+    el.setAttribute("profile",prfl);
     return true;
     }
 
   el=document.createElement("div");
   el.style.cssText="display:none;max-height: 0px; max-width: 0px; opacity:0;";
-  //el.setAttribute("profile",prfl);
+  el.setAttribute("profile",prfl);
   el.id=id;
   document.body.appendChild(el);
   return true;
@@ -185,9 +184,9 @@ return false;
   function getPgPrfl(){
   let el=document.getElementById("extIdNmSARAPgPrfl");
     if(el){
-    return true;
+    return el.getAttribute("profile");
     }
-  return false;
+  return null;
   }
 
   /*---------------------------------------------------
@@ -512,7 +511,8 @@ var applyHsh={}; //hash for apply list
 var isApply=false; //is this domain in apply list?
 var curPrfl=null; //profile name to apply for this page 
 var dmn=window.location.host;//domain of current page/
-
+var curX=0;
+var curY=0;
 
 document.addEventListener("mouseover", elObjToBG);
 

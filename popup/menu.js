@@ -102,12 +102,15 @@ var act=null;
         chrome.storage.local.set(d);
         });
       break;
+      //this is when the drop down in the popup for profiles is set.
       case 'setPgPrfl':
         chrome.storage.local.get({"settings":null}, (d)=>{
           chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            //send message to page to set profile
             chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
               if(r){
               d.settings.cur_profile=e.target.value;
+              //send message to background to set the contextmenu for which profile to set up for user to paste from
               chrome.runtime.sendMessage({'setPrfl':e.target.value});
               chrome.storage.local.set(d);
               }
@@ -272,7 +275,7 @@ function getCurHost(fnc, fncPrms){
     var curPrfl=null;
 
     //else if applist domain profile marker exists and host in applyList, use cur,
-    if(mrk==true){
+    if(mrk!=null){
     curPrfl=cur;
     }
     //else if applylist domain profile marker doesn't exist but host in applyList, user applist prof.
