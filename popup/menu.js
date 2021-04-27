@@ -75,7 +75,6 @@ var act=null;
         chrome.runtime.openOptionsPage();     
       break;
       case 'btnFllId':
-      console.log(e);
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, {action: 'fillForm', msg:{val:document.getElementById("prflSlct").value}});
       });
@@ -332,15 +331,17 @@ getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d
 
   //figure out what profile to have in the profiles drop down as well as fill the drop down. 
   chrome.tabs.query({active: true, currentWindow: true},(tabs) => {
-  
-  let h=hostFromURL(tabs[0].url);
-  let aHsh=strToApplyLst(d.settings.applyLst);
-  
-    chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
-    curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+    if(tabs[0].url.indexOf("chrome")!=0){
 
-    fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
-    });
+    let h=hostFromURL(tabs[0].url);
+    let aHsh=strToApplyLst(d.settings.applyLst);
+    
+      chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
+      curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+
+      fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
+      });
+    }
   });
 
 

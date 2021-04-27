@@ -226,6 +226,7 @@ console.log(pth);
 var cntxtCch={};//cache for the context menu id's
 var cntxtCchPst=[]; //cache for context menu -> paste
 var curEl=null;
+chrome.contextMenus.removeAll();
 mkCntxtMnu();
 
 //making a rule here. profiles and meta depth should not exceed double digits
@@ -408,42 +409,49 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 //----determines how to evaluate which profile to use (for the paste context menu) when changing existing tabs--
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-  //console.log(tabs);
-    if(tabs[0].url==""||tabs[0].url.indexOf("chrome:")==0){
+    //console.log(tabs);
+    if(tabs[0].url==""||tabs[0].url.indexOf("chrome")==0){
     //url not loaded or not a valid URL do nothing.
     return null;
     }
     chrome.storage.local.get(null, (d)=>{
     let h=hostFromURL(tabs[0].url);
     let aHsh=strToApplyLst(d.settings.applyLst);
-        chrome.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
-
+      // this can return an error if the extension was reloaded or updated and you go back to a page.
+      // I tried try-catch, but that won't catch async calls. .catch() doesn't work and you can't supply
+      // a function to deal with errors. Nothing I can do.
+      chrome.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
+      //console.log(e);
+        if(e!=null&&e!=false&&e!=undefined){
         let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
         //console.log("applying profile:"+ curPrfl);
         remakePstCntxtMnu(curPrfl);
-        });
+        }
+      });
     });
   });
-
 });
 
 
 //------------ adding contextMenu listener on click ----------------------------
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
-  if (changeInfo.status == 'complete') {   
+  if(tab.url.indexOf("chrome")==0){
+  return null;
+  }
+  if(changeInfo.status == 'complete') {
     //adds listeners for the right click/context menu so we know what to do if something is clicked
     chrome.contextMenus.onClicked.addListener(function(info, tabs) {
         // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
         if(info.menuItemId.substr(0,5) == "info-"){
           chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-          chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
+            chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});
           });
         }
         else if(info.menuItemId.substr(0,6) == "paste-"){
-        chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
+          chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
         }
         else if(info.menuItemId=="clip"){
-        chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}});
+          chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}});
         }
         else{
         //console.log(info);
@@ -452,7 +460,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     });
   
     //set proper paste context menu on page load/reload
-    if(tab.url!=""&&tab.url.indexOf("chrome:")!=0){
+    if(tab.url!=""&&tab.url.indexOf("chrome")!=0){
       chrome.storage.local.get(null, (d)=>{
       let h=hostFromURL(tab.url);
       let aHsh=strToApplyLst(d.settings.applyLst);
@@ -476,5 +484,8 @@ chrome.runtime.onInstalled.addListener(function() {
       actions: [new chrome.declarativeContent.ShowPageAction()]
     }]);
   });
+
+
+
 });
 

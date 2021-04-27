@@ -7,7 +7,7 @@
  * it will do nothing next time.
  */
 if (window.hasRun) {
-  return;
+  return true;
 }
 window.hasRun = true;
 
@@ -260,7 +260,6 @@ return false;
   -------------------------*/
   function elObjToBG(e){
     try{
-    curX=
     chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
     }
     catch(e){
