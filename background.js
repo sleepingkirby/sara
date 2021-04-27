@@ -14,6 +14,12 @@ function mkCntxtMnu(func){
           parentId: "root"
     });
     chrome.contextMenus.create({
+          id: "clip",
+          title: "Copy Field to Clipboard",
+          contexts: ["all"],
+          parentId: "root"
+    });
+    chrome.contextMenus.create({
           id: "info",
           title: "Element: none",
           contexts: ["all"],
@@ -333,11 +339,11 @@ chrome.storage.local.get(null,(d)=>{
       }
     };
     chrome.storage.local.set(ind,(e)=>{
-    mkPstCntxtMnu(ind.settings.def_profile); //on first run, default the paste context menu to default profile
+    remakePstCntxtMnu(ind.settings.def_profile);
     });
   }
   else{
-  mkPstCntxtMnu(d.settings.def_profile); //on startup, default the paste context menu to default profile
+  remakePstCntxtMnu(d.settings.def_profile); //on startup, default the paste context menu to default profile
   }
 
 });
@@ -433,11 +439,15 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
           chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});  
           });
         }
+        else if(info.menuItemId.substr(0,6) == "paste-"){
+        chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
+        }
+        else if(info.menuItemId=="clip"){
+        chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}});
+        }
         else{
         //console.log(info);
         //console.log(tabs);
-         
-        chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
         }
     });
   

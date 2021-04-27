@@ -85,6 +85,121 @@ return false;
   document.body.removeChild(ta);
   }
 
+  /*--------------------------------------------
+  pre: global element onEl
+  post: element onEl filled
+  takes the string from the message, find the 
+  value from the settings via the string, fills
+  the onEl with the value.
+  ---------------------------------------------*/ 
+  function pasteVal(str){
+    if(typeof str!="string" || str==""){
+    return null;
+    }
+  let prfl="";
+  let tmp=str.split('|');
+  prfl=tmp[1];
+  tmp=tmp[0].split('-');
+
+  let rtrn="";
+  let ptr=null;
+    chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
+    let max=tmp.length;
+    ptr=d.profiles[prfl];
+    //skipping 0 as that's root, skipping 1 as that's always category
+      if(max<=2){
+      return rtrn;
+      }
+
+      for(let i=2; i<max; i++){
+        if(d.profile_meta[prfl].hasOwnProperty(tmp[i])){
+        let nm=d.profile_meta[prfl][tmp[i]].nm;
+          if(typeof ptr=="object" && ptr && ptr.hasOwnProperty(nm)){
+          ptr=ptr[nm];
+          }
+        }
+      }
+      
+      if(typeof ptr!="string" || typeof onEl!="object"){
+      return null;
+      }
+
+      
+      if(onEl.tagName.toLocaleLowerCase()=="input"){    
+        switch(onEl.type){
+        case "checkbox":
+          if(ptr!=null&&ptr!=false){
+          onEl.checked=true;
+          }
+          else{
+          onEl.checked=false;
+          }
+        break;
+        case "radio":
+        let rds=document.getElementsByName(onEl.name);
+        let m=rds.length;
+          for(let i=0; i<m; i++){
+            if(rds[i].value==ptr){
+            rds[i].checked=true;
+            }
+          }
+        break;
+        default:
+        onEl.value=ptr;
+        break;
+        }
+      }
+      else if(onEl.tagName.toLocaleLowerCase()=="option"){
+      onEl.parentElement.value=ptr;
+      }
+      else{
+      onEl.value=ptr;
+      }
+
+    }); 
+  }
+
+  /*---------------------------------------------------------
+  pre: element
+  post:
+  extract proper value from element in accordance to what kind
+  of element it is
+  ----------------------------------------------------------*/
+  function getValFrmElTyp(el){
+    if(typeof el!="object"){
+    return null;
+    }
+
+    if(el.tagName.toLocaleLowerCase()=="input"){
+      switch(el.type){
+      case "checkbox":
+        return el.checked;
+      break;
+      case "radio":
+      let arr=document.getElementsByName(el.name);
+      let m=arr.length;
+        for(let i=0; i<m; i++){
+          if(arr[i].checked==true){
+          return arr[i].value;
+          }
+        }
+      break;
+      default:
+      return el.value;
+      break;
+      }
+    }
+    else if(el.tagName.toLocaleLowerCase()=="option"){
+    return el.parentElement.value;
+    }
+    else{
+    //both textarea and select should fall here
+    return el.value;
+    }
+
+  return null;
+  }
+
   /*--------------------
   pre: everything above here
   post: everything modified as a result of running functions above here
@@ -123,6 +238,14 @@ return false;
         });
         sendResponse(true);
       break;
+      case 'pasteVal':
+      pasteVal(request.msg.path);
+      sendResponse(true);  
+      break;
+      case 'clip':
+      copyHack(getValFrmElTyp(onEl));
+      sendResponse(true);
+      break;
       default:
       console.log(request);
       sendResponse("default");
@@ -132,11 +255,12 @@ return false;
 
   /*-------------------------
   pre: onEl exists, mouseover event passed down, elToObj()
-  post: mouseover event listener added, updating global curX and curY
+  post: mouseover event listener added
   sends message current element as object to background script
   -------------------------*/
   function elObjToBG(e){
     try{
+    curX=
     chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
     }
     catch(e){
@@ -146,9 +270,18 @@ return false;
       if(ignErr){
       location.reload();
       }
-      
     }
   }
+
+  /*---------------------------------------------------
+  pre: global variable onEl 
+  post:
+  function to capture what element was right-clicked on
+  ---------------------------------------------------*/
+  function rghtClckOnEl(e){
+  onEl=e.path[0];
+  }
+
 
   /*---------------------------------------------------
   pre:
@@ -201,7 +334,6 @@ return false;
     if(Object.keys(d).length<=0 || Object.keys(d.profiles).length<=0 ){
     return false;
     }
-
 
     //since always runs on page start and only on page start, the profile marker is NEVER set
     //if in applyHsh, get profile name
@@ -289,6 +421,11 @@ return false;
     };
   }
 
+  /*--------------------------------------------------------
+  pre:
+  post:
+  splits strings with new lines into objects
+  --------------------------------------------------------*/
   function strToHsh(str){
     if(typeof str !="string"){
     return null;
@@ -303,13 +440,19 @@ return false;
   return rtrn;
   }
 
-
-  //convert string to Apply List object
+  /*--------------------------------------------------------------
+  pre: none
+  post: none
+  convert string to Apply List object
+  --------------------------------------------------------------*/
   function strToApplyLst(str){
     if(typeof str !="string"){
-    return null;
+    return {};
     }
   var s=str;
+    if(s.trim()==""){
+    return {};
+    }
   var arr=s.trim().split("\n");
   var rtrn={};
   var max=arr.length;
@@ -387,8 +530,11 @@ return false;
 
   };
 
-
-  //find elements and fill it with proper values.
+  /*-------------------------------------------------------------------
+  pre: mtchAgnstHsh()
+  post: html elements filled
+  find elements and fill it with proper values.
+  -------------------------------------------------------------------*/
   function fndNFll(hsh){
     if(typeof hsh!="object" || Object.keys(hsh) <=0){
     return false;
@@ -511,10 +657,9 @@ var applyHsh={}; //hash for apply list
 var isApply=false; //is this domain in apply list?
 var curPrfl=null; //profile name to apply for this page 
 var dmn=window.location.host;//domain of current page/
-var curX=0;
-var curY=0;
 
 document.addEventListener("mouseover", elObjToBG);
+document.addEventListener("contextmenu", rghtClckOnEl);
 
 chrome.storage.local.get(null, function(d){
   if(Object.keys(d).length<=0){
@@ -530,6 +675,7 @@ applyHsh=strToApplyLst(d.settings.applyLst);
 hoverId(d.settings.hoverId);
 
 isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
+
 
 curPrfl=dtrmnPrfl(dmn, d, applyHsh);
   //if this fails, we can't do the rest. Stop here
