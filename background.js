@@ -91,9 +91,8 @@ function mkPstCntxtMnu(prfl){
         contexts: ["all"],
         parentId: prnt
         });
-        if(prnt=="paste"){
-        cntxtCchPst.push(id);
-        }
+        //console.log("pusing into cntxtCchPst[] id:"+id);
+        cntxtCchPst.unshift(id);
       }
 
       //add to prntIdHsh as well add to buffer.
@@ -106,7 +105,7 @@ function mkPstCntxtMnu(prfl){
         }
       }
     }
-
+    
     chrome.contextMenus.update("paste",{
       title: "Paste from profile: "+prfl
     });
@@ -124,10 +123,13 @@ and remake it
 function remakePstCntxtMnu(prfl){
 //build contextmenu 
 let max=cntxtCchPst.length;
-  for(let i=0; i<max; i++){
-  chrome.contextMenus.remove(cntxtCchPst[i]);
-  }
-cntxtCchPst=[];
+  if(max>0){
+    for(let i=0; i<max; i++){
+    chrome.contextMenus.remove(cntxtCchPst[i]);
+    }
+  cntxtCchPst=[];
+  }  
+
 mkPstCntxtMnu(prfl);
 }
 
@@ -211,14 +213,17 @@ var end=rtrn.search('/');
 return rtrn;
 }
 
-/*----------------------------------
-pre:
-post:
-traverses the profile's data, gets the value
-and send to content script
-----------------------------------*/
-function sendPrflVal(pth){
-console.log(pth);
+//to handle chrome.runtime/tabs.sendMessage errors
+function chromeSendMsgErrHndl(action, tabs){
+  if(chrome.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
+  }
+}
+
+function chromeSendMsgErrHndlDtl(action, details){
+  if(chrome.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+details.tabId+"\nurl: \""+details.url+"\"");
+  }
 }
 
 //======================== functional code =============================
@@ -389,13 +394,8 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   else if(msg.hasOwnProperty('setPrfl')){
     chrome.storage.local.get({'profile_meta':null}, (d)=>{
       if(d && typeof d=="object" && d.hasOwnProperty('profile_meta') && typeof d.profile_meta =="object" && d.profile_meta.hasOwnProperty(msg.setPrfl)){
-     //build contextmenu 
-      let max=cntxtCchPst.length;
-        for(let i=0; i<max; i++){
-        chrome.contextMenus.remove(cntxtCchPst[i]);
-        }
-      cntxtCchPst=[]; 
-      mkPstCntxtMnu(msg.setPrfl);
+      //build contextmenu 
+      remakePstCntxtMnu(msg.setPrfl);
       }
     }); 
   }
@@ -418,10 +418,13 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     let aHsh=strToApplyLst(d.settings.applyLst);
       // this can return an error if the extension was reloaded or updated and you go back to a page.
       // I tried try-catch, but that won't catch async calls. .catch() doesn't work and you can't supply
-      // a function to deal with errors. Nothing I can do.
+      // a function to deal with errors. It turns out, just by calling "chrome.runtime.lastError" you can
+      // "catch" the error and it won't report to the console on the background.js. WTH?
+      // Whatever, it works. I'm running with it.
       chrome.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
       //console.log(e);
-        if(e!=null&&e!=false&&e!=undefined){
+      chromeSendMsgErrHndl("getPgPrfl", tabs);
+        if(e!=null&&e!=false&&e!=undefined&&chrome.runtime.lastError==undefined){
         let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
         //console.log("applying profile:"+ curPrfl);
         remakePstCntxtMnu(curPrfl);
@@ -433,43 +436,44 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 
 //------------ adding contextMenu listener on click ----------------------------
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
-  if(tab.url.indexOf("chrome")==0){
+//chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
+//no longer using tabs.onUpdated because of iframes. it loads the onUpdated for each iframe and does each step within ths logic asynchronously. Hence
+// remakePstCntxtMnu()'s mkPstCntxtMnu() call happen at the same time, before cntxtPstCch gets updated, causing it to make a contextmenu that already exists.
+//which causes a non-stopping error.
+chrome.webNavigation.onCompleted.addListener(function(details){
+
+  if(details.url.indexOf("chrome")==0){
   return null;
   }
-  if(changeInfo.status == 'complete') {
-    //adds listeners for the right click/context menu so we know what to do if something is clicked
-    chrome.contextMenus.onClicked.addListener(function(info, tabs) {
-        // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
-        if(info.menuItemId.substr(0,5) == "info-"){
-          chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-            chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}});
-          });
-        }
-        else if(info.menuItemId.substr(0,6) == "paste-"){
-          chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}});
-        }
-        else if(info.menuItemId=="clip"){
-          chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}});
-        }
-        else{
-        //console.log(info);
-        //console.log(tabs);
-        }
-    });
-  
-    //set proper paste context menu on page load/reload
-    if(tab.url!=""&&tab.url.indexOf("chrome")!=0){
-      chrome.storage.local.get(null, (d)=>{
-      let h=hostFromURL(tab.url);
-      let aHsh=strToApplyLst(d.settings.applyLst);
-          chrome.tabs.sendMessage(tabId,{action: "getPgPrfl"},(e)=>{
+  //adds listeners for the right click/context menu so we know what to do if something is clicked
+  chrome.contextMenus.onClicked.addListener(function(info, tabs) {
+      // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
+      if(info.menuItemId.substr(0,5) == "info-"){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+          chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}},(e)=>{chromeSendMsgErrHndlDtl("sendInfo", details);});
+        });
+      }
+      else if(info.menuItemId.substr(0,6) == "paste-"){
+        chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}},(e)=>{chromeSendMsgErrHndlDtl("pasteVal", details);});
+      }
+      else if(info.menuItemId=="clip"){
+        chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}},(e)=>{chromeSendMsgErrHndlDtl("clip", details);});
+      }
+      else{
+      }
+  });
 
-          let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
-          remakePstCntxtMnu(curPrfl);
-          });
-      });
-    }
+  //============set proper paste context menu on page load/reload=====
+  if(details.url!=""&&details.url.indexOf("chrome")!=0&&details.frameId==0){
+    chrome.storage.local.get(null, (d)=>{
+    let h=hostFromURL(details.url);
+    let aHsh=strToApplyLst(d.settings.applyLst);
+        chrome.tabs.sendMessage(details.tabId,{action: "getPgPrfl"},(e)=>{
+        chromeSendMsgErrHndlDtl("getPgPrfl on page reload", details);
+        let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+        remakePstCntxtMnu(curPrfl);
+        });
+    });
   }
 });
 

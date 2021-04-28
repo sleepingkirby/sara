@@ -8,6 +8,7 @@
     "declarativeContent",
     "activeTab",
     "tabs",
+    "webNavigation",
     "contextMenus"
   ],
   "icons": {
