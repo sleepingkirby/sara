@@ -253,8 +253,7 @@ chrome.storage.local.get(null,(d)=>{
           },
           addr:{
           1:"123 street road",
-          2:"apt. A123",
-          ess:""
+          2:"apt. A123"
           },
         city: "",
         state: "",
