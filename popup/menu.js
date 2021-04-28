@@ -72,7 +72,10 @@ var act=null;
   act=e.target.getAttribute("act");
     switch(e.target.id){
       case 'settingsPage':
-        chrome.runtime.openOptionsPage();     
+      chrome.runtime.openOptionsPage();     
+      break;
+      case 'donate':
+      chrome.tabs.create({url: 'https://b3spage.sourceforge.io/index.html?psjs'});
       break;
       case 'btnFllId':
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -297,11 +300,14 @@ function getCurHost(fnc, fncPrms){
     if(!prfls.hasOwnProperty(curPrfl)){
     curPrfl=Object.keys(prfls[0]);
     }
-
-
   return curPrfl;
   }
 
+function chromeSendMsgErrHndl(action, tabs){
+  if(chrome.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
+  }
+}
 
 
 //================================ main ==========================
@@ -337,6 +343,7 @@ getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d
     let aHsh=strToApplyLst(d.settings.applyLst);
     
       chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
+      chromeSendMsgErrHndl("getPgPrfl", tabs);
       curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
 
       fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
