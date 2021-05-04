@@ -456,12 +456,18 @@ var el=document.getElementById(elId);
   if(el==false || !elId || elId=="" ){ 
   return null;
   }
+  
+  if(el.value==""){
+  setMsg("msgPrfl", "No settings found in textbox. Nothing to import.");
+  return false;
+  }
 
 var d=JSON.parse(el.value);
 
   chrome.storage.local.set(d, (e)=>{
-  setMsg("msgImprt", "JSON settings imported.");
+  setMsg("msgPrfl", "Settings imported.");
   });
+return true;
 }
 
 
@@ -486,12 +492,6 @@ var msgPrfl=document.getElementById("msgPrfl");
   msgPrfl.innerText="";
   msgPrfl.style.cssText="";
   });
-var msgPrfl=document.getElementById("msgImprt");
-  msgPrfl.addEventListener("animationend", ()=>{
-  msgPrfl.innerText="";
-  msgPrfl.style.cssText="";
-  });
-
 
 
   document.addEventListener("click", (e)=>{
