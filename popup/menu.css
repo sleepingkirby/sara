@@ -9,6 +9,18 @@ font-size: 8pt;
 font-family: "DejaVu Sans", Arial, sans-serif;
 }
 
+a{
+text-decoration: none;
+color: #0852ff;
+font-weight: 700;
+}
+
+a:visited{
+text-decoration: none;
+color: #0852ff;
+font-weight: 700;
+}
+
 hr{
 width:100%;
 border-color: #666666;
