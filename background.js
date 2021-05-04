@@ -261,14 +261,10 @@ chrome.storage.local.get(null,(d)=>{
       profiles: {
         "default":{
           name:{
-          last: "Surname",
-          first: "FirstName",
-          m: "M."
+          l: "Surname",
+          f: "FirstName"
           },
-          addr:{
-          1:"123 street road",
-          2:"apt. A123"
-          },
+          addr:"123 street road apt. A123",
         city: "",
         state: "",
         province: "",
@@ -305,8 +301,8 @@ chrome.storage.local.get(null,(d)=>{
         1:{"nm":"stat", "ord":[5, 6, 7, 8, 9, 10, 11, 12, 13],"hash":{"name":5, "addr":6, "city":7,"state":8, "province":9,"zip":10,"postal":11, "mail":12, "phone":13}},
         2:{"nm":"exp","ord":[21],"hash":{"job":21}},
         4:{"nm":"others","ord":[27],"hash":{"covers":27}},
-        5:{"nm":"name","ord":[14, 15, 16],"hash":{"last":14,"first":15,"m":16}},
-        6:{"nm":"addr","ord":[17,18],"hash":{"1":17, "2":18}},
+        5:{"nm":"name","ord":[14, 15],"hash":{"l":14,"f":15}},
+        6:{"nm":"addr","ord":[],"hash":{}},
         13:{"nm":"phone","ord":[19,20],"hash":{"cell":19,"home":20}},
         21:{"nm":"job","ord":[22,23],"hash":{"1":22,"2":23}},
         3:{"nm":"references","ord":[24],"hash":{"ref":24}},
@@ -318,11 +314,8 @@ chrome.storage.local.get(null,(d)=>{
         10:{"nm":"zip","ord":[], "hash":{}},
         11:{"nm":"postal","ord":[], "hash":{}},
         12:{"nm":"mail","ord":[], "hash":{}},
-        14:{"nm":"last","ord":[], "hash":{}},
-        15:{"nm":"first","ord":[], "hash":{}},
-        16:{"nm":"m","ord":[], "hash":{}},
-        17:{"nm":"1","ord":[], "hash":{}},
-        18:{"nm":"2","ord":[], "hash":{}},
+        14:{"nm":"l","ord":[], "hash":{}},
+        15:{"nm":"f","ord":[], "hash":{}},
         19:{"nm":"cell","ord":[], "hash":{}},
         20:{"nm":"home","ord":[], "hash":{}},
         22:{"nm":"1","ord":[], "hash":{}},

@@ -455,7 +455,7 @@ justify-content: flex-end;
 }
 
 
-#msgPrfl{
+#msgPrfl, #msgImprt{
 margin: 0px 0px 0px 0px;
 padding: 0px 6px 0px 6px;
 border: 0px solid #888888;

@@ -26,6 +26,21 @@ var vNm=url.substr(i+1);
 return vNm;
 }
 
+function exportSettings( str ){
+//not my code. But very clean and understandable so I;m using it
+//https://stackoverflow.com/questions/33664398/how-to-download-file-using-javascript-only
+var a = document.createElement("a");
+a.style = "display: none";
+document.body.appendChild(a);
+
+var blob = new File([str], {type: 'text/plain'});
+var url = window.URL.createObjectURL(blob);
+a.href = url;
+a.download = "SARA_settings_backup.txt";
+a.click();
+window.URL.revokeObjectURL(url);
+}
+
 
 function tabSwitch(e){
 var el=e.target;
@@ -423,6 +438,8 @@ function rnFld(prfl, pth, v){
   });
 }
 
+
+//users exportSettings()
 function exprtSttngs(elId){
 var el=document.getElementById(elId);
   if(el==false || !elId || elId=="" ){ 
@@ -430,6 +447,7 @@ var el=document.getElementById(elId);
   }
   chrome.storage.local.get(null, (e)=>{
   el.textContent=JSON.stringify(e);
+  exportSettings(el.textContent);
   });
 }
 
@@ -442,7 +460,7 @@ var el=document.getElementById(elId);
 var d=JSON.parse(el.value);
 
   chrome.storage.local.set(d, (e)=>{
-  setMsg("msgPrfl", "JSON settings imported.");
+  setMsg("msgImprt", "JSON settings imported.");
   });
 }
 
@@ -468,6 +486,12 @@ var msgPrfl=document.getElementById("msgPrfl");
   msgPrfl.innerText="";
   msgPrfl.style.cssText="";
   });
+var msgPrfl=document.getElementById("msgImprt");
+  msgPrfl.addEventListener("animationend", ()=>{
+  msgPrfl.innerText="";
+  msgPrfl.style.cssText="";
+  });
+
 
 
   document.addEventListener("click", (e)=>{
