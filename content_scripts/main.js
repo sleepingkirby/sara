@@ -206,6 +206,7 @@ return false;
   the main logic for what to do when a message comes in from the popup menu
   ---------------------*/
   function runOnMsg(request, sender, sendResponse){
+  console.log("SARA: Setting up listeners for popup menu and background services");
     switch(request.action){
       /*
       case 'getEl':

@@ -90,6 +90,11 @@ function mkPstCntxtMnu(prfl){
         title: p[pos].nm,
         contexts: ["all"],
         parentId: prnt
+        },
+        (e)=>{
+          if(chrome.runtime.lastError){
+          console.log("SARA: Unable to generate context menu for paste-* on profile "+prfl+". Error: "+chrome.runtime.lastError.message);
+          }
         });
         //console.log("pusing into cntxtCchPst[] id:"+id);
         cntxtCchPst.unshift(id);
@@ -217,13 +222,17 @@ return rtrn;
 function chromeSendMsgErrHndl(action, tabs){
   if(chrome.runtime.lastError){
   console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
+  return true;
   }
+return false;
 }
 
 function chromeSendMsgErrHndlDtl(action, details){
   if(chrome.runtime.lastError){
   console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+details.tabId+"\nurl: \""+details.url+"\"");
+  return true;
   }
+return false;
 }
 
 //======================== functional code =============================
@@ -387,6 +396,10 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         title: val+": \""+msg.onEl.attr[val]+"\"",
         contexts: ["all"],
         parentId: "info"
+        }, (e)=>{
+          if(chrome.runtime.lastError){
+          console.log("SARA: Unable to populate info-* context menu. Error: "+chrome.runtime.lastError.message); 
+          }
         });
     });
   }
