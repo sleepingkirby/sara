@@ -130,7 +130,11 @@ function remakePstCntxtMnu(prfl){
 let max=cntxtCchPst.length;
   if(max>0){
     for(let i=0; i<max; i++){
-    chrome.contextMenus.remove(cntxtCchPst[i]);
+      chrome.contextMenus.remove(cntxtCchPst[i],(e)=>{
+        if(chrome.runtime.lastError){
+          console.log("SARA: Unable to populate remove context item: \""+tmp+"\" Error: "+chrome.runtime.lastError.message);
+        }
+      });
     }
   cntxtCchPst=[];
   }  
@@ -377,7 +381,11 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     var ids=Object.keys(cntxtCch);
     var tmp=ids.shift();
       while(tmp){
-      chrome.contextMenus.remove(tmp);
+        chrome.contextMenus.remove(tmp,(e)=>{
+          if(chrome.runtime.lastError){
+          console.log("SARA: Unable to populate remove context item: \""+tmp+"\" Error: "+chrome.runtime.lastError.message);
+          }
+        });
       tmp=ids.shift();
       }
     cntxtCch={};
