@@ -263,9 +263,10 @@ return false;
     try{
     chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
     }
-    catch(e){
-      if(ignErr===null){
-      ignErr=confirm("Hi, this is the extension \"SARA\". I've detected an error when trying to talk with another part of myself.\nThis is most likely because I was upgraded, reloaded or removed. In order for me to run correctly, this page will have to be reloaded. If this continues even after a reload, something is blocking me. Please troubleshoot by turning off other extensions, antivirus, firewalls or the like that might do this. \nClick \"OK\" to reload the page.\nClick \"Cancel\" to continue to work as it is. \n\n"+e);
+    catch(err){
+      var frames=document.getElementsByTagName("iframe");
+      if(ignErr===null&&frames.length<=0){
+      ignErr=confirm("Hi, this is the extension \"SARA\". I've detected an error when trying to talk with another part of myself.\nThis is most likely because I was upgraded, reloaded or removed. In order for me to run correctly, this page will have to be reloaded. If this continues even after a reload, something is blocking me. Please troubleshoot by turning off other extensions, antivirus, firewalls or the like that might do this. \nClick \"OK\" to reload the page.\nClick \"Cancel\" to continue to work as it is. \n\n"+err);
       }
       if(ignErr){
       location.reload();

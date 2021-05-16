@@ -132,7 +132,7 @@ let max=cntxtCchPst.length;
     for(let i=0; i<max; i++){
       chrome.contextMenus.remove(cntxtCchPst[i],(e)=>{
         if(chrome.runtime.lastError){
-          console.log("SARA: Unable to populate remove context item: \""+tmp+"\" Error: "+chrome.runtime.lastError.message);
+          console.log("SARA: Unable to populate remove context item: \""+cntxtCchPst[i]+"\" Error: "+chrome.runtime.lastError.message);
         }
       });
     }
@@ -423,7 +423,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     //console.log(tabs);
-    if(tabs[0].url==""||tabs[0].url.indexOf("chrome")==0){
+    if(!tabs||tabs.length<=0||!tabs.hasOwnProperty(0)||tabs[0].url==""||tabs[0].url.indexOf("chrome")==0){
     //url not loaded or not a valid URL do nothing.
     return null;
     }
