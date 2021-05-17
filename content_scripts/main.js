@@ -86,7 +86,7 @@ return false;
   }
 
   /*--------------------------------------------
-  pre: global element onEl
+  pre: global element onEl, copyHack()
   post: element onEl filled
   takes the string from the message, find the 
   value from the settings via the string, fills
@@ -119,12 +119,15 @@ return false;
           }
         }
       }
-      
+
       if(typeof ptr!="string" || typeof onEl!="object"){
       return null;
       }
 
+      console.log("SARA: pasting value \""+ptr+"\" into field");
       
+      copyHack(ptr);
+
       if(onEl.tagName.toLocaleLowerCase()=="input"){    
         switch(onEl.type){
         case "checkbox":

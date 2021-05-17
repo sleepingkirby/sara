@@ -493,6 +493,27 @@ var msgPrfl=document.getElementById("msgPrfl");
   msgPrfl.style.cssText="";
   });
 
+var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-right: 3px solid #0852ff;color: #0852ff;";
+
+  document.addEventListener("mouseover", (e)=>{
+    switch(e.target.getAttribute("act")){
+      case "hlId":
+      document.getElementById(e.target.getAttribute("for")).style.cssText=style;
+      break;
+      default:
+      break;
+    }
+  });
+
+  document.addEventListener("mouseout", (e)=>{
+    switch(e.target.getAttribute("act")){
+      case "hlId":
+      document.getElementById(e.target.getAttribute("for")).removeAttribute("style");
+      break;
+      default:
+      break;
+    }
+  });
 
   document.addEventListener("click", (e)=>{
     switch(e.target.getAttribute("act")){

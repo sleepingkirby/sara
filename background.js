@@ -462,9 +462,7 @@ chrome.webNavigation.onCompleted.addListener(function(details){
   //adds listeners for the right click/context menu so we know what to do if something is clicked
   chrome.contextMenus.onClicked.addListener(function(info, tabs) {
       // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
-      console.log(cntxtCch);
       if(info.menuItemId.substr(0,5) == "info-"){
-      console.log(cntxtCch.hasOwnProperty(info.menuItemId));
         if(cntxtCch.hasOwnProperty(info.menuItemId) && cntxtCch[info.menuItemId].hasOwnProperty("attr") && cntxtCch[info.menuItemId].hasOwnProperty("val")){
           chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
             chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}},(e)=>{chromeSendMsgErrHndlDtl("sendInfo", details);});

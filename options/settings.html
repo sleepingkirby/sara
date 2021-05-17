@@ -116,23 +116,43 @@
           <div class="version">Version: 1.0</div>
           <div class="version">*WARNING: DO NOT SAVE PASSWORDS INTO THIS PROGRAM. IT IS NOT MEANT FOR ANY DATA THAT ARE MEANT TO BE ENCRYPTED. IF IT IS INFO YOU DON'T FEEL COMFORTABLE IN SHARING WITH JOB RECRUITERS, INTERVIEWERS OR THE HR DEPARTMENT OF ANOTHER COMPANY, DO NOT SAVE IT HERE.*</div>
           <div class="title">How to use: </div>
-          <div class="body" style="margin-top: 32px;">Every form field should have a name and/or id attached. For this example, we just care about "<span style="font-weight:bold">first_name</span>":<br/>( I'm getting this info from "hover" or "floating id box" option. You can also get this via the right-click menu under the option "SARA" -&gt; "Copy Element Attr..." as well.)
+          <div class="body">
+          SARA lets you set up profiles and pre-enter information for web forms.  The default profile is set up for job applications, but you can create multiple profiles and use any of them as your default.  SARA looks for patterns in webform elements and fields that can then be matched to an element in your profile.
           </div>
-          <div class="pic" style="opacity: 0.75;">
-          <img src="./pics/form_empty.png" />
+          
+          <div class="body">
+          The <span class="hlId" act="hlId" for="profile">profile</span> tab is where you'll enter your resume (or other webform input) details. Review the existing template and add/remove fields as needed for your most commonly used job sites.
           </div>
-          <div class="body">In this case, it will match "<span style="font-weight:bold">first_name</span>" by "<span style="font-weight:bold">name</span>" then "<span style="font-weight:bold">first</span>" (order doesn't matter):</div>
-          <div class="pic">
-          <img src="./pics/options.png" style="border-bottom: 1px solid #303443;" />
+
+          <div class="body">
+          <span class="hlId" act="hlId" for="import">Import/Export</span> is to create a backup of your settings and details.  Click Export to create a text file of your settings that can later be imported if needed.
           </div>
-          <div class="body">Once it fills out the form for you, it'll tell you as such:</div>
+            
+          <div class="body">
+          Selecting "<span class="keyword">Auto Fill</span>" on the <span class="hlId" act="hlId" for="settings">Settings</span> tab will automatically fill in any webform on a page that you load. 
+          </div>
+
+          <div class="body">
+          Also in Settings, selecting "<span class="keyword">Floating ID box</span>" will give you a hover window with details on any element or field on a webpage that you mouse over.  This option can help you set up new fields in your profile to match commonly used webform elements.  
+          </div>
+
+          <div class="body">
+          The "<span class="keyword">Ignore List</span>" will tell autofill which sites to NOT autofill. 
+          </div>
+
+          <div class="body">
+          The "<span class="keyword">Apply List</span>" will autofill listed sites even when "<span class="keyword">Auto Fill</span>" is turned off. 
+          </div> 
+
+          <div class="body">
+          For cases when autofill does not find a match for every field, or if it matched against different data, you can use the right-click menu to fill them. When filling the field this way, the value of the field will be copied into your clipboard as well.
+          </div>
           <div class="pic" style="opacity:0.75;">
-          <img src="./pics/form_filled.png">
+          <img src="./pics/rightclickmenu.png">
           </div>
 
           <div class="title" style="margin-top:42px;">FAQ: </div>
           <div class="qs">Q: Is it matching case sensitive or case insensitive?<br/>A: Case <span style="font-weight:bold">IN</span>sensitive. If there is enough demand for allowing users to set case sensitivity, I'll go back and add the feature.</div>
-          <div class="qs">Q: Can the patterns be regular expression?<br/>A: Yes, but it hasn't been fully tested. I forsee no functional problems with using regular expression patterns, but it may be possible to escape the HTML with regex values. (If you have no idea what any of this means, don't worry about it. It won't apply to you.)</div>
           <div class="qs">Q: <span style="font-weight:bold;">Should I make every pattern unique?</span><br/>A: <span style="font-weight:bold;">Yes, yes, a thousand times yes.</span> Though it is possible (though manual editting of the settings. This should not be possible via this interface.) to have duplicate patterns, it provides <span style="font-weight:bold;">no benefit for the user to have duplicate patterns.</span></div>
           <div class="qs">Q: What if I want to make duplicates anyways?<br/>A: Sure, if you want. SARA should still work. But keep in mind that the search and fill functionality will probably not work as you intend it. See next question for explanation.</div>
           <div class="qs">Q: If 2 patterns match the same field, which has priority/how is it prioritized?<br/>A: None. The data structure that holds the pattern has no explicit order or priority (search "Does JavaScript guarantee object property order?" if you want to know more). So if 2 patterns matches the same field, there's no guarantee that the same pattern will be used every time. As such, I <span style="font-weight:bold;">HIGHLY RECOMMEND THAT EVERY PATTERN BE UNIQUE.</span></div>
@@ -149,7 +169,7 @@
             </ol>
           </div>
           <div class="qs">Q: When I press the "export" button in the "Import/Export" section, a bunch of code showed up! What is that all that? What do I do with it?<br/>A: That's a text presentation(JSON) for all the settings for the plugin. This way, in case you ever need to, you can transfer or back up all your settings, patterns and values for this extension. If you have a friend or colleague that also uses this extension, you can also share your settings.</div>
-          
+          <div class="qs">Q: Can the patterns be regular expression?<br/>A: Yes, but it hasn't been fully tested. I forsee no functional problems with using regular expression patterns, but it may be possible to escape the HTML with regex values. (If you have no idea what any of this means, don't worry about it. It won't apply to you.)</div>
           <div class="qs">Q: Everything's so dark? Is there a light mode?<br/>A: By default, I try to make all of my projects' colors and themes dark. Most people that I know that work on computers a lot prefer dark mode by default, myself included. If this is a hinderance to you, contact me and we can discuss what you need.</div>
           <div class="qs">Q: Does this program track anything? Do you capture and/or send any personal data? <br/>A: No. I know a lot of cheap or free programs like to, but I hate that and have no interest in people's personal info or data. Though, since this is a google chrome extension, there may be some tracking through the chrome browser itself. But, as long as I'm in charge of this extension, there will be no user tracking/gathering of personal data/information.</div>
           <div class="qs">Q: I found a bug/I would like to request a new feature! Where can I contact you?<br/>A: My contact information is in the "About" section below. Please keep in mind that any unsolicated advertisement or bulk business inquries will promptly be marked as spam and deleted.</div>
