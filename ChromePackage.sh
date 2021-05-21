@@ -1,3 +1,3 @@
 #!/bin/bash
-rm releases/psjs_chrome.zip
-zip -r releases/psjs_chrome.zip background.js common.js content_scripts/ icons manifest.json options/ popup/
+rm releases/sara_chrome.zip
+zip -r releases/sara_chrome.zip background.js content_scripts/ icons manifest.json options/ popup/
