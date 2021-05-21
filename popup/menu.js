@@ -75,7 +75,7 @@ var act=null;
       chrome.runtime.openOptionsPage();     
       break;
       case 'donate':
-      chrome.tabs.create({url: 'https://b3spage.sourceforge.io/index.html?psjs'});
+      chrome.tabs.create({url: 'https://b3spage.sourceforge.io/index.html?sara'});
       break;
       case 'btnFllId':
       chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
