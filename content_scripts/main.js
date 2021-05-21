@@ -93,6 +93,7 @@ return false;
   the onEl with the value.
   ---------------------------------------------*/ 
   function pasteVal(str){
+  //console.log("SARA: starting pasteVal: "+str);
     if(typeof str!="string" || str==""){
     return null;
     }
@@ -100,6 +101,7 @@ return false;
   let tmp=str.split('|');
   prfl=tmp[1];
   tmp=tmp[0].split('-');
+  console.log(tmp);
 
   let rtrn="";
   let ptr=null;
@@ -120,12 +122,16 @@ return false;
         }
       }
 
+    //console.log("found: "+ptr);
       if(typeof ptr!="string" || typeof onEl!="object"){
+      console.log("SARA: Attempt to paste value into field failed. Field either not an object or value not a string.");
+      console.log(onEl);
+      console.log(prt);
       return null;
       }
 
       console.log("SARA: pasting value \""+ptr+"\" into field");
-      
+      console.log(onEl);      
       copyHack(ptr);
 
       if(onEl.tagName.toLocaleLowerCase()=="input"){    
@@ -209,7 +215,8 @@ return false;
   the main logic for what to do when a message comes in from the popup menu
   ---------------------*/
   function runOnMsg(request, sender, sendResponse){
-  console.log("SARA: Setting up listeners for popup menu and background services");
+  //console.log("SARA: Heard message from. Running action: "+request.action);
+  //console.log(request);
     switch(request.action){
       /*
       case 'getEl':
@@ -283,6 +290,7 @@ return false;
   function to capture what element was right-clicked on
   ---------------------------------------------------*/
   function rghtClckOnEl(e){
+  console.log(e);
   onEl=e.path[0];
   }
 

@@ -1,7 +1,7 @@
 
 function setMsg(id,txt){
   document.getElementById(id).innerText+="- "+txt+"\n";
-  document.getElementById(id).style.cssText="animation: opac 5s;";
+  document.getElementById(id).style.cssText="animation: opac 7s;";
 }
 
 //gets hostname from url
@@ -134,6 +134,23 @@ var max=arr.length;
   var nw=false;
   var pRef=ref;
   var pId=null;
+
+  //verifying patt1 doesn't already exist in another category. This can lead to profiles/profile_meta desync from category deletion.
+  var p1w=false;
+  var ctgId=0;
+  var patt1Chck=d.profile_meta[prf][0].hash;// d.profile_meta[prf][0].hash should always exist
+  var ctgHash=Object.keys(patt1Chck);
+  var ctgHashM=ctgHash.length;
+  var subRef=null;
+    for(let i=0;i<ctgHashM;i++){
+      subRef=patt1Chck[ctgHash[i]]; //ctgHash[i] should be like "exp" or "stat", aka, patt1 name. patt1Chck[ctgHash[i]] should therefore be the id for that patt
+      if(d.profile_meta[prf][subRef].hash.hasOwnProperty(a[2])&&a[1]!=d.profile_meta[prf][subRef].nm){
+      setMsg("msgPrfl", "Value for the first pattern: \""+a[2]+"\", already exists in category: \""+ctgHash[i]+"\". Please make sure the first pattern is unique.");
+      return null;
+      }
+    }
+
+
     while(i<max){
       //console.log("================ "+ i +"/"+max+": "+ a[i]+"============>>");
       //console.log(ref);
