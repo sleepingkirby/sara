@@ -290,7 +290,6 @@ return false;
   function to capture what element was right-clicked on
   ---------------------------------------------------*/
   function rghtClckOnEl(e){
-  console.log(e);
   onEl=e.path[0];
   }
 
@@ -489,6 +488,8 @@ return false;
   var s=str;
   var ks=Object.keys(h);
   var hsh_ind="";
+  var trl="";
+  var cm="";
   var rtrn=null;
     while(typeof h=="object" && ks.length>0 && rtrn==null){
     hsh_ind=ks.shift();
@@ -498,10 +499,15 @@ return false;
         if(typeof h[hsh_ind]=="object"){
         h=h[hsh_ind];
         ks=Object.keys(h);
+        trl+=cm+hsh_ind;
+        cm="->";
         }
         else{
         //if the pattern matches and the pattern is an index for not an object, it's the final value.
         rtrn=h[hsh_ind];
+        trl+=hsh_ind;
+        console.log("SARA: match found for \""+s+"\", with trial \""+trl+"\", with value \""+rtrn+"\"");
+        return rtrn;
         }
       }
     }
