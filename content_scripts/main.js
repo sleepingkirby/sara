@@ -101,7 +101,6 @@ return false;
   let tmp=str.split('|');
   prfl=tmp[1];
   tmp=tmp[0].split('-');
-  console.log(tmp);
 
   let rtrn="";
   let ptr=null;
@@ -125,13 +124,13 @@ return false;
     //console.log("found: "+ptr);
       if(typeof ptr!="string" || typeof onEl!="object"){
       console.log("SARA: Attempt to paste value into field failed. Field either not an object or value not a string.");
-      console.log(onEl);
-      console.log(prt);
+      //console.log(onEl);
+      //console.log(prt);
       return null;
       }
 
       console.log("SARA: pasting value \""+ptr+"\" into field");
-      console.log(onEl);      
+      //console.log(onEl);      
       copyHack(ptr);
 
       if(onEl.tagName.toLocaleLowerCase()=="input"){    
@@ -258,7 +257,7 @@ return false;
       sendResponse(true);
       break;
       default:
-      console.log(request);
+      //console.log(request);
       sendResponse("default");
       break;
     }
@@ -540,8 +539,13 @@ return false;
   el.firstChild.textContent=msg;
 
     el.onanimationend=(e)=>{
-    document.body.removeChild(el);
-    document.head.removeChild(sty);
+      try{
+      document.body.removeChild(el);
+      document.head.removeChild(sty);
+      }
+      catch(err){
+      console.log("SARA: unable to remove element and/or style for the over page message. This is okay if the element doesn't exist. "+err);
+      }
     };
 
   document.body.appendChild(el);
