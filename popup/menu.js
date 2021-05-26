@@ -214,7 +214,7 @@ function getCurHost(fnc, fncPrms){
 
   function strToHsh(str){
     if(typeof str !="string"){
-    console.log("not strin?");
+    //console.log("not strin?");
     return null;
     }
   var s=str;
