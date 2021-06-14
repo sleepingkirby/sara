@@ -482,6 +482,7 @@ var el=document.getElementById(elId);
 var d=JSON.parse(el.value);
 
   chrome.storage.local.set(d, (e)=>{
+  fillSlct("prflSlct", getURLVar());
   setMsg("msgPrfl", "Settings imported.");
   });
 return true;
