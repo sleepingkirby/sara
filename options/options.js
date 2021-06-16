@@ -594,7 +594,7 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       break;
       case "imprtClr":
       //clear textarea
-      document.getElementById(e.target.getAttribute("forel")).textContent="dasdfa";
+      document.getElementById(e.target.getAttribute("forel")).textContent="";
       break;
       case "imprtExprt":
       //post JSON.stringify of chrome storage
