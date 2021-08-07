@@ -183,6 +183,10 @@ var act=null;
         chrome.storage.local.set(d);
         });
       break;
+      case 'fPnl':
+          chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, {action: 'fPnlTgl', msg:{val:e.target.checked}});
+          });
       default:
       console.log(e.target);
       break;
@@ -326,6 +330,9 @@ af.checked=d.settings.autoFill;
 
 var hov=document.getElementById("hvrId");
 hov.checked=d.settings.hoverId;
+
+var hov=document.getElementById("fPnlId");
+hov.checked=d.settings.floatPnl;
 
 var curDef=document.getElementById("curDefId");
 curDef.checked=d.settings.curDef;

@@ -256,6 +256,17 @@ return false;
       copyHack(getValFrmElTyp(onEl));
       sendResponse(true);
       break;
+      case 'fPnlTgl':
+        chrome.storage.local.get(null,(d)=>{
+        floatPnlDt(d, request.msg.val);
+        });
+      sendResponse(true);
+      break;
+      case 'closeFltPnl':
+        chrome.storage.local.get(null, (d)=>{
+        floatPnlDt(d, d.settings.floatPnl);
+        });
+      break;
       default:
       //console.log(request);
       sendResponse("default");
@@ -430,6 +441,60 @@ return false;
       }
     };
   }
+
+  /*---------------------------------------------------
+  ---------------------------------------------------*/
+  function floatPnlDt(data, tgl){
+  var id="extIdNmSARAFPnl";
+    if(!tgl){
+        data.settings['floatPnl']=false;
+          chrome.storage.local.set(data,(e)=>{
+          var el=document.getElementById(id);
+            if(el && el.nodeType){
+            document.body.removeChild(el);
+            }
+          });
+    return 1;
+    } 
+
+    //if float panel is toggled, look to see if floating panel already exists, if so, do nothing
+    var el=document.getElementById(id);
+    if(el && el.nodeType){
+    return 0;
+    }
+
+    data.settings['floatPnl']=true;
+    chrome.storage.local.set(data,(e)=>{
+    el=document.createElement("div");
+    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#cccccc;background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;white-space:pre-wrap;word-break:break-all;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #cccccc";
+    el.id=id;
+    el.draggable=true;
+      el.addEventListener("dragstart", (e)=>{
+      e.target.setAttribute("prevX", e.offsetX);
+      e.target.setAttribute("prevY", e.offsetY);
+      });
+      el.addEventListener("dragend", (e)=>{
+      var pos=e.target.getBoundingClientRect();
+      var prevX=e.target.getAttribute("prevX");
+      var prevY=e.target.getAttribute("prevY");
+      e.target.style.top=(pos.y+e.offsetY-prevY)+"px";
+      e.target.style.left=(pos.x+e.offsetX-prevX)+"px";
+      });
+    
+    var cls=document.createElement("div");
+    cls.style.cssText="display: flex; align-self: flex-end; border:1px solid #cccccc; padding: 2px 2px 2px 2px; border-radius: 3px;";
+    cls.textContent='x';
+      cls.addEventListener("click", (e)=>{
+      data.settings['floatPnl']=false;
+        chrome.storage.local.set(data,(e)=>{
+        document.body.removeChild(el);
+        });
+      });
+    el.appendChild(cls); 
+    document.body.appendChild(el);
+    });
+  }
+
 
   /*--------------------------------------------------------
   pre:
@@ -695,6 +760,9 @@ applyHsh=strToApplyLst(d.settings.applyLst);
 
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
+
+//see if floating panel
+floatPnlDt(d, d.settings.floatPnl);
 
 isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
 

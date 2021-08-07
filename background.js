@@ -344,6 +344,7 @@ chrome.storage.local.get(null,(d)=>{
       settings:{
       autoFill: false,
       hoverId: false,
+      floatPnl: false,
       def_profile: "default",
       cur_profile: "default",
       curDef: false,
@@ -444,6 +445,11 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
         //console.log("applying profile:"+ curPrfl);
         remakePstCntxtMnu(curPrfl);
         }
+      });
+
+      //determines if floating panel should be there on new and/or old tabs.
+      chrome.tabs.sendMessage(tabs[0].id,{action: "closeFltPnl"},(e)=>{
+      chromeSendMsgErrHndl("closeFltPnl", tabs);
       });
     });
   });

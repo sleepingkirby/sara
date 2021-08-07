@@ -27,13 +27,17 @@
     <div class="row rowRght" style="margin-bottom: 3px;" >
       <div style="margin-right: 6px;">selected profile: </div><select id="prflSlct" act="setPgPrfl" class="prflSlctDmn"></select>
     </div>
-    <div class="row rowRght" style="margin-bottom: 22px;">
+    <div class="row rowRght" style="margin-bottom: 10px;">
       <label for="curDefId" style="border: none;">keep selected:</label>
       <input id="curDefId" act="tglCurDef" class="tgglBtn" type="checkbox" style="display: flex;" />
     </div>
     <div class="row" style="padding-top: 8px; border-top: 1px solid #888888; justify-content: space-between;">
+      <input id="fPnlId" act="fPnl" class="tgglBtn" type="checkbox" />
+      <label act="fPnl" class="tgglBtn" for="fPnlId">data float</label>
       <input id="hvrId" act="tglHvr" class="tgglBtn" type="checkbox" />
       <label act="tglHvr" class="tgglBtn" for="hvrId">hover</label>
+    </div>
+    <div class="row" style="padding-top: 8px; justify-content: flex-end;">
       <button id="btnFllId" act="fill" >fill form</button>
     </div>
     <div class="row" style="justify-content: flex-end; margin-top: 6px;">
