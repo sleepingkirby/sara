@@ -44,7 +44,8 @@ padding: 4px;
 }
 
 textarea::placeholder,input::placeholder{
-color: #444444;
+color: #505050;
+font-style: italic;
 }
 
 button{
@@ -296,8 +297,8 @@ border: 0px solid #888888;
 
 #prflNewFrm:hover div.prflNewInpt{
 border: 1px solid #888888;
-width: 80px;
-max-width: 300px;
+width: 135px;
+max-width: 350px;
 min-width: 80px;
 margin-right: 10px;
 transition-delay: 0s;

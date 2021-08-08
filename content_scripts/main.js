@@ -552,16 +552,16 @@ window.hasRun = true;
       var curId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
         //if the element exists in the profile_meta AND the element has sub elements, but also don't process the root node (stack.length<=1).
         if(meta.hasOwnProperty(curId) && ((meta[curId].ord.length>0 && Object.keys(meta[curId].hash).length>0)||stack.length<=1)){
-        rtrn+="<div style=\"display: flex; flex-direction: column;\"> \
-                <span>"+meta[curId].nm+"</span> \
-                <div style=\"display: flex; padding: 2px 0px 2px 10px; flex-direction: column;\"> \
+        rtrn+="<div style=\"display: flex; flex-direction: column; margin-top: 6px;\"> \
+                <span style=\"font-weight: 900;\">"+meta[curId].nm.toUpperCase()+"</span> \
+                <div style=\"display: flex; padding: 2px 0px 2px 20px; flex-direction: column;\"> \
               ";
         stack.push({n:curId,i:0});
         }
         else{
         //else,it's a leaf node
         let val=getValTree(stack, meta, prof, meta[curId].nm);
-        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; margin: 0px 0px 4px 0px; border:1px solid; border-radius: 4px; padding: 0px 2px 0px 4px; width: fit-content; white-space:nowrap;" act="'+act+'" val="'+toHtmlEnt(val)+'">'+meta[curId].nm+' : <div style="padding-left: 6px; text-overflow:ellipsis; overflow: hidden; border-radius: 4px; width: 80px; margin-left: 6px; white-space:nowrap;" type="text" >'+val+'</div></div>';
+        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; align-items: center; margin: 0px 0px 4px 0px; padding: 0px 2px 0px 4px; white-space:nowrap; cursor: copy; width: 100%;" act="'+act+'" val="'+toHtmlEnt(val)+'"><div style=\"display: flex; margin-right: 6px;\">&bull;</div>'+meta[curId].nm+': <div style="text-overflow:ellipsis; overflow: hidden; border-radius: 4px; margin-left: 6px; white-space:nowrap;" type="text" >'+val+'</div></div>';
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
@@ -594,7 +594,7 @@ window.hasRun = true;
     data.settings['floatPnl']=true;
     chrome.storage.local.set(data,(e)=>{
     el=document.createElement("div");
-    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#AAAAAA; background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #AAAAAA";
+    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#AAAAAA; background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #AAAAAA; font-family: sans-serif; cursor: grab;";
     el.id=id;
     el.draggable=true;
     el.innerHTML=trvrsDrwPrfl(data,prfl);
