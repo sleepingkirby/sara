@@ -6,27 +6,56 @@
  * If this content script is injected into the same page again,
  * it will do nothing next time.
  */
-if (window.hasRun) {
+  if (window.hasRun) {
   return true;
-}
+  }
 window.hasRun = true;
 
 
-//validate Str
-function validStr(str){
-  if( str && (typeof str === 'string' || str instanceof String) && str!=""){
-  return str;
+  //validate Str
+  function validStr(str){
+    if( str && (typeof str === 'string' || str instanceof String) && str!=""){
+    return str;
+    }
+  return "";
   }
-return "";
-}
 
-function strToBool(str){
-  if(str.toLocaleLowerCase()=="true"){
+  function strToBool(str){
+    if(str.toLocaleLowerCase()=="true"){
     return true
+    }
+  return false;
   }
-return false;
-}
 
+  //I can't believe that this function doesn't exist in javascript
+  // makes O'Reily into O\'Reily or "air quotes" into \"air quotes\"
+  function addslashes(str){
+  return str.replace(/['"\\]/g, '\\$&');
+  }
+
+  //convert special characters to html entities.
+  function toHtmlEnt(str){
+  var rtrn=str;
+  rtrn=rtrn.replace(/'/g, '&apos;');
+  rtrn=rtrn.replace(/"/g, '&quot;');
+  rtrn=rtrn.replace(/\\/g, '&bsol;');
+  rtrn=rtrn.replace(/</g, '&lt;');
+  rtrn=rtrn.replace(/>/g, '&gt;');
+  rtrn=rtrn.replace(/&/g, '&amp;');
+  return rtrn;
+  }
+
+  //convert special characters back from html entities
+  function fromHtmlEnt(str){
+  var rtrn=str;
+  rtrn=rtrn.replace(/&apos;/g, '\'');
+  rtrn=rtrn.replace(/&quot;/g, '"');
+  rtrn=rtrn.replace(/&bsol;/g, '\\');
+  rtrn=rtrn.replace(/&lt;/g, '<');
+  rtrn=rtrn.replace(/&gt;/g, '>');
+  rtrn=rtrn.replace(/&amp;/g, '&');
+  return rtrn;
+  }
 
 //gets hostname from url
   function hostFromURL(str){
@@ -258,14 +287,20 @@ return false;
       break;
       case 'fPnlTgl':
         chrome.storage.local.get(null,(d)=>{
-        floatPnlDt(d, request.msg.val);
+        let prfl=getPgPrfl();
+          if(!prfl){
+          let applyHsh=strToApplyLst(d.settings.applyLst);
+          prfl=dtrmnPrfl(window.location.host, d, applyHsh);
+          }        
+        floatPnlDt(d, request.msg.val, prfl);
         });
       sendResponse(true);
       break;
       case 'closeFltPnl':
         chrome.storage.local.get(null, (d)=>{
-        floatPnlDt(d, d.settings.floatPnl);
+        floatPnlDt(d, d.settings.floatPnl, null);
         });
+      sendResponse(true);
       break;
       default:
       //console.log(request);
@@ -276,7 +311,7 @@ return false;
 
   /*-------------------------
   pre: onEl exists, mouseover event passed down, elToObj()
-  post: mouseover event listener added
+  post: process mouseover event
   sends message current element as object to background script
   -------------------------*/
   function elObjToBG(e){
@@ -293,6 +328,26 @@ return false;
       }
     }
   }
+
+  /*---------------------
+  pre: elObjToBG()
+  post: process mouseover event
+  wrapper for mouseover events
+  ---------------------*/
+  function mouseOvrEvnt(e){
+  var act="extIdNmSARAActCopy";
+  
+    if(e.target.getAttribute('act')==act){
+    var vl=fromHtmlEnt(e.target.getAttribute('val'));
+    copyHack(vl);
+    setMsg('"'+vl+'" copied');
+    console.log(vl);
+    }
+    else{
+    elObjToBG(e);
+    }
+  }
+  
 
   /*---------------------------------------------------
   pre: global variable onEl 
@@ -442,9 +497,82 @@ return false;
     };
   }
 
+  //gets value from the profile data according to the stack and leaf
+  //see used in trvrsDrwPrfl()
+  function getValTree(stk, meta, prf, leaf){
+  var max=stk.length;
+    if(max<=1){
+    return '';
+    }
+  var i=0;
+  var val='';
+  var pos=prf;
+    for(var i=0; i<max; i++){
+      if(pos.hasOwnProperty(meta[stk[i].n].nm)){
+      pos=pos[meta[stk[i].n].nm];
+      }
+    }
+   
+    if(pos.hasOwnProperty(leaf) && typeof pos[leaf]=="string"){
+    return pos[leaf];
+    }
+  return '';
+  }
+
+
+  /*----------------------------
+  pre: getVal()
+  post: none
+  generates html for the float panel
+  ----------------------------*/
+  //traverse and draw profile 
+  function trvrsDrwPrfl(d,p){
+  var act="extIdNmSARAActCopy";
+  var stack=[];
+  var prof=d.profiles[p];
+  var meta=d.profile_meta[p];
+  var settings=d.settings;
+  var rtrn='';
+  var path=[];
+  stack.push({n:0,i:0});
+
+    while(stack.length>0){
+      //if the current id (stack[last].i) is beyond the last element in meta[curId].ord, pop the current entry in stack as we're done with it.
+      if(stack[stack.length-1].i>(meta[stack[stack.length-1].n].ord.length-1)){
+      stack.pop();
+        if(stack.length>0){
+        stack[stack.length-1].i = stack[stack.length-1].i +1;
+        }
+      rtrn+="    </div> \
+            </div> \
+            <div style=\"display: flex; width:100%; margin: 6px 0px 6px 0px; height:0px;\">&nbsp</div>\
+            ";
+      }
+      else{
+      var curId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
+        //if the element exists in the profile_meta AND the element has sub elements, but also don't process the root node (stack.length<=1).
+        if(meta.hasOwnProperty(curId) && ((meta[curId].ord.length>0 && Object.keys(meta[curId].hash).length>0)||stack.length<=1)){
+        rtrn+="<div style=\"display: flex; flex-direction: column;\"> \
+                <span>"+meta[curId].nm+"</span> \
+                <div style=\"display: flex; padding: 2px 0px 2px 10px; flex-direction: column;\"> \
+              ";
+        stack.push({n:curId,i:0});
+        }
+        else{
+        //else,it's a leaf node
+        let val=getValTree(stack, meta, prof, meta[curId].nm);
+        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; margin: 0px 0px 4px 0px; border:1px solid; border-radius: 4px; padding: 0px 2px 0px 4px; width: fit-content; white-space:nowrap;" act="'+act+'" val="'+toHtmlEnt(val)+'">'+meta[curId].nm+' : <div style="padding-left: 6px; text-overflow:ellipsis; overflow: hidden; border-radius: 4px; width: 80px; margin-left: 6px; white-space:nowrap;" type="text" >'+val+'</div></div>';
+        stack[stack.length-1].i = stack[stack.length-1].i +1;
+        }
+      }
+    }
+  return rtrn;
+  }
+
+
   /*---------------------------------------------------
   ---------------------------------------------------*/
-  function floatPnlDt(data, tgl){
+  function floatPnlDt(data, tgl, prfl){
   var id="extIdNmSARAFPnl";
     if(!tgl){
         data.settings['floatPnl']=false;
@@ -466,9 +594,11 @@ return false;
     data.settings['floatPnl']=true;
     chrome.storage.local.set(data,(e)=>{
     el=document.createElement("div");
-    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#cccccc;background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;white-space:pre-wrap;word-break:break-all;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #cccccc";
+    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#AAAAAA; background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #AAAAAA";
     el.id=id;
     el.draggable=true;
+    el.innerHTML=trvrsDrwPrfl(data,prfl);
+
       el.addEventListener("dragstart", (e)=>{
       e.target.setAttribute("prevX", e.offsetX);
       e.target.setAttribute("prevY", e.offsetY);
@@ -490,7 +620,8 @@ return false;
         document.body.removeChild(el);
         });
       });
-    el.appendChild(cls); 
+    el.insertBefore(cls, el.firstChild); 
+
     document.body.appendChild(el);
     });
   }
@@ -745,7 +876,7 @@ var isApply=false; //is this domain in apply list?
 var curPrfl=null; //profile name to apply for this page 
 var dmn=window.location.host;//domain of current page/
 
-document.addEventListener("mouseover", elObjToBG);
+document.addEventListener("mouseover", mouseOvrEvnt);
 document.addEventListener("contextmenu", rghtClckOnEl);
 
 chrome.storage.local.get(null, function(d){
@@ -761,13 +892,14 @@ applyHsh=strToApplyLst(d.settings.applyLst);
 //see if need to make hoverid. element.
 hoverId(d.settings.hoverId);
 
-//see if floating panel
-floatPnlDt(d, d.settings.floatPnl);
-
 isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
 
 
 curPrfl=dtrmnPrfl(dmn, d, applyHsh);
+
+//see if floating panel should exist
+floatPnlDt(d, d.settings.floatPnl, curPrfl);
+
   //if this fails, we can't do the rest. Stop here
   if(curPrfl==false){
   console.log("SARA: No profiles found. Nothing to do.");

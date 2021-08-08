@@ -803,7 +803,7 @@ var rtrn="";
     var idPre="stdPath";
     while(stack.length>0){
 
-      //if current location's index is beyond the arr.length, pop the stack
+      //if the current id (stack[last].i) is beyond the last element in meta[curId].ord, pop the current entry in stack as we're done with it.
       if(stack[stack.length-1].i>(meta[stack[stack.length-1].n].ord.length-1)){
       stack.pop();
         if(stack.length>0){
