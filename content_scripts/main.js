@@ -340,7 +340,7 @@ window.hasRun = true;
     if(e.target.getAttribute('act')==act){
     var vl=fromHtmlEnt(e.target.getAttribute('val'));
     copyHack(vl);
-    setMsg('"'+vl+'" copied');
+    //setMsg('"'+vl+'" copied');
     console.log(vl);
     }
     else{
@@ -574,6 +574,7 @@ window.hasRun = true;
   ---------------------------------------------------*/
   function floatPnlDt(data, tgl, prfl){
   var id="extIdNmSARAFPnl";
+  var ttlId="extIdNmSARAFPnlTtl";
     if(!tgl){
         data.settings['floatPnl']=false;
           chrome.storage.local.set(data,(e)=>{
@@ -610,9 +611,14 @@ window.hasRun = true;
       e.target.style.top=(pos.y+e.offsetY-prevY)+"px";
       e.target.style.left=(pos.x+e.offsetX-prevX)+"px";
       });
+   
+    var ttl=document.createElement("div");
+    ttl.style.cssText="display: flex; flex-direction: row; justify-content: center; align-item: center; align-self: center; background-color: black; overflow: hidden; text-overflow: ellipsis; flex-grow: 10; font-weight: 900; position: fixed;";
+    ttl.id=ttlId;
+    ttl.textContent="Quick Copy Panel";
     
     var cls=document.createElement("div");
-    cls.style.cssText="display: flex; align-self: flex-end; border:1px solid #cccccc; padding: 2px 2px 2px 2px; border-radius: 3px;";
+    cls.style.cssText="display: flex; align-self: flex-end; border:1px solid #cccccc; background-color: black; padding: 2px 2px 2px 2px; border-radius: 3px; position: fixed;";
     cls.textContent='x';
       cls.addEventListener("click", (e)=>{
       data.settings['floatPnl']=false;
@@ -620,7 +626,15 @@ window.hasRun = true;
         document.body.removeChild(el);
         });
       });
+
+    var spc=document.createElement("div");
+    spc.textContent="&nbsp;";
+    spc.style.cssText="display: flex; opacity: 0;";
+
+
+    el.insertBefore(ttl, el.firstChild); 
     el.insertBefore(cls, el.firstChild); 
+    el.insertBefore(spc, el.firstChild); 
 
     document.body.appendChild(el);
     });
