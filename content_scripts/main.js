@@ -595,10 +595,9 @@ window.hasRun = true;
     data.settings['floatPnl']=true;
     chrome.storage.local.set(data,(e)=>{
     el=document.createElement("div");
-    el.style.cssText="position: fixed; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; width: calc(25vw - 20px); height: calc(100vh - 20px); z-index: 9999999; opacity: 0.75; color:#AAAAAA; background-color:black;border-radius:6px;padding: 6px 6px 6px 10px;max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize:both; overflow: auto; min-height: 30px; min-width: 60px; border: 1px solid #AAAAAA; font-family: sans-serif; cursor: grab;";
+    el.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; opacity: 0.75; color:#AAAAAA; background-color:black; border-radius:6px; box-sizing: border-box; border: 1px solid #AAAAAA; font-family: sans-serif; cursor: grab; position: fixed; z-index: 9999999;";
     el.id=id;
     el.draggable=true;
-    el.innerHTML=trvrsDrwPrfl(data,prfl);
 
       el.addEventListener("dragstart", (e)=>{
       e.target.setAttribute("prevX", e.offsetX);
@@ -611,14 +610,17 @@ window.hasRun = true;
       e.target.style.top=(pos.y+e.offsetY-prevY)+"px";
       e.target.style.left=(pos.x+e.offsetX-prevX)+"px";
       });
-   
+  
+    var hd=document.createElement("div");
+    hd.style.cssText="display:flex; flex-direction:row; justify-content: stretch; align-items: stretch;";
+ 
     var ttl=document.createElement("div");
-    ttl.style.cssText="display: flex; flex-direction: row; justify-content: center; align-item: center; align-self: center; background-color: black; overflow: hidden; text-overflow: ellipsis; flex-grow: 10; font-weight: 900; position: fixed;";
+    ttl.style.cssText="display: flex; flex-direction: row; justify-content: center; align-items: center; overflow: hidden; text-overflow: ellipsis; flex-grow: 10; font-weight: 900;";
     ttl.id=ttlId;
     ttl.textContent="Quick Copy Panel";
     
     var cls=document.createElement("div");
-    cls.style.cssText="display: flex; align-self: flex-end; border:1px solid #cccccc; background-color: black; padding: 2px 2px 2px 2px; border-radius: 3px; position: fixed;";
+    cls.style.cssText="display: flex;  border:1px solid #cccccc; margin: 4px 4px 4px 0px; padding: 2px 2px 2px 2px; border-radius: 6px; cursor: default;";
     cls.textContent='x';
       cls.addEventListener("click", (e)=>{
       data.settings['floatPnl']=false;
@@ -627,14 +629,15 @@ window.hasRun = true;
         });
       });
 
-    var spc=document.createElement("div");
-    spc.textContent="&nbsp;";
-    spc.style.cssText="display: flex; opacity: 0;";
+    hd.appendChild(ttl);
+    hd.appendChild(cls);
 
+    var bdy=document.createElement("div");
+    bdy.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; width: calc(25vw - 20px); height: calc(100vh - 50px); border-radius:6px; padding: 6px 6px 6px 10px; max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize: both; overflow: auto; min-height: 50px; min-width: 180px; font-family: sans-serif; cursor: grab;";
+    bdy.innerHTML=trvrsDrwPrfl(data,prfl);
 
-    el.insertBefore(ttl, el.firstChild); 
-    el.insertBefore(cls, el.firstChild); 
-    el.insertBefore(spc, el.firstChild); 
+    el.appendChild(hd); 
+    el.appendChild(bdy); 
 
     document.body.appendChild(el);
     });
