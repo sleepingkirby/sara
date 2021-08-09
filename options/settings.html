@@ -151,8 +151,114 @@
           <img src="./pics/rightclickmenu.png">
           </div>
 
+          <div class="title" style="margin-top:42px;">How It Works: </div>
+          <div class="body">
+          This is the more advanced context for how all this works. If you want to do more than just fill out basic forms, definitely read this.
+          </div>
+          <div class="body">
+          Did you know, behind every field on a web form...
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/behind_every_field.png">
+          </div>
+          
+          <div class="body">
+          ...there's a bunch of information stored (property values) into it?
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/theres_a_bunch_of_properties.png">
+          </div>
+
+          <div class="body" style="font-weight: 900; margin: 20px 20px 50px 20px;">
+          *What this extension does, is takes "matching names" and tries to [partial] match them to any of these "property values". It can try to match to the same field with multiple "matching names" to find what value/text you really want to fill the field with.*
+          </div>
+          
+          <div class="body">
+          Don't worry if this sounds confusing now. We'll go through an example together.
+          </div>
+          
+          <div class="body" style="margin-top:10px;">
+          Let's say we want to match this "First Name" field. Looking at the properties of these fields, we'll just pick any one property at random. <b>"infoFirstName"</b> will do nicely because it's nice and descriptive of what this field is for. But also, there's a high likelihood that other forms of this type will name it similarly/have properties of a similar name.
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/lets_say_we_want_to_match_this.png">
+          </div>
+
+          <div class="body">
+          When you go into the settings of this extension, you should see something (or you can make) like this:
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/in_settings_you_can_see_or_make.png">
+          </div>
+
+          <div class="body">
+          If it's not obvious, here's what all these fields are:
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/these_are_category_matching_name.png">
+          </div>
+        
+          <div class="body">
+          As stated before, <b>this extension will try to take "matching names" and partial match them to any property value.</b> We've picked the property value of <b>"infoFirstName"</b>. <br> 1) So we'll have set <b>"matching name 1"</b> with <b>"name"</b> first. 2) And, under that, we'll set <b>"matching name 2"</b> with <b>"first"</b>. <br><br><b>*NOTE: Categories are not used for matching at all. They are there for your personal organization purposes.*</b>
+          </div>
+
+          <div class="body">
+          So you can imagine it like this:
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/so_itll_look_like_this.png">
+          </div>
+
+          <div class="body">
+          When the extension tries to see if this first name field is something it should fill, it'll try to match the word <b>"name"</b> first. And, if <b>"infoFirstName"</b> does have the word <b>"name"</b> in it, it'll try to see if "last", <b>"first"</b> or "full_name" is in the word <b>"infoFirstName"</b>. Since <b>"first"</b> is, the extension will see that you want to fill this field with the value/text <b>"Sam"</b>.
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/plugin_will_try_to_match_like_this.png">
+          </div>
+
+          <div class="body">
+          So now that this is set, we can go back to the form (might need to refresh the page if you newly added matching name and values) and through the <b>popup menu</b> of this extension, click <b>"fill form"</b>.
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/by_clicking_on_the_fill_form_button.png">
+          </div>
+
+          <div class="body">
+          And, as you can see, it found and filled out the first name field. It even tells you when it does this and how many fields it filled out (whether or not you can see them) for you.
+          </div>
+
+          <div class="body">
+          And that's basically how it works. There are other functions of course, an apply list so it'll automatically fill any forms on a specific domain, fill forms on all domains (autofill), don't fill out forms on specific domains when autofill is turned on, etc. But I'll leave you to play with them and see what you can do.
+          </div>
+
+          <div class="body" style="font-weight: 900;">
+          By the way, if you're wondering how you can find the property values of a field yourself without being a coder, it's right here:
+          </div>
+
+          <div class="pic" style="opacity:0.75;">
+          <img src="./pics/please_note_element_properties.png">
+          </div>
+
+          <div class="body">
+          That's the <b>"right click" menu</b> (context menu). Simply right click on a field and, under the <b>"SARA"</b>, go to <b>"Element Properties: &lt;something&gt;"</b>, and it will display all the properties and property values of that field.
+          </div>
+
+          <div class="body">
+          And that's that. If you have any further questions about the details of how it all works, it's likely that I've answered them in the FAQ below. I hope you're having a good time with this extension. And, if you're using this to fill out web forms for jobs, like I did, best of luck to you. It sucks, I know. The process can be dehumanizing. But know that someone out there thinks enough of you to help you along the way. Because, if I didn't, I wouldn't have released extension to the public.
+          </div>
+
+
           <div class="title" style="margin-top:42px;">FAQ: </div>
           <div class="qs">Q: Is it matching case sensitive or case insensitive?<br/>A: Case <span style="font-weight:bold">IN</span>sensitive. If there is enough demand for allowing users to set case sensitivity, I'll go back and add the feature.</div>
+          <div class="qs">Q: Why do you use "matching name" in one explanation and "pattern" in another?<br/>A: The "matching names" are actually, known to us programmers, regular expression patterns. If you have no idea what I'm talking about, don't worry about it. Not knowing understanding this will not diminish this extension's usefulness. I use "matching name" instead of pattern because it's more descriptive and informative for someone that doesn't know what "pattern" implies to programmers. With that said, I cover using regular expression later. (One liner. Don't get too excited.)</div>
           <div class="qs">Q: <span style="font-weight:bold;">Should I make every pattern unique?</span><br/>A: <span style="font-weight:bold;">Yes, yes, a thousand times yes.</span> Though it is possible (though manual editting of the settings. This should not be possible via this interface.) to have duplicate patterns, it provides <span style="font-weight:bold;">no benefit for the user to have duplicate patterns.</span></div>
           <div class="qs">Q: What if I want to make duplicates anyways?<br/>A: Sure, if you want. SARA should still work. But keep in mind that the search and fill functionality will probably not work as you intend it. See next question for explanation.</div>
           <div class="qs">Q: If 2 patterns match the same field, which has priority/how is it prioritized?<br/>A: None. The data structure that holds the pattern has no explicit order or priority (search "Does JavaScript guarantee object property order?" if you want to know more). So if 2 patterns matches the same field, there's no guarantee that the same pattern will be used every time. As such, I <span style="font-weight:bold;">HIGHLY RECOMMEND THAT EVERY PATTERN BE UNIQUE.</span></div>

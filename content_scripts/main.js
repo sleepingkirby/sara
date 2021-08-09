@@ -427,7 +427,7 @@ window.hasRun = true;
     }
 
     //if that profile doesn't exist/workout, use current profile.
-    if(d.settings.hasOwnProperty("cur_profile") && d.profiles.hasOwnProperty(d.settings.cur_profile)){
+    if(d.settings.hasOwnProperty("cur_profile") && d.profiles.hasOwnProperty(d.settings.cur_profile) && d.settings.hasOwnProperty("curDef") && d.settings.curDef==true){
     return d.settings.cur_profile;
     }
 
@@ -937,7 +937,7 @@ isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
 
 
 curPrfl=dtrmnPrfl(dmn, d, applyHsh);
-
+console.log(curPrfl);
 //see if floating panel should exist
 floatPnlDt(d, d.settings.floatPnl, curPrfl);
 
