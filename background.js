@@ -376,7 +376,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   var arr=Object.keys(msg.onEl.attr);
     //change the menu item title
     chrome.contextMenus.update("info",{
-      title: "Copy Element Attr: "+msg.onEl.tagName
+      title: "Element Properties: "+msg.onEl.tagName
     });
     
     //removes previous entry

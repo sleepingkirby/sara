@@ -339,9 +339,18 @@ window.hasRun = true;
   
     if(e.target.getAttribute('act')==act){
     var vl=fromHtmlEnt(e.target.getAttribute('val'));
-    copyHack(vl);
-    //setMsg('"'+vl+'" copied');
-    console.log(vl);
+    //copyHack(vl);
+    //using chrome clipboard copy here to prevent field from losing focus.
+    navigator.clipboard.writeText(vl).then(
+      (e)=>{
+      setFPnlMsg('Copied "'+vl+'"');
+      },
+      (e)=>{
+        if(e=="DOMException: Document is not focused."||e=="NotAllowedError: Document is not focused."){
+        setFPnlMsg('Click on page to begin copying');
+        }
+        console.log('SARA: function mouseOvrEvnt() failed to copy. Error: "'+e+'"');
+      });
     }
     else{
     elObjToBG(e);
@@ -552,16 +561,16 @@ window.hasRun = true;
       var curId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
         //if the element exists in the profile_meta AND the element has sub elements, but also don't process the root node (stack.length<=1).
         if(meta.hasOwnProperty(curId) && ((meta[curId].ord.length>0 && Object.keys(meta[curId].hash).length>0)||stack.length<=1)){
-        rtrn+="<div style=\"display: flex; flex-direction: column; margin-top: 6px;\"> \
+        rtrn+="<div style=\"display: flex; flex-direction: column; align-items: flex-start; margin-top: 6px;\"> \
                 <span style=\"font-weight: 900;\">"+meta[curId].nm.toUpperCase()+"</span> \
-                <div style=\"display: flex; padding: 2px 0px 2px 20px; flex-direction: column;\"> \
+                <div style=\"display: flex; padding: 2px 0px 2px 20px; flex-direction: column; width:100%; box-sizing: border-box;\"> \
               ";
         stack.push({n:curId,i:0});
         }
         else{
         //else,it's a leaf node
         let val=getValTree(stack, meta, prof, meta[curId].nm);
-        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; align-items: center; margin: 0px 0px 4px 0px; padding: 0px 2px 0px 4px; white-space:nowrap; cursor: copy; width: 100%;" act="'+act+'" val="'+toHtmlEnt(val)+'"><div style=\"display: flex; margin-right: 6px;\">&bull;</div>'+meta[curId].nm+': <div style="text-overflow:ellipsis; overflow: hidden; border-radius: 4px; margin-left: 6px; white-space:nowrap;" type="text" >'+val+'</div></div>';
+        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; align-items: center; margin: 0px 0px 4px 0px; padding: 0px 2px 0px 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 100%; box-sizing: border-box; cursor: copy;" act="'+act+'" val="'+toHtmlEnt(val)+'"><div style=\"display: flex; margin-right: 6px;\">&bull;</div>'+meta[curId].nm+': <div style="text-overflow:ellipsis; overflow: hidden; border-radius: 4px; margin-left: 6px; white-space:nowrap; width: 100%;" type="text" act="'+act+'" val="'+toHtmlEnt(val)+'">'+val+'</div></div>';
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
@@ -595,7 +604,7 @@ window.hasRun = true;
     data.settings['floatPnl']=true;
     chrome.storage.local.set(data,(e)=>{
     el=document.createElement("div");
-    el.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; opacity: 0.75; color:#AAAAAA; background-color:black; border-radius:6px; box-sizing: border-box; border: 1px solid #AAAAAA; font-family: sans-serif; cursor: grab; position: fixed; z-index: 9999999;";
+    el.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; opacity: 0.75; color:#AAAAAA; background-color:black; border-radius:6px; box-sizing: border-box; border: 1px solid #AAAAAA; width: calc(25vw - 20px); height: calc(100vh - 50px); max-width:75vw; max-height: calc(100vh - 20px); min-height: 50px; min-width: 180px; font-family: sans-serif; cursor: grab; position: fixed; z-index: 9999999; resize: both; overflow: hidden;";
     el.id=id;
     el.draggable=true;
 
@@ -615,7 +624,7 @@ window.hasRun = true;
     hd.style.cssText="display:flex; flex-direction:row; justify-content: stretch; align-items: stretch;";
  
     var ttl=document.createElement("div");
-    ttl.style.cssText="display: flex; flex-direction: row; justify-content: center; align-items: center; overflow: hidden; text-overflow: ellipsis; flex-grow: 10; font-weight: 900;";
+    ttl.style.cssText="display: flex; flex-direction: row; justify-content: flex-start; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 10; font-weight: 900; padding: 0px 4px 0px 6px;";
     ttl.id=ttlId;
     ttl.textContent="Quick Copy Panel";
     
@@ -633,7 +642,7 @@ window.hasRun = true;
     hd.appendChild(cls);
 
     var bdy=document.createElement("div");
-    bdy.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; width: calc(25vw - 20px); height: calc(100vh - 50px); border-radius:6px; padding: 6px 6px 6px 10px; max-width:75vw; max-height: calc(100vh - 20px); box-sizing: border-box; resize: both; overflow: auto; min-height: 50px; min-width: 180px; font-family: sans-serif; cursor: grab;";
+    bdy.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; border-radius:6px; padding: 6px 6px 6px 10px; box-sizing: border-box; overflow: auto; font-family: sans-serif; cursor: grab; width: 100%; height: 100%;";
     bdy.innerHTML=trvrsDrwPrfl(data,prfl);
 
     el.appendChild(hd); 
@@ -765,6 +774,20 @@ window.hasRun = true;
 
   };
 
+  
+  /*---------------------------
+  pre: element with id
+  post: sets content of element with id
+  post sets element with id "id" with content of str
+  ---------------------------*/
+  function setFPnlMsg(str){
+  var id="extIdNmSARAFPnlTtl";
+  document.getElementById(id).textContent=str;
+  return 0;
+  }
+
+
+
   /*-------------------------------------------------------------------
   pre: mtchAgnstHsh()
   post: html elements filled
@@ -890,7 +913,8 @@ var ignErr=null;
 var ignrHsh={}; //hash for ignore list
 var applyHsh={}; //hash for apply list
 var isApply=false; //is this domain in apply list?
-var curPrfl=null; //profile name to apply for this page 
+var curPrfl=null; //profile name to apply for this page
+var curInpt=null;
 var dmn=window.location.host;//domain of current page/
 
 document.addEventListener("mouseover", mouseOvrEvnt);
