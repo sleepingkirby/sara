@@ -284,7 +284,7 @@ align-self: flex-start;
 }
 
 #prflNewFrm div.prflNewInpt{
-transition-property: margin-right, min-width, max-width;
+transition-property: margin-right, width, min-width, max-width;
 transition-duration: 0.8s;
 transition-delay: 1.5s;
 transition-timing-function: ease-in-out;
