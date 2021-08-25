@@ -115,13 +115,54 @@ window.hasRun = true;
   }
 
   /*--------------------------------------------
-  pre: global element onEl, copyHack()
+  pre: none
+  post:
+  sends events that makes forms that cache your input rather
+  just reading the d*mn input forms for the values
+  actually work and persist.
+          onEl.dispatchEvent(new InputEvent('input',{inputType:'insertFromPaste'}));
+        onEl.dispatchEvent(new Event('change',{bubbles:true}));
+        onEl.value=ptr;
+        onEl.dispatchEvent(new Event('change',{bubbles:true}));
+  using:
+  https://higherme.bamboohr.com/jobs/view.php?id=25&source=aWQ9MjY%3D
+  as example
+  ---------------------------------------------*/
+  function smrtFill(el, val, type, flag=false){
+
+  var vls='value';
+    switch(vls){
+      case 'checked':
+      vls='checked';
+      break;
+      default:
+      vls='value';
+      break;
+    }  
+
+    
+    if(!flag){
+    el[vls]=val;
+    return 0;
+    }
+
+    el.dispatchEvent(new InputEvent('input',{inputType:'insertFromPaste'}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+    el[vls]=val;
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+    el[vls]=val;
+    return 0;
+  }
+
+
+  /*--------------------------------------------
+  pre: global element onEl, copyHack(), smrtFill()
   post: element onEl filled
   takes the string from the message, find the 
   value from the settings via the string, fills
   the onEl with the value.
   ---------------------------------------------*/ 
-  function pasteVal(str){
+  function pasteVal(str, flag=false){
   //console.log("SARA: starting pasteVal: "+str);
     if(typeof str!="string" || str==""){
     return null;
@@ -133,7 +174,7 @@ window.hasRun = true;
 
   let rtrn="";
   let ptr=null;
-    chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
+    chrome.storage.local.get(null, (d)=>{
     let max=tmp.length;
     ptr=d.profiles[prfl];
     //skipping 0 as that's root, skipping 1 as that's always category
@@ -151,6 +192,8 @@ window.hasRun = true;
       }
 
     //console.log("found: "+ptr);
+    copyHack(ptr);
+
       if(typeof ptr!="string" || typeof onEl!="object"){
       console.log("SARA: Attempt to paste value into field failed. Field either not an object or value not a string.");
       //console.log(onEl);
@@ -160,16 +203,15 @@ window.hasRun = true;
 
       console.log("SARA: pasting value \""+ptr+"\" into field");
       //console.log(onEl);      
-      copyHack(ptr);
 
       if(onEl.tagName.toLocaleLowerCase()=="input"){    
         switch(onEl.type){
         case "checkbox":
           if(ptr!=null&&ptr!=false){
-          onEl.checked=true;
+          smrtFill(onEl, true, 'checked', flag);
           }
           else{
-          onEl.checked=false;
+          smrtFill(onEl, false, 'checked', flag);
           }
         break;
         case "radio":
@@ -178,19 +220,20 @@ window.hasRun = true;
           for(let i=0; i<m; i++){
             if(rds[i].value==ptr){
             rds[i].checked=true;
+            smrtFill(rds[i], true, 'checked', flag);
             }
           }
         break;
         default:
-        onEl.value=ptr;
+        smrtFill(onEl, ptr, 'value', flag);
         break;
         }
       }
       else if(onEl.tagName.toLocaleLowerCase()=="option"){
-      onEl.parentElement.value=ptr;
+      smrtFill(onEl.parentElement.value, ptr, 'value', flag);
       }
       else{
-      onEl.value=ptr;
+      smrtFill(onEl, ptr, 'value', flag);
       }
 
     }); 
@@ -267,9 +310,9 @@ window.hasRun = true;
       sendResponse(getPgPrfl());
       break;
       case 'fillForm':
-        chrome.storage.local.get({'profiles':null},(d)=>{
+        chrome.storage.local.get({'profiles':null, 'settings':null},(d)=>{
           if(d.profiles.hasOwnProperty(request.msg.val)){
-          fillNMsg(d.profiles[request.msg.val], "Fields Filled: ##num##\r\nProfile: "+request.msg.val);
+          fillNMsg(d.profiles[request.msg.val], "Fields Filled: ##num##\r\nProfile: "+request.msg.val, d.settings.eventFill);
           }
           else{
           sendResponse(false);
@@ -278,7 +321,9 @@ window.hasRun = true;
         sendResponse(true);
       break;
       case 'pasteVal':
-      pasteVal(request.msg.path);
+        chrome.storage.local.get(null,(d)=>{
+        pasteVal(request.msg.path, d.settings.eventFill);
+        });
       sendResponse(true);  
       break;
       case 'clip':
@@ -789,14 +834,15 @@ window.hasRun = true;
 
 
   /*-------------------------------------------------------------------
-  pre: mtchAgnstHsh()
+  pre: mtchAgnstHsh(), smrtFill()
   post: html elements filled
   find elements and fill it with proper values.
   -------------------------------------------------------------------*/
-  function fndNFll(hsh){
+  function fndNFll(hsh, flag=false){
     if(typeof hsh!="object" || Object.keys(hsh) <=0){
     return false;
     }
+
   var h=hsh;
   var inpts=document.getElementsByTagName("input");
   var tas=document.getElementsByTagName("textarea");
@@ -823,27 +869,28 @@ window.hasRun = true;
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
         //if, for some bizarre reason, the input element doens't have a type, assume value
           if(!inpts[i].hasAttribute("type")){
-          inpts[i].value=val;
+          smrtFill(inpts[i], val, 'value', flag);
           cnt++;
           break;
           }
           else{
             if((inpts[i].type=="text"||inpts[i].type=="email"||inpts[i].type=="hidden"||inpts[i].type=="month"||inpts[i].type=="number"||inpts[i].type=="date"||inpts[i].type=="datetime-local"||inpts[i].type=="color"||inpts[i].type=="vol"||inpts[i].type=="image"||inpts[i].type=="password"||inpts[i].type=="tel"||inpts[i].type=="time"||inpts[i].type=="url"||inpts[i].type=="week")){
-            inpts[i].value=val;
+            smrtFill(inpts[i], val, 'value', flag);
             cnt++;
             break;
             }
             if(inpts[i].type=="radio"&&inpts[i].value==val){//why only if the value match? With radios, multiple inputs are linked together via name and has to provide a value to distinguish the choices from each other.
-            inpts[i].checked=true;
+            //inpts[i].checked=true;
+            smrtFill(inpts[i], true, 'checked', flag);
             cnt++;
             break;
             }
             if(inpts[i].type=="checkbox"){
               if(val!="false"&&val!=""){
-              inpts[i].checked=true;
+              smrtFill(inpts[i], true, 'checked', flag);
               }
               else{
-              inpts[i].checked=false;
+              smrtFill(inpts[i], false, 'checked', flag);
               }
               cnt++;
               break;
@@ -864,7 +911,7 @@ window.hasRun = true;
       //checked when value=checkbox, radio
       val=mtchAgnstHsh(tas[i].getAttribute(arr[j]),hsh);
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
-        tas[i].value=val;
+        smrtFill(tas[i], val, 'value', flag);
         cnt++;
         }
       }
@@ -881,7 +928,7 @@ window.hasRun = true;
       //checked when value=checkbox, radio
       val=mtchAgnstHsh(slcts[i].getAttribute(arr[j]),hsh);
         if(val!=null&&val!=false){//if val is null or false, the hash doesn't have an entry for this. Don't fill stuff in
-        slcts[i].value=val;
+        smrtFill(slcts[i], val, 'value', flag);
         cnt++;
         }
       }
@@ -896,11 +943,11 @@ params: hash for fndNFll and profile for message
 wrapper for fndNFll and setMsg so only 1 
 function needs to be called to both fill and setMsg
 ---------------------------------------------------*/
-function fillNMsg(hsh, msg){
+function fillNMsg(hsh, msg, flag=false){
   if(typeof hsh!="object"){
   return false;
   }
-let num=fndNFll(hsh);
+let num=fndNFll(hsh, flag);
 let m=msg.replace("##num##", num);
 setMsg(m);
 return true;
@@ -937,7 +984,6 @@ isApply=applyHsh.hasOwnProperty(dmn); //current page's domain in applyHsh?
 
 
 curPrfl=dtrmnPrfl(dmn, d, applyHsh);
-console.log(curPrfl);
 //see if floating panel should exist
 floatPnlDt(d, d.settings.floatPnl, curPrfl);
 
@@ -953,14 +999,14 @@ floatPnlDt(d, d.settings.floatPnl, curPrfl);
   if(d.settings.autoFill){
     if(!ignrHsh.hasOwnProperty(dmn)){
     //find and fill
-    fillNMsg(d.profiles[curPrfl], "Autofill ON\r\nFields Filled: ##num##\r\nProfile: "+curPrfl);
+    fillNMsg(d.profiles[curPrfl], "Autofill ON\r\nFields Filled: ##num##\r\nProfile: "+curPrfl, d.settings.eventFill);
     }
   }
   //if auto fill not on, see if domain is apply list. If so, apply. If not, do nothing.
   else{
     if(isApply){
     //find and fill
-    fillNMsg(d.profiles[curPrfl], "Apply List Fill\r\nFields Filled: ##num##\r\nProfile: "+curPrfl);
+    fillNMsg(d.profiles[curPrfl], "Apply List Fill\r\nFields Filled: ##num##\r\nProfile: "+curPrfl, d.settings.eventFill);
     }
   }
 
