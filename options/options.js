@@ -63,6 +63,7 @@ var max=nm.length;
     document.getElementById("hvrId").checked=d.settings.hoverId;
     document.getElementById("curDef").checked=d.settings.curDef;
     document.getElementById("autoFll").checked=d.settings.autoFill;
+    document.getElementById("evntFll").checked=d.settings.eventFill;
     });
   }
 
@@ -646,6 +647,12 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       case "setAutoFill":
         chrome.storage.local.get(null, (d)=>{
         d.settings.autoFill=e.target.checked;
+          chrome.storage.local.set(d);
+        });
+      break;
+      case "setEvntFill":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.eventFill=e.target.checked;
           chrome.storage.local.set(d);
         });
       break;
