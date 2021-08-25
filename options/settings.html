@@ -148,6 +148,10 @@
           </div> 
 
           <div class="body">
+          The "<span class="keyword">Event List</span>" should be turned on by default. If this extension uses too much power or takes too long, you can try turning it off.
+          </div>
+
+          <div class="body">
           For cases when autofill does not find a match for every field, or if it matched against different data, you can use the right-click menu to fill them. When filling the field this way, the value of the field will be copied into your clipboard as well.
           </div>
           <div class="pic" style="opacity:0.75;">
@@ -262,6 +266,7 @@
           <div class="title" style="margin-top:42px;">FAQ: </div>
           <div class="qs">Q: Is it matching case sensitive or case insensitive?<br/>A: Case <span style="font-weight:bold">IN</span>sensitive. If there is enough demand for allowing users to set case sensitivity, I'll go back and add the feature.</div>
           <div class="qs">Q: Why do you use "matching name" in one explanation and "pattern" in another?<br/>A: The "matching names" are actually, known to us programmers, regular expression patterns. If you have no idea what I'm talking about, don't worry about it. Not knowing understanding this will not diminish this extension's usefulness. I use "matching name" instead of pattern because it's more descriptive and informative for someone that doesn't know what "pattern" implies to programmers. With that said, I cover using regular expression later. (One liner. Don't get too excited.)</div>
+          <div class="qs">Q: What is "Event Fill"? What does it actually do?<br/>A: There are a significant amount of forms online that uses a lot of modern web elements. Some of which doesn't rely on the input field's actual value to read/set values for said field. (Yes, that sounds a little dumb. But if modern web forms were good, neither of us would be here.) Instead, they listen to javascript events to know when values have been changed or when it needs to be updated or used. By turning on "Event Fill", whenever this extension fills a value into a field, it'll also fire off a bunch (3) events from the field as it's filling it in to mimic events that would have been fired when a human would paste a value into that input field. Not all modern, event driven, troublesome forms may be fixed by this, but this should get most of them.</div>
           <div class="qs">Q: <span style="font-weight:bold;">Should I make every pattern unique?</span><br/>A: <span style="font-weight:bold;">Yes, yes, a thousand times yes.</span> Though it is possible (though manual editting of the settings. This should not be possible via this interface.) to have duplicate patterns, it provides <span style="font-weight:bold;">no benefit for the user to have duplicate patterns.</span></div>
           <div class="qs">Q: What if I want to make duplicates anyways?<br/>A: Sure, if you want. SARA should still work. But keep in mind that the search and fill functionality will probably not work as you intend it. See next question for explanation.</div>
           <div class="qs">Q: If 2 patterns match the same field, which has priority/how is it prioritized?<br/>A: None. The data structure that holds the pattern has no explicit order or priority (search "Does JavaScript guarantee object property order?" if you want to know more). So if 2 patterns matches the same field, there's no guarantee that the same pattern will be used every time. As such, I <span style="font-weight:bold;">HIGHLY RECOMMEND THAT EVERY PATTERN BE UNIQUE.</span></div>
