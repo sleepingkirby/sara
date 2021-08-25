@@ -98,6 +98,12 @@ var act=null;
           chrome.storage.local.set(d);
         });
       break;
+      case 'tglEvntFll':
+        chrome.storage.local.get({"settings":null},(d)=>{
+          d.settings.eventFill=document.getElementById("evntFllId").checked;
+          chrome.storage.local.set(d);
+        });
+      break;
       case "tglHvr":
         chrome.storage.local.get({"settings":null},(d)=>{
         d.settings.hoverId=e.target.checked;
@@ -327,6 +333,9 @@ chrome.storage.local.get( null,(d) => {
 
 var af=document.getElementById("atFllId");
 af.checked=d.settings.autoFill;
+
+var ef=document.getElementById("evntFllId");
+ef.checked=d.settings.eventFill;
 
 var hov=document.getElementById("hvrId");
 hov.checked=d.settings.hoverId;

@@ -343,6 +343,7 @@ chrome.storage.local.get(null,(d)=>{
       },
       settings:{
       autoFill: false,
+      eventFill: false,
       hoverId: false,
       floatPnl: false,
       def_profile: "default",
