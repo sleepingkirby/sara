@@ -131,7 +131,7 @@ window.hasRun = true;
   function smrtFill(el, val, type, flag=false){
 
   var vls='value';
-    switch(vls){
+    switch(type){
       case 'checked':
       vls='checked';
       break;
