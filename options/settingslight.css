@@ -1,7 +1,7 @@
 
 body{
 background-color: white;
-color: #888888;
+color: #787878;
 padding: 6px 6px 6px 6px;
 max-width: 100vw;
 display: flex;
@@ -19,9 +19,9 @@ color: #0852ff;
 
 input{
 background-color: transparent;
-border: 1px solid #888888;
+border: 1px solid #787878;
 border-radius: 4px;
-color: #888888;
+color: #787878;
 font-family: "DejaVu Sans", Arial, sans-serif;
 }
 
@@ -35,11 +35,11 @@ text-align: justify;
 
 textarea{
 box-sizing: border-box;
-border: 1px solid #888888;
+border: 1px solid #787878;
 border-radius: 4px;
 background-color: white;
 width: 100%;
-color: #888888;
+color: #787878;
 padding: 4px;
 }
 
@@ -51,8 +51,8 @@ font-style: italic;
 button{
 display: flex;
 background-color: transparent;
-border: 1px solid #888888;
-color: #888888;
+border: 1px solid #787878;
+color: #787878;
 height: 100%;
 border-radius: 4px;
 padding: 2px 4px 2px 4px;
@@ -76,7 +76,7 @@ padding: 2px 0px 2px 0px;
 
 .prflAdd:hover input{
 width: 180px;
-border: 1px solid #888888;
+border: 1px solid #787878;
 padding: 2px 2px 2px 6px;
 margin-right: 6px;
 }
@@ -106,9 +106,9 @@ justify-content: flex-start;
 }
 
 .switch div{
-border-left:1px solid #888888;
-border-top:1px solid #888888;
-border-right:1px solid #888888;
+border-left:1px solid #787878;
+border-top:1px solid #787878;
+border-right:1px solid #787878;
 border-radius: 8px 8px 0px 0px;
 padding: 6px 6px 4px 6px;
 margin-right: 8px;
@@ -122,17 +122,17 @@ display: none;
 
 .switch input:checked + label div{
 color: #000000;
-background-color: #888888;
+background-color: #787878;
 }
 
 .switch .inptOn{
 color: #000000;
-background-color: #888888;
+background-color: #787878;
 }
 
 .main{
 margin: 0px 0px 0px 0px;
-border: 1px #888888 solid;
+border: 1px #787878 solid;
 display: none;
 justify-content: flex-start;
 padding: 16px 8px 6px 8px;
@@ -171,7 +171,7 @@ align-items: stretch;
 }
 
 #prflFrm > div{
-border-top: 1px solid #888888;
+border-top: 1px solid #787878;
 padding-top: 8px;
 }
 
@@ -184,8 +184,8 @@ margin: 2px 8px 6px 0px;
 #prflFrm div.prflInpt button{
 margin-left: 6px;
 background-color: transparent;
-color: #888888;
-border: 1px solid #888888;
+color: #787878;
+border: 1px solid #787878;
 border-radius: 4px;
 }
 
@@ -202,7 +202,7 @@ div.prflInpt div.prflInptTtl{
 overflow: hidden;
 resize: horizontal;
 margin-right: 10px;
-border: 1px solid #888888;
+border: 1px solid #787878;
 border-radius: 4px;
 width: 100px;
 }
@@ -239,7 +239,7 @@ div.prflCtgTtl{
 font-weight: bolder;
 font-size: larger;
 border: 0px;
-border-bottom: 1px solid #888888;
+border-bottom: 1px solid #787878;
 padding: 0px 0px 0px 0px;
 resize: horizontal;
 overflow: hidden;
@@ -265,7 +265,7 @@ select{
 background-color: white;
 border-radius: 3px 3px 3px 3px;
 padding: 3px 5px 3px 5px;
-color: #888888;
+color: #787878;
 font-family: "DejaVu Sans", Arial, sans-serif;
 font-size: 12px;
 }
@@ -292,11 +292,11 @@ width: 0px;
 max-width: 0px;
 min-width: 0px;
 margin-right:0px;
-border: 0px solid #888888;
+border: 0px solid #787878;
 }
 
 #prflNewFrm:hover div.prflNewInpt{
-border: 1px solid #888888;
+border: 1px solid #787878;
 width: 135px;
 max-width: 350px;
 min-width: 80px;
@@ -328,7 +328,7 @@ padding: 2px 2px 2px 6px;
 }
 
 .sttngsTA{
-border-top: 1px solid #888888;
+border-top: 1px solid #787878;
 flex-direction: column;
 align-items: flex-start;
 padding: 8px 8px 15px 8px;
@@ -349,7 +349,7 @@ margin-right: 8px;
 }
 
 .clrMd {
-border-bottom: 1px solid #888888;
+border-bottom: 1px solid #787878;
 padding-bottom: 8px;
 }
 
@@ -372,7 +372,7 @@ margin-bottom: 14px;
 }
 
 .text > .title{
-border-top: 1px solid #888888;
+border-top: 1px solid #787878;
 padding-top: 20px;
 margin-top: 16px;
 margin-bottom: 16px;
@@ -433,7 +433,7 @@ justify-content: center;
 align-items: center;
 content: "Make Default";
 padding: 2px 4px 2px 4px;
-border: 1px solid #888888;
+border: 1px solid #787878;
 height: 100%;
 background-color: transparent;
 border-radius: 4px;
@@ -482,7 +482,7 @@ justify-content: flex-end;
 #msgPrfl, #msgImprt{
 margin: 0px 0px 0px 0px;
 padding: 0px 6px 0px 6px;
-border: 0px solid #888888;
+border: 0px solid #787878;
 border-radius: 4px;
 opacity: 0;
 max-height: 0px;

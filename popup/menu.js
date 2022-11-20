@@ -313,6 +313,7 @@ function getCurHost(fnc, fncPrms){
   return curPrfl;
   }
 
+
 function chromeSendMsgErrHndl(action, tabs){
   if(chrome.runtime.lastError){
   console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
@@ -321,6 +322,9 @@ function chromeSendMsgErrHndl(action, tabs){
 
 
 //================================ main ==========================
+const cssDflt="./menu.css";
+const cssLght="./menulight.css";
+
 var host=""
 var ignrHsh={};
 var applyHsh={};
@@ -330,6 +334,8 @@ var curPrfl=null;
 chrome.storage.local.get( null,(d) => {
   
 
+var link=document.getElementById("cssPath");
+link.href=d.settings.clrMd?cssLght:cssDflt;
 
 var af=document.getElementById("atFllId");
 af.checked=d.settings.autoFill;
