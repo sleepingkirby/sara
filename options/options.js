@@ -491,7 +491,7 @@ return true;
 
 
 //main function
-function startListen(){
+function startListen(cssDfltLght,cssDflt){
 var swtchTbs=document.getElementsByClassName("swtchTb");
 var max=swtchTbs.length;
   for(i=0; i<max; i++){
@@ -630,7 +630,7 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
         chrome.storage.local.get(null, (d)=>{
         d.settings.clrMd=e.target.checked;
         chrome.storage.local.set(d);
-        document.getElementById("cssPath")=e.target.checked?cssDfltLght:cssDflt;
+        document.getElementById("cssPath").href=e.target.checked?cssDfltLght:cssDflt;
         });
       break;
       case "sttngsIgnrLst":
@@ -883,4 +883,4 @@ fillSlct("prflSlct", urlPrf);
 updtChckBx("prflSlct", "prflDflt");
 setCSSMd(cssDfltLght,cssDflt);
 drawProfiles(urlPrf);
-startListen();
+startListen(cssDfltLght,cssDflt);
