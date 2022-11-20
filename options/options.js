@@ -1,4 +1,3 @@
-
 function setMsg(id,txt){
   document.getElementById(id).innerText+="- "+txt+"\n";
   document.getElementById(id).style.cssText="animation: opac 7s;";
@@ -64,6 +63,7 @@ var max=nm.length;
     document.getElementById("curDef").checked=d.settings.curDef;
     document.getElementById("autoFll").checked=d.settings.autoFill;
     document.getElementById("evntFll").checked=d.settings.eventFill;
+    document.getElementById("clrMd").checked=d.settings.clrMd;
     });
   }
 
@@ -626,34 +626,41 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       case "updtDrwPrfl":
       drawProfiles(e.target.value);
       break;
+      case "setColorMode":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.clrMd=e.target.checked;
+        chrome.storage.local.set(d);
+        document.getElementById("cssPath")=e.target.checked?cssDfltLght:cssDflt;
+        });
+      break;
       case "sttngsIgnrLst":
         chrome.storage.local.get(null, (d)=>{
         d.settings.ignrLst=e.target.value;
-          chrome.storage.local.set(d);
+        chrome.storage.local.set(d);
         });
       break;
       case "sttngsApplyLst":
         chrome.storage.local.get(null, (d)=>{
         d.settings.applyLst=e.target.value;
-          chrome.storage.local.set(d);
+        chrome.storage.local.set(d);
         });
       break;
       case "setHoverId":
         chrome.storage.local.get(null, (d)=>{
         d.settings.hoverId=e.target.checked;
-          chrome.storage.local.set(d);
+        chrome.storage.local.set(d);
         });
       break;
       case "setAutoFill":
         chrome.storage.local.get(null, (d)=>{
         d.settings.autoFill=e.target.checked;
-          chrome.storage.local.set(d);
+        chrome.storage.local.set(d);
         });
       break;
       case "setEvntFill":
         chrome.storage.local.get(null, (d)=>{
         d.settings.eventFill=e.target.checked;
-          chrome.storage.local.set(d);
+        chrome.storage.local.set(d);
         });
       break;
       case "setCurDef":
@@ -855,6 +862,15 @@ var rtrn="";
   });
 }
 
+function setCSSMd(lght,dflt){
+  chrome.storage.local.get(null, (d)=>{
+  document.getElementById("cssPath").href=d.settings.clrMd?lght:dflt;
+  });
+}
+
+
+const cssDflt="./settings.css"
+const cssDfltLght="./settingslight.css"
 
 
 var urlPrf=getURLVar();
@@ -865,5 +881,6 @@ var idObj={};
 
 fillSlct("prflSlct", urlPrf);
 updtChckBx("prflSlct", "prflDflt");
+setCSSMd(cssDfltLght,cssDflt);
 drawProfiles(urlPrf);
 startListen();
