@@ -1,3 +1,5 @@
+const cssDflt="./menu.css";
+const cssLght="./menulight.css";
 
 function reportErr(error){
 console.error('' + error.message);
@@ -71,6 +73,13 @@ var act=null;
   document.addEventListener("click", (e) => {
   act=e.target.getAttribute("act");
     switch(e.target.id){
+      case "clrMdId":
+        chrome.storage.local.get(null, (d)=>{
+        d.settings.clrMd=typeof d.settings.clrMd=="boolean"?!d.settings.clrMd:false;
+        chrome.storage.local.set(d);
+        document.getElementById("cssPath").href=d.settings.clrMd?cssLght:cssDflt;
+        });
+      break;
       case 'settingsPage':
       chrome.runtime.openOptionsPage();     
       break;
@@ -92,6 +101,12 @@ var act=null;
   var dmn="";
   act=e.target.getAttribute("act");
     switch(act){
+      case 'tglAtFll':
+        chrome.storage.local.get({"settings":null},(d)=>{
+          d.settings.autoFill=document.getElementById("atFllId").checked;
+          chrome.storage.local.set(d);
+        });
+      break;
       case 'tglAtFll':
         chrome.storage.local.get({"settings":null},(d)=>{
           d.settings.autoFill=document.getElementById("atFllId").checked;
@@ -322,9 +337,6 @@ function chromeSendMsgErrHndl(action, tabs){
 
 
 //================================ main ==========================
-const cssDflt="./menu.css";
-const cssLght="./menulight.css";
-
 var host=""
 var ignrHsh={};
 var applyHsh={};
