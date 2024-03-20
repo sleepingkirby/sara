@@ -610,16 +610,16 @@ window.hasRun = true;
       var curId=meta[stack[stack.length-1].n].ord[stack[stack.length-1].i];
         //if the element exists in the profile_meta AND the element has sub elements, but also don't process the root node (stack.length<=1).
         if(meta.hasOwnProperty(curId) && ((meta[curId].ord.length>0 && Object.keys(meta[curId].hash).length>0)||stack.length<=1)){
-        rtrn+="<div style=\"display: flex; flex-direction: column; align-items: flex-start; margin-top: 6px;\"> \
+        rtrn+="<div style=\"display: flex; flex-direction: column; align-items: flex-start; margin-top: 6px; line-height: 1;\"> \
                 <span style=\"font-weight: 900;\">"+meta[curId].nm.toUpperCase()+"</span> \
-                <div style=\"display: flex; padding: 2px 0px 2px 20px; flex-direction: column; width:100%; box-sizing: border-box;\"> \
+                <div style=\"display: flex; padding: 2px 0px 2px 20px; flex-direction: column; width:100%; box-sizing: border-box; line-height: 1;\"> \
               ";
         stack.push({n:curId,i:0});
         }
         else{
         //else,it's a leaf node
         let val=getValTree(stack, meta, prof, meta[curId].nm);
-        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; align-items: center; margin: 0px 0px 4px 0px; padding: 0px 2px 0px 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 100%; box-sizing: border-box; cursor: copy;" act="'+act+'" val="'+toHtmlEnt(val)+'"><div style=\"display: flex; margin-right: 6px;\">&bull;</div>'+meta[curId].nm+': <div style="text-overflow:ellipsis; overflow: hidden; border-radius: 4px; margin-left: 6px; white-space:nowrap; width: 100%;" type="text" act="'+act+'" val="'+toHtmlEnt(val)+'">'+val+'</div></div>';
+        rtrn+='<div style="display:flex; flex-direction:row; justify-content:flex-start; align-items: center; margin: 0px 0px 4px 0px; padding: 0px 2px 0px 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 100%; box-sizing: border-box; cursor: copy; line-height: 1;" act="'+act+'" val="'+toHtmlEnt(val)+'"><div style=\"display: flex; margin-right: 6px; line-height: 1;\">&bull;</div>'+meta[curId].nm+': <div style="text-overflow:ellipsis; overflow: hidden; border-radius: 4px; margin-left: 6px; white-space:nowrap; width: 100%; line-height: 1;" type="text" act="'+act+'" val="'+toHtmlEnt(val)+'">'+val+'</div></div>';
         stack[stack.length-1].i = stack[stack.length-1].i +1;
         }
       }
