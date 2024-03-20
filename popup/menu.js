@@ -65,7 +65,7 @@ function fillSlct(id, arr, prf){
 
 /*---------------------------------------------------------------------
 pre: none 
-post: updates chrome.storage.local
+post: updates browser.storage.local
 function to set up listeners for events.
 ---------------------------------------------------------------------*/
 function startListen(){
@@ -74,11 +74,11 @@ var act=null;
   act=e.target.getAttribute("act");
     switch(e.target.id){
       case "clrMdId":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.clrMd=typeof d.settings.clrMd=="boolean"?!d.settings.clrMd:false;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         document.getElementById("cssPath").href=d.settings.clrMd?cssLght:cssDflt;
-        });
+        }, onError);
       break;
       case 'settingsPage':
       chrome.runtime.openOptionsPage();     
@@ -102,32 +102,32 @@ var act=null;
   act=e.target.getAttribute("act");
     switch(act){
       case 'tglAtFll':
-        chrome.storage.local.get({"settings":null},(d)=>{
+        browser.storage.local.get("settings").then((d)=>{
           d.settings.autoFill=document.getElementById("atFllId").checked;
-          chrome.storage.local.set(d);
-        });
+          browser.storage.local.set(d);
+        },onError);
       break;
       case 'tglAtFll':
-        chrome.storage.local.get({"settings":null},(d)=>{
+        browser.storage.local.get("settings").then((d)=>{
           d.settings.autoFill=document.getElementById("atFllId").checked;
-          chrome.storage.local.set(d);
-        });
+          browser.storage.local.set(d);
+        },onError);
       break;
       case 'tglEvntFll':
-        chrome.storage.local.get({"settings":null},(d)=>{
+        browser.storage.local.get("settings").then((d)=>{
           d.settings.eventFill=document.getElementById("evntFllId").checked;
-          chrome.storage.local.set(d);
-        });
+          browser.storage.local.set(d);
+        },onError);
       break;
       case "tglHvr":
-        chrome.storage.local.get({"settings":null},(d)=>{
+        browser.storage.local.get("settings").then((d)=>{
         d.settings.hoverId=e.target.checked;
-        chrome.storage.local.set(d);
-        });
+        browser.storage.local.set(d);
+        },onError);
       break;
       //this is when the drop down in the popup for profiles is set.
       case 'setPgPrfl':
-        chrome.storage.local.get({"settings":null}, (d)=>{
+        browser.storage.local.get("settings").then((d)=>{
           chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             //send message to page to set profile
             chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
@@ -135,15 +135,15 @@ var act=null;
               d.settings.cur_profile=e.target.value;
               //send message to background to set the contextmenu for which profile to set up for user to paste from
               chrome.runtime.sendMessage({'setPrfl':e.target.value});
-              chrome.storage.local.set(d);
+              browser.storage.local.set(d);
               }
             });
           });
-        });
+        },onError);
       break;
       case 'addDmnIgnr':
       dmn=document.getElementById("dmn");
-        chrome.storage.local.get({"settings":null}, (d)=>{
+        browser.storage.local.get("settings").then((d)=>{
           if(e.target.checked){
             if(d.settings.ignrLst.trim()==""){
             d.settings.ignrLst=dmn.textContent;
@@ -151,16 +151,16 @@ var act=null;
             else{
             d.settings.ignrLst+="\n"+dmn.textContent;
             }
-          chrome.storage.local.set(d);
+          browser.storage.local.set(d);
           }
           else{
             if(d.settings.ignrLst.indexOf("\n"+dmn.textContent)>=0){
             d.settings.ignrLst=d.settings.ignrLst.replace("\n"+dmn.textContent,"");
-            chrome.storage.local.set(d);
+            browser.storage.local.set(d);
             }
             else if(d.settings.ignrLst.indexOf(dmn.textContent)>=0){
             d.settings.ignrLst=d.settings.ignrLst.replace(dmn.textContent,"").trim();
-            chrome.storage.local.set(d);
+            browser.storage.local.set(d);
             }
           }
         });
@@ -168,7 +168,7 @@ var act=null;
       case 'addDmnApply':
       prfl=document.getElementById("prflSlct");
       dmn=document.getElementById("dmn");
-        chrome.storage.local.get({"settings":null}, (d)=>{
+        browser.storage.local.get("settings").then((d)=>{
         let aHsh=strToApplyLst(d.settings.applyLst);
           if(e.target.checked){
             if(d.settings.applyLst.trim()==""){
@@ -177,7 +177,7 @@ var act=null;
             else{
             d.settings.applyLst+="\n"+dmn.textContent+"|"+prfl.value;
             }
-          chrome.storage.local.set(d);
+          browser.storage.local.set(d);
           }
           else{
             if(!aHsh.hasOwnProperty(dmn.textContent)){
@@ -185,23 +185,23 @@ var act=null;
             }
             if(d.settings.applyLst.indexOf("\n"+dmn.textContent+"|"+aHsh[dmn.textContent])>=0){
             d.settings.applyLst=d.settings.applyLst.replace("\n"+dmn.textContent+"|"+aHsh[dmn.textContent],"");
-            chrome.storage.local.set(d);
+            browser.storage.local.set(d);
             }
             else if(d.settings.applyLst.indexOf(dmn.textContent+"|"+aHsh[dmn.textContent])>=0){
             d.settings.applyLst=d.settings.applyLst.replace(dmn.textContent+"|"+aHsh[dmn.textContent],"").trim();
-            chrome.storage.local.set(d);
+            browser.storage.local.set(d);
             }
           }
         });
       break;
       case 'tglCurDef':
-        chrome.storage.local.get({"settings":null},(d)=>{
+        browser.storage.local.get("settings").then((d)=>{
         d.settings.curDef=document.getElementById("curDefId").checked;
           if(!e.target.checked){
           d.settings.cur_profile=d.settings.def_profile;
           chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
           }
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         });
       break;
       case 'fPnl':
@@ -343,7 +343,7 @@ var applyHsh={};
 var curPrfl=null;
 
 //variable checks
-chrome.storage.local.get( null,(d) => {
+browser.storage.local.get( null,(d) => {
   
 
 var link=document.getElementById("cssPath");
