@@ -539,7 +539,6 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
   document.addEventListener("click", (e)=>{
     switch(e.target.getAttribute("act")){
       case "newPrfl":
-      //add new profile to chrome.storage. Redraw page.
       var el=document.getElementById(e.target.getAttribute("forel"));
         if(el && el.value && el.value!=""){
           browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
@@ -572,7 +571,7 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       let val=document.getElementById(fr).value;
         browser.storage.local.get("settings").then((e)=>{
           e.settings.def_profile=val;
-          chrome.storage.local.set({"settings":e.settings});
+          browser.storage.local.set({"settings":e.settings});
         },onError);
       break;
       case "newFld":
@@ -631,38 +630,38 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       case "setColorMode":
         browser.storage.local.get().then((d)=>{
         d.settings.clrMd=e.target.checked;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         document.getElementById("cssPath").href=e.target.checked?cssDfltLght:cssDflt;
         },onError);
       break;
       case "sttngsIgnrLst":
         browser.storage.local.get().then((d)=>{
         d.settings.ignrLst=e.target.value;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         },onError);
       break;
       case "sttngsApplyLst":
         browser.storage.local.get().then((d)=>{
         d.settings.applyLst=e.target.value;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         },onError);
       break;
       case "setHoverId":
         browser.storage.local.get().then((d)=>{
         d.settings.hoverId=e.target.checked;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         },onError);
       break;
       case "setAutoFill":
         browser.storage.local.get().then((d)=>{
         d.settings.autoFill=e.target.checked;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         },onError);
       break;
       case "setEvntFill":
         browser.storage.local.get().then((d)=>{
         d.settings.eventFill=e.target.checked;
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
         },onError);
       break;
       case "setCurDef":
@@ -670,9 +669,9 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       d.settings.curDef=e.target.checked;
         if(!e.target.checked){
         d.settings.cur_profile=d.settings.def_profile;
-        chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
+        browser.runtime.sendMessage({'setPrfl':d.settings.def_profile});
         }
-        chrome.storage.local.set(d);
+        browser.storage.local.set(d);
       },onError);
       break;
       default:

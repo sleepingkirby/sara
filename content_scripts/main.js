@@ -174,7 +174,7 @@ window.hasRun = true;
 
   let rtrn="";
   let ptr=null;
-    chrome.storage.local.get(null, (d)=>{
+    browser.storage.local.get().then((d)=>{
     let max=tmp.length;
     ptr=d.profiles[prfl];
     //skipping 0 as that's root, skipping 1 as that's always category
@@ -236,7 +236,7 @@ window.hasRun = true;
       smrtFill(onEl, ptr, 'value', flag);
       }
 
-    }); 
+    },onError); 
   }
 
   /*---------------------------------------------------------
@@ -310,7 +310,7 @@ window.hasRun = true;
       sendResponse(getPgPrfl());
       break;
       case 'fillForm':
-        chrome.storage.local.get({'profiles':null, 'settings':null},(d)=>{
+        browser.storage.local.get(['profiles', 'settings']).then((d)=>{
           if(d.profiles.hasOwnProperty(request.msg.val)){
           fillNMsg(d.profiles[request.msg.val], "Fields Filled: ##num##\r\nProfile: "+request.msg.val, d.settings.eventFill);
           }
@@ -321,7 +321,7 @@ window.hasRun = true;
         sendResponse(true);
       break;
       case 'pasteVal':
-        chrome.storage.local.get(null,(d)=>{
+        browser.storage.local.get().then((d)=>{
         pasteVal(request.msg.path, d.settings.eventFill);
         });
       sendResponse(true);  
@@ -331,7 +331,7 @@ window.hasRun = true;
       sendResponse(true);
       break;
       case 'fPnlTgl':
-        chrome.storage.local.get(null,(d)=>{
+        browser.storage.local.get().then((d)=>{
         let prfl=getPgPrfl();
           if(!prfl){
           let applyHsh=strToApplyLst(d.settings.applyLst);
@@ -342,7 +342,7 @@ window.hasRun = true;
       sendResponse(true);
       break;
       case 'closeFltPnl':
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         floatPnlDt(d, d.settings.floatPnl, null);
         });
       sendResponse(true);
@@ -362,7 +362,7 @@ window.hasRun = true;
   function elObjToBG(e){
     if(e.path){
       try{
-      chrome.runtime.sendMessage({'onEl':elToObj(e.path[0])});
+      browser.runtime.sendMessage({'onEl':elToObj(e.path[0])});
       }
       catch(err){
         var frames=document.getElementsByTagName("iframe");
@@ -509,7 +509,7 @@ window.hasRun = true;
   el.textContent="loading...";
   el.id="extIdNmSARA";
 
-    chrome.storage.onChanged.addListener(function(c,n){
+    browser.storage.onChanged.addListener(function(c,n){
       if(c.hasOwnProperty("settings")){
       rnFlg=c.settings.hasOwnProperty("newValue")?c.settings.newValue.hoverId:false;
       oldFlg=c.settings.hasOwnProperty("oldValue")?c.settings.oldValue.hoverId:false;
@@ -635,7 +635,7 @@ window.hasRun = true;
   var ttlId="extIdNmSARAFPnlTtl";
     if(!tgl){
         data.settings['floatPnl']=false;
-          chrome.storage.local.set(data,(e)=>{
+          browser.storage.local.set(data).then((e)=>{
           var el=document.getElementById(id);
             if(el && el.nodeType){
             document.body.removeChild(el);
@@ -651,7 +651,7 @@ window.hasRun = true;
     }
 
     data.settings['floatPnl']=true;
-    chrome.storage.local.set(data,(e)=>{
+    browser.storage.local.set(data).then((e)=>{
     el=document.createElement("div");
     el.style.cssText="display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; top: 0px; left: 75vw; opacity: 0.75; color:#AAAAAA; background-color:black; border-radius:6px; box-sizing: border-box; border: 1px solid #AAAAAA; width: calc(25vw - 20px); height: calc(100vh - 50px); max-width:75vw; max-height: calc(100vh - 20px); min-height: 50px; min-width: 180px; font-family: sans-serif; cursor: grab; position: fixed; z-index: 9999999; resize: both; overflow: hidden;";
     el.id=id;
@@ -682,7 +682,7 @@ window.hasRun = true;
     cls.textContent='x';
       cls.addEventListener("click", (e)=>{
       data.settings['floatPnl']=false;
-        chrome.storage.local.set(data,(e)=>{
+        browser.storage.local.set(data).then((e)=>{
         document.body.removeChild(el);
         });
       });
@@ -971,7 +971,7 @@ var dmn=window.location.host;//domain of current page/
 document.addEventListener("mouseover", mouseOvrEvnt);
 document.addEventListener("contextmenu", rghtClckOnEl);
 
-chrome.storage.local.get(null, function(d){
+browser.storage.local.get().then(function(d){
   if(Object.keys(d).length<=0){
   console.log("SARA: No settings found. Not able to do anything. Reinstall recommended.");
   return false;
@@ -994,7 +994,7 @@ floatPnlDt(d, d.settings.floatPnl, curPrfl);
   //if this fails, we can't do the rest. Stop here
   if(curPrfl==false){
   console.log("SARA: No profiles found. Nothing to do.");
-  chrome.runtime.onMessage.addListener(runOnMsg);
+  browser.runtime.onMessage.addListener(runOnMsg);
   return false;
   }
 
@@ -1016,7 +1016,7 @@ floatPnlDt(d, d.settings.floatPnl, curPrfl);
 
 
 //get message from other parts
-chrome.runtime.onMessage.addListener(runOnMsg);
+browser.runtime.onMessage.addListener(runOnMsg);
 });
 
 })();
