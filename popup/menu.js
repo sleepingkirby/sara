@@ -81,14 +81,14 @@ var act=null;
         }, onError);
       break;
       case 'settingsPage':
-      chrome.runtime.openOptionsPage();     
+      browser.runtime.openOptionsPage();     
       break;
       case 'donate':
-      chrome.tabs.create({url: 'https://b3spage.sourceforge.io/index.html?sara'});
+      browser.tabs.create({url: 'https://b3spage.sourceforge.io/index.html?sara'});
       break;
       case 'btnFllId':
-      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, {action: 'fillForm', msg:{val:document.getElementById("prflSlct").value}});
+      browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+        browser.tabs.sendMessage(tabs[0].id, {action: 'fillForm', msg:{val:document.getElementById("prflSlct").value}});
       });
       break;
       default:
@@ -128,13 +128,13 @@ var act=null;
       //this is when the drop down in the popup for profiles is set.
       case 'setPgPrfl':
         browser.storage.local.get("settings").then((d)=>{
-          chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
             //send message to page to set profile
-            chrome.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}},(r)=>{
+            browser.tabs.sendMessage(tabs[0].id, {action: 'setPgPrfl', msg:{val:e.target.value}}).then((r)=>{
               if(r){
               d.settings.cur_profile=e.target.value;
               //send message to background to set the contextmenu for which profile to set up for user to paste from
-              chrome.runtime.sendMessage({'setPrfl':e.target.value});
+              browser.runtime.sendMessage({'setPrfl':e.target.value});
               browser.storage.local.set(d);
               }
             });
@@ -199,14 +199,14 @@ var act=null;
         d.settings.curDef=document.getElementById("curDefId").checked;
           if(!e.target.checked){
           d.settings.cur_profile=d.settings.def_profile;
-          chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
+          browser.runtime.sendMessage({'setPrfl':d.settings.def_profile});
           }
         browser.storage.local.set(d);
         });
       break;
       case 'fPnl':
-          chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-            chrome.tabs.sendMessage(tabs[0].id, {action: 'fPnlTgl', msg:{val:e.target.checked}});
+          browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
+            browser.tabs.sendMessage(tabs[0].id, {action: 'fPnlTgl', msg:{val:e.target.checked}});
           });
       default:
       console.log(e.target);
@@ -225,7 +225,7 @@ cbFunc() Call back function
 cbFuncPrms=should be an object
 ---------------------------------------*/
 function getCurHost(fnc, fncPrms){
-  chrome.tabs.query({active: true, currentWindow: true},(tabs) => {
+  browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
   
   host=hostFromURL(tabs[0].url);
     if(host==false){
@@ -329,9 +329,9 @@ function getCurHost(fnc, fncPrms){
   }
 
 
-function chromeSendMsgErrHndl(action, tabs){
-  if(chrome.runtime.lastError){
-  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
+function browserSendMsgErrHndl(action, tabs){
+  if(browser.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+browser.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
   }
 }
 
@@ -370,19 +370,16 @@ getCurHost(populDmn, {id:"dmn", ignrId:"dmnTypeIgnr", applyId:"dmnTypeApply", "d
 
 
   //figure out what profile to have in the profiles drop down as well as fill the drop down. 
-  chrome.tabs.query({active: true, currentWindow: true},(tabs) => {
-    if(tabs[0].url.indexOf("chrome")!=0){
+  browser.tabs.query({active: true, currentWindow: true}).then((tabs) => {
 
-    let h=hostFromURL(tabs[0].url);
-    let aHsh=strToApplyLst(d.settings.applyLst);
-    
-      chrome.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}, function(e){
-      chromeSendMsgErrHndl("getPgPrfl", tabs);
-      curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
+  let h=hostFromURL(tabs[0].url);
+  let aHsh=strToApplyLst(d.settings.applyLst);
+    browser.tabs.sendMessage(tabs[0].id, {action: 'getPgPrfl', msg:{}}).then(function(e){
+    browserSendMsgErrHndl("getPgPrfl", tabs);
+    curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
 
-      fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
-      });
-    }
+    fillSlct("prflSlct", Object.keys(d.profiles),curPrfl); 
+    });
   });
 
 

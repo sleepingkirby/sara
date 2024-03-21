@@ -3,6 +3,10 @@ function setMsg(id,txt){
   document.getElementById(id).style.cssText="animation: opac 7s;";
 }
 
+function onError(e){
+console.log(e);
+}
+
 //gets hostname from url
 function hostFromURL(str){
 var rtrn=str;
@@ -56,7 +60,7 @@ var max=nm.length;
   }
 
   if(id=="sttngsMain"){
-    chrome.storage.local.get(null, (d)=>{
+    browser.storage.local.get().then((d)=>{
     document.getElementById("ignrLst").value=d.settings.ignrLst;
     document.getElementById("applyLst").value=d.settings.applyLst;
     document.getElementById("hvrId").checked=d.settings.hoverId;
@@ -64,7 +68,7 @@ var max=nm.length;
     document.getElementById("autoFll").checked=d.settings.autoFill;
     document.getElementById("evntFll").checked=d.settings.eventFill;
     document.getElementById("clrMd").checked=d.settings.clrMd;
-    });
+    }, onError);
   }
 
 document.getElementById(id).classList.toggle("mainOn");
@@ -76,9 +80,9 @@ function updtChckBx(selectEl, checkEl){
   return null;
   }
 
-  chrome.storage.local.get("settings", (e)=>{
+  browser.storage.local.get().then((e)=>{
   document.getElementById(checkEl).checked=(e.hasOwnProperty("settings") && e.settings.hasOwnProperty("def_profile") && document.getElementById(selectEl).value==e.settings.def_profile);
-  });
+  }, onError);
 }
 
 //requires drawProfiles();
@@ -125,7 +129,7 @@ var max=arr.length;
 
 //console.log("=========== starting =========>>");
 //console.log(a);
-  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
   var ref=null;
   //---------------- profiles: adding something new to the profiles tree. traverse and add only when something new is created ---------------
   //profiles the first 2 items is always the root and category, the last is always the value. do nothing on 0,1 and 4
@@ -223,7 +227,7 @@ var max=arr.length;
     console.log(d.profile_meta[prf]);
     */
     
-    chrome.storage.local.set(d,(e)=>{
+    browser.storage.local.set(d).then((e)=>{
     drawProfiles(prf);
       if(nw){
       setMsg("msgPrfl", "New field added");
@@ -234,8 +238,8 @@ var max=arr.length;
       return null;
       }
       setMsg("msgPrfl", "New field and/or category already exists.");
-    });
-  });
+    },onError);
+  },onError);
 }
 
 //deletes the field and/or value and/or path
@@ -255,7 +259,7 @@ var arr=arrm.slice(2); //removing the first element as that's the category.
   return null;
   }
 
-  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
   var prof=d.profiles[prf];
   var meta=d.profile_meta[prf];
 
@@ -358,10 +362,10 @@ var arr=arrm.slice(2); //removing the first element as that's the category.
     delete prof[prfBuff[i]];
     }
 
-    chrome.storage.local.set(d,(e)=>{
+    browser.storage.local.set(d).then((e)=>{
     drawProfiles(prf); 
-    });
-  });
+    },onError);
+  }, onError);
 }
 
 function updtFld(prfl, pth, val){
@@ -370,7 +374,7 @@ function updtFld(prfl, pth, val){
   }
 
 
-  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
     if(!d.profiles.hasOwnProperty(prfl)){
     return null;
     }
@@ -391,9 +395,8 @@ function updtFld(prfl, pth, val){
       }
       ref=ref[meta[arr[i]].nm];
     }
-    chrome.storage.local.set(d, (e)=>{
-    });
-  });
+    browser.storage.local.set(d).then((e)=>{},onError);
+  },onError);
 }
 
 
@@ -410,7 +413,7 @@ function rnFld(prfl, pth, v){
   }
 
 
-  chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+  browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
     if(!d.profiles.hasOwnProperty(prfl)){
     return null;
     }
@@ -434,7 +437,6 @@ function rnFld(prfl, pth, v){
       }
       ref=ref[meta[arr[i]].nm];
     }
-    //chrome.storage.local.set(d, (e)=>{});
 
 //================ updating meta =====================
   max=arrm.length;
@@ -452,8 +454,8 @@ function rnFld(prfl, pth, v){
       }
     meta[id].nm=val;
     }
-  chrome.storage.local.set(d, (e)=>{});
-  });
+  browser.storage.local.set(d).then((e)=>{},onError);
+  },(e)=>{console.log(e);});
 }
 
 
@@ -463,10 +465,10 @@ var el=document.getElementById(elId);
   if(el==false || !elId || elId=="" ){ 
   return null;
   }
-  chrome.storage.local.get(null, (e)=>{
+  browser.storage.local.get().then((e)=>{
   el.textContent=JSON.stringify(e);
   exportSettings(el.textContent);
-  });
+  },onError);
 }
 
 function imprtSttngs(elId){
@@ -482,10 +484,10 @@ var el=document.getElementById(elId);
 
 var d=JSON.parse(el.value);
 
-  chrome.storage.local.set(d, (e)=>{
+  browser.storage.local.set(d).then((e)=>{
   fillSlct("prflSlct", getURLVar());
   setMsg("msgPrfl", "Settings imported.");
-  });
+  },onError);
 return true;
 }
 
@@ -540,38 +542,38 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       //add new profile to chrome.storage. Redraw page.
       var el=document.getElementById(e.target.getAttribute("forel"));
         if(el && el.value && el.value!=""){
-          chrome.storage.local.get({"profiles":null, "profile_meta":null}, (d)=>{
+          browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
           d.profiles[el.value]={};
           d.profile_meta[el.value]={0:{"nm":"root","ord":[],"hash":{}},last:0};
-            chrome.storage.local.set(d,(e)=>{
+            browser.storage.local.set(d).then((e)=>{
             fillSlct("prflSlct", getURLVar());
             alert("New Profile Added.");
-            });
-          });
+            },onError);
+          },onError);
         }
       break;
       case "delPrfl":
-        chrome.storage.local.get({"profiles":null, "profile_meta":null},(d)=>{
+        browser.storage.local.get(["profiles", "profile_meta"]).then((d)=>{
         var el=document.getElementById(e.target.getAttribute("forel"));
         var ans=confirm("Are you sure you want to delete the profile: \""+el.value+"\"");
           if(ans){
             delete d.profiles[el.value];
             delete d.profile_meta[el.value];
-              chrome.storage.local.set(d, (e)=>{
+              browser.storage.local.set(d).then((e)=>{
               fillSlct("prflSlct", getURLVar());
               drawProfiles();
-              });
+              },onError);
             }
-        });
+        },onError);
       break;
       case "newDflt":
       //updates settings for def_profile to new profile name
       let fr=e.target.getAttribute("forel");
       let val=document.getElementById(fr).value;
-        chrome.storage.local.get("settings", (e)=>{
+        browser.storage.local.get("settings").then((e)=>{
           e.settings.def_profile=val;
           chrome.storage.local.set({"settings":e.settings});
-        });
+        },onError);
       break;
       case "newFld":
       //adds new Fld to profiles, update meta_profile, redraw page.
@@ -627,51 +629,51 @@ var style="border-left: 3px solid #0852ff; border-top: 1px solid #0852ff;border-
       drawProfiles(e.target.value);
       break;
       case "setColorMode":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.clrMd=e.target.checked;
         chrome.storage.local.set(d);
         document.getElementById("cssPath").href=e.target.checked?cssDfltLght:cssDflt;
-        });
+        },onError);
       break;
       case "sttngsIgnrLst":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.ignrLst=e.target.value;
         chrome.storage.local.set(d);
-        });
+        },onError);
       break;
       case "sttngsApplyLst":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.applyLst=e.target.value;
         chrome.storage.local.set(d);
-        });
+        },onError);
       break;
       case "setHoverId":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.hoverId=e.target.checked;
         chrome.storage.local.set(d);
-        });
+        },onError);
       break;
       case "setAutoFill":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.autoFill=e.target.checked;
         chrome.storage.local.set(d);
-        });
+        },onError);
       break;
       case "setEvntFill":
-        chrome.storage.local.get(null, (d)=>{
+        browser.storage.local.get().then((d)=>{
         d.settings.eventFill=e.target.checked;
         chrome.storage.local.set(d);
-        });
+        },onError);
       break;
       case "setCurDef":
-      chrome.storage.local.get(null, (d)=>{
+      browser.storage.local.get().then((d)=>{
       d.settings.curDef=e.target.checked;
         if(!e.target.checked){
         d.settings.cur_profile=d.settings.def_profile;
         chrome.runtime.sendMessage({'setPrfl':d.settings.def_profile});
         }
         chrome.storage.local.set(d);
-      });
+      },onError);
       break;
       default:
       //console.log(e.target);
@@ -689,7 +691,7 @@ function fillSlct(id, prf){
   var prof=prf;
 
   var tmp=null;
-  chrome.storage.local.get({"profiles":null, "settings":null}, (e)=>{
+  browser.storage.local.get(["profiles","settings"]).then((e)=>{
     if(!e.hasOwnProperty("profiles") || e.profiles==null){
     return 0;
     }
@@ -713,7 +715,7 @@ function fillSlct(id, prf){
     }
   
   updtChckBx("prflSlct", "prflDflt");
-  });
+  },onError);
 }
 
 //get value from profile data object and stack
@@ -782,7 +784,7 @@ var rtrn="";
   p="default";
   }
 
-  chrome.storage.local.get(null,function(d){
+  browser.storage.local.get().then(function(d){
     
     if(!d.hasOwnProperty("profiles")||!d.hasOwnProperty("profile_meta")){
     return 0;
@@ -859,13 +861,13 @@ var rtrn="";
       }
     }
     document.getElementById("prflFrm").innerHTML=rtrn;
-  });
+  },onError);
 }
 
 function setCSSMd(lght,dflt){
-  chrome.storage.local.get(null, (d)=>{
+  browser.storage.local.get().then((d)=>{
   document.getElementById("cssPath").href=d.settings.clrMd?lght:dflt;
-  });
+  },onError);
 }
 
 
