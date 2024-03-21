@@ -74,10 +74,12 @@ var act=null;
   act=e.target.getAttribute("act");
     switch(e.target.id){
       case "clrMdId":
+      console.log("asdfasdfsadfasd");
         browser.storage.local.get().then((d)=>{
         d.settings.clrMd=typeof d.settings.clrMd=="boolean"?!d.settings.clrMd:false;
         browser.storage.local.set(d);
         document.getElementById("cssPath").href=d.settings.clrMd?cssLght:cssDflt;
+        console.log(document.getElementById("cssPath"));
         }, onError);
       break;
       case 'settingsPage':
