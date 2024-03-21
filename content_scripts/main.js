@@ -364,9 +364,10 @@ window.hasRun = true;
   sends message current element as object to background script
   -------------------------*/
   function elObjToBG(e){
-    if(e.path){
+    if(e.path||e.target){
+    let el=e.target||e.path[0];
       try{
-      browser.runtime.sendMessage({'onEl':elToObj(e.path[0])});
+      browser.runtime.sendMessage({'onEl':elToObj(el)});
       }
       catch(err){
         var frames=document.getElementsByTagName("iframe");
