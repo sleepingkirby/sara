@@ -239,6 +239,18 @@ function chromeSendMsgErrHndlDtl(action, details){
 return false;
 }
 
+
+//condition to enable or disable the browser action
+function browserActionOn(str){
+  if(str.match(/(http|https|file):\//)){
+  browser.browserAction.enable();
+  }
+  else{
+  browser.browserAction.disable();
+  }
+}
+
+
 //======================== functional code =============================
 
 var cntxtCch={};//cache for the context menu id's
@@ -520,14 +532,16 @@ browser.runtime.onInstalled.addListener(function() {
 });
 --------------------------------------------------------------------------------------------------------*/
 
-
-/*----------------------------- browser action (the icon in the toolbar) can be disabled with this ---------------
-//low priority, do later
-browser.tabs.onCreated.addListener(() => {
-  browser.browserAction.enable();
+//enable or disable toolbar/browser action on new tab
+browser.tabs.onUpdated.addListener((tabId, changeInfo, tabInfo)=>{
+  if(tabInfo.active){
+  browserActionOn(tabInfo.url);
+  }
 });
 
-browser.browserAction.onClicked.addListener(() => {
-  browser.browserAction.disable();
+//enable or diable toolbar/browser action on tab switch
+browser.tabs.onActivated.addListener((tabInfo)=>{
+  browser.tabs.get(tabInfo.tabId).then((tab)=>{
+  browserActionOn(tab.url);
+  });
 });
-----------------------------------------------------------------------------------------------------------------*/
