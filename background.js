@@ -1,25 +1,25 @@
 
 function mkCntxtMnu(func){
-  chrome.contextMenus.removeAll(
+  browser.menus.removeAll().then(
   () => {
-    chrome.contextMenus.create({
+    browser.menus.create({
           id: "root",
           title: "SARA",
           contexts: ["all"]
     });
-    chrome.contextMenus.create({
+    browser.menus.create({
           id: "paste",
           title: "Paste",
           contexts: ["all"],
           parentId: "root"
     });
-    chrome.contextMenus.create({
+    browser.menus.create({
           id: "clip",
           title: "Copy Field to Clipboard",
           contexts: ["all"],
           parentId: "root"
     });
-    chrome.contextMenus.create({
+    browser.menus.create({
           id: "info",
           title: "Element: none",
           contexts: ["all"],
@@ -68,7 +68,7 @@ function mkPstCntxtMnu(prfl){
   if(typeof prfl !="string" || !prfl || prfl==""){
   return null;
   }
-  chrome.storage.local.get({"profile_meta":prfl},(d)=>{
+  browser.storage.local.get(["profile_meta"]).then((d)=>{
     var p=d.profile_meta[prfl];
     var buff=[0];
     var prntIdHsh={};
@@ -85,15 +85,15 @@ function mkPstCntxtMnu(prfl){
       //console.log("my id:"+genHshPth(prfl,prntIdHsh,pos));
         let id=genHshPth(prfl,prntIdHsh,pos);
         let prnt=genHshPth(prfl,prntIdHsh,prntIdHsh[pos])
-        chrome.contextMenus.create({
+        browser.menus.create({
         id: id,
         title: p[pos].nm,
         contexts: ["all"],
         parentId: prnt
         },
         (e)=>{
-          if(chrome.runtime.lastError){
-          console.log("SARA: Unable to generate context menu for paste-* on profile "+prfl+". Error: "+chrome.runtime.lastError.message);
+          if(browser.runtime.lastError){
+          console.log("SARA: Unable to generate context menu for paste-* on profile "+prfl+". Error: "+browser.runtime.lastError.message);
           }
         });
         //console.log("pusing into cntxtCchPst[] id:"+id);
@@ -111,7 +111,7 @@ function mkPstCntxtMnu(prfl){
       }
     }
     
-    chrome.contextMenus.update("paste",{
+    browser.menus.update("paste",{
       title: "Paste from profile: "+prfl
     });
     
@@ -130,9 +130,9 @@ function remakePstCntxtMnu(prfl){
 let max=cntxtCchPst.length;
   if(max>0){
     for(let i=0; i<max; i++){
-      chrome.contextMenus.remove(cntxtCchPst[i],(e)=>{
-        if(chrome.runtime.lastError){
-          console.log("SARA: Unable to populate remove context item: \""+cntxtCchPst[i]+"\" Error: "+chrome.runtime.lastError.message);
+      browser.menus.remove(cntxtCchPst[i],(e)=>{
+        if(browser.runtime.lastError){
+          console.log("SARA: Unable to populate remove context item: \""+cntxtCchPst[i]+"\" Error: "+browser.runtime.lastError.message);
         }
       });
     }
@@ -222,18 +222,18 @@ var end=rtrn.search('/');
 return rtrn;
 }
 
-//to handle chrome.runtime/tabs.sendMessage errors
+//to handle browser.runtime/tabs.sendMessage errors
 function chromeSendMsgErrHndl(action, tabs){
-  if(chrome.runtime.lastError){
-  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
+  if(browser.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+browser.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+tabs[0].id+"\ntitled: \""+tabs[0].title+"\"\nurl: \""+tabs[0].url+"\"");
   return true;
   }
 return false;
 }
 
 function chromeSendMsgErrHndlDtl(action, details){
-  if(chrome.runtime.lastError){
-  console.log("SARA: Received the following error: \n\n"+chrome.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+details.tabId+"\nurl: \""+details.url+"\"");
+  if(browser.runtime.lastError){
+  console.log("SARA: Received the following error: \n\n"+browser.runtime.lastError.message+"\n\nTrying to send a \""+action+"\" to\ntab: "+details.tabId+"\nurl: \""+details.url+"\"");
   return true;
   }
 return false;
@@ -244,7 +244,7 @@ return false;
 var cntxtCch={};//cache for the context menu id's
 var cntxtCchPst=[]; //cache for context menu -> paste
 var curEl=null;
-chrome.contextMenus.removeAll();
+browser.menus.removeAll();
 mkCntxtMnu();
 var cntxtMnsEvntLstnrAdded=false;
 
@@ -261,7 +261,7 @@ complexity for long term efficiency... hopefully. I haven't done the math/Big O 
 case yet
 */
 //-------checking for empty install and initializing values-----------
-chrome.storage.local.get(null,(d)=>{
+browser.storage.local.get().then((d)=>{
   if(Object.keys(d).length <= 0){
     var ind={
       profiles: {
@@ -353,7 +353,7 @@ chrome.storage.local.get(null,(d)=>{
       ignrLst: ""
       }
     };
-    chrome.storage.local.set(ind,(e)=>{
+    browser.storage.local.set(ind).then((e)=>{
     remakePstCntxtMnu(ind.settings.def_profile);
     });
   }
@@ -364,19 +364,19 @@ chrome.storage.local.get(null,(d)=>{
 });
 
 
-//chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+//browser.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
 //--------------- listener for messages from other parts of the extension -------------------------
-chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+browser.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
   /*
   if(msg.hasOwnProperty('bdgNm')) {
-    chrome.browserAction.setBadgeText({text: msg.bdgNm});
+    browser.browserAction.setBadgeText({text: msg.bdgNm});
   }
   */
   if(msg.hasOwnProperty('onEl') && msg.onEl.hasOwnProperty('tagName') && msg.onEl.hasOwnProperty('attr')){
   var arr=Object.keys(msg.onEl.attr);
     //change the menu item title
-    chrome.contextMenus.update("info",{
+    browser.menus.update("info",{
       title: "Element Properties: "+msg.onEl.tagName
     });
     
@@ -384,9 +384,9 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     var ids=Object.keys(cntxtCch);
     var tmp=ids.shift();
       while(tmp){
-        chrome.contextMenus.remove(tmp,(e)=>{
-          if(chrome.runtime.lastError){
-          console.log("SARA: Unable to populate remove context item: \""+tmp+"\" Error: "+chrome.runtime.lastError.message);
+        browser.menus.remove(tmp,(e)=>{
+          if(browser.runtime.lastError){
+          console.log("SARA: Unable to populate remove context item: \""+tmp+"\" Error: "+browser.runtime.lastError.message);
           }
         });
       tmp=ids.shift();
@@ -395,21 +395,21 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     //populates the context menu
     arr.forEach((val, i) => {
     cntxtCch["info-"+val]={"val":msg.onEl.attr[val], "attr":val};
-        chrome.contextMenus.create({
+        browser.menus.create({
         id: "info-"+val,
         title: val+": \""+msg.onEl.attr[val]+"\"",
         contexts: ["all"],
         parentId: "info"
         }, (e)=>{
-          if(chrome.runtime.lastError){
-          console.log("SARA: Unable to populate info-* context menu. Error: "+chrome.runtime.lastError.message); 
+          if(browser.runtime.lastError){
+          console.log("SARA: Unable to populate info-* context menu. Error: "+browser.runtime.lastError.message); 
           }
         });
     });
   }
   //on popup menu profile set, do the following
   else if(msg.hasOwnProperty('setPrfl')){
-    chrome.storage.local.get({'profile_meta':null}, (d)=>{
+    browser.storage.local.get(['profile_meta']).then((d)=>{
       if(d && typeof d=="object" && d.hasOwnProperty('profile_meta') && typeof d.profile_meta =="object" && d.profile_meta.hasOwnProperty(msg.setPrfl)){
       //build contextmenu 
       remakePstCntxtMnu(msg.setPrfl);
@@ -423,25 +423,25 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
 
 //----determines how to evaluate which profile to use (for the paste context menu) when changing existing tabs--
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+browser.tabs.onActivated.addListener(function(activeInfo) {
+  browser.tabs.query({active: true, currentWindow: true}, function(tabs){
     //console.log(tabs);
     if(!tabs||tabs.length<=0||!tabs.hasOwnProperty(0)||tabs[0].url==""||tabs[0].url.indexOf("chrome")==0){
     //url not loaded or not a valid URL do nothing.
     return null;
     }
-    chrome.storage.local.get(null, (d)=>{
+    browser.storage.local.get().then((d)=>{
     let h=hostFromURL(tabs[0].url);
     let aHsh=strToApplyLst(d.settings.applyLst);
       // this can return an error if the extension was reloaded or updated and you go back to a page.
       // I tried try-catch, but that won't catch async calls. .catch() doesn't work and you can't supply
-      // a function to deal with errors. It turns out, just by calling "chrome.runtime.lastError" you can
+      // a function to deal with errors. It turns out, just by calling "browser.runtime.lastError" you can
       // "catch" the error and it won't report to the console on the background.js. WTH?
       // Whatever, it works. I'm running with it.
-      chrome.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
+      browser.tabs.sendMessage(tabs[0].id,{action: "getPgPrfl"},(e)=>{
       //console.log(e);
       chromeSendMsgErrHndl("getPgPrfl", tabs);
-        if(e!=null&&e!=false&&e!=undefined&&chrome.runtime.lastError==undefined){
+        if(e!=null&&e!=false&&e!=undefined&&browser.runtime.lastError==undefined){
         let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
         //console.log("applying profile:"+ curPrfl);
         remakePstCntxtMnu(curPrfl);
@@ -449,7 +449,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
       });
 
       //determines if floating panel should be there on new and/or old tabs.
-      chrome.tabs.sendMessage(tabs[0].id,{action: "closeFltPnl"},(e)=>{
+      browser.tabs.sendMessage(tabs[0].id,{action: "closeFltPnl"},(e)=>{
       chromeSendMsgErrHndl("closeFltPnl", tabs);
       });
     });
@@ -458,11 +458,11 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 
 
 //------------ adding contextMenu listener on click ----------------------------
-//chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
+//browser.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {          
 //no longer using tabs.onUpdated because of iframes. it loads the onUpdated for each iframe and does each step within ths logic asynchronously. Hence
 // remakePstCntxtMnu()'s mkPstCntxtMnu() call happen at the same time, before cntxtPstCch gets updated, causing it to make a contextmenu that already exists.
 //which causes a non-stopping error.
-chrome.webNavigation.onCompleted.addListener(function(details){
+browser.webNavigation.onCompleted.addListener(function(details){
   
   if(details.url.indexOf("chrome")==0){
   return null;
@@ -471,20 +471,22 @@ chrome.webNavigation.onCompleted.addListener(function(details){
   //cntxtMnsEvntLstnrAdded is to prevent the listener from being added multiple times
   if(!cntxtMnsEvntLstnrAdded){
     //adds listeners for the right click/context menu so we know what to do if something is clicked
-    chrome.contextMenus.onClicked.addListener(function(info, tabs) {
+    browser.menus.onClicked.addListener(function(info, tabs) {
         // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
         if(info.menuItemId.substr(0,5) == "info-"){
           if(cntxtCch.hasOwnProperty(info.menuItemId) && cntxtCch[info.menuItemId].hasOwnProperty("attr") && cntxtCch[info.menuItemId].hasOwnProperty("val")){
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-              chrome.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}},(e)=>{chromeSendMsgErrHndlDtl("sendInfo", details);});
+            browser.tabs.query({active: true, currentWindow: true}).then(function(tabs){
+            console.log("<<<<<<==================background");
+            console.log({attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val});
+              browser.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}}).then((e)=>{chromeSendMsgErrHndlDtl("sendInfo", details);});
             });
           }
         }
         else if(info.menuItemId.substr(0,6) == "paste-"){
-          chrome.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}},(e)=>{chromeSendMsgErrHndlDtl("pasteVal", details);});
+          browser.tabs.sendMessage(tabs.id, {action: "pasteVal", msg:{path:info.menuItemId}},(e)=>{chromeSendMsgErrHndlDtl("pasteVal", details);});
         }
         else if(info.menuItemId=="clip"){
-          chrome.tabs.sendMessage(tabs.id, {action: "clip", msg:{}},(e)=>{chromeSendMsgErrHndlDtl("clip", details);});
+          browser.tabs.sendMessage(tabs.id, {action: "clip", msg:{}},(e)=>{chromeSendMsgErrHndlDtl("clip", details);});
         }
         else{
         }
@@ -494,10 +496,10 @@ chrome.webNavigation.onCompleted.addListener(function(details){
 
   //============set proper paste context menu on page load/reload=====
   if(details.url!=""&&details.url.indexOf("chrome")!=0&&details.frameId==0){
-    chrome.storage.local.get(null, (d)=>{
+    browser.storage.local.get().then((d)=>{
     let h=hostFromURL(details.url);
     let aHsh=strToApplyLst(d.settings.applyLst);
-        chrome.tabs.sendMessage(details.tabId,{action: "getPgPrfl"},(e)=>{
+        browser.tabs.sendMessage(details.tabId,{action: "getPgPrfl"},(e)=>{
         chromeSendMsgErrHndlDtl("getPgPrfl on page reload", details);
         let curPrfl=dtrmnPrfl(d.settings.cur_profile, d.settings.def_profile, h, aHsh, e, d.profiles, d.settings.curDef);
         remakePstCntxtMnu(curPrfl);
@@ -506,18 +508,27 @@ chrome.webNavigation.onCompleted.addListener(function(details){
   }
 });
 
-
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
+/*------- enables toolbar icon when conditions are met. Doesn't need/not supported for firefox------------
+browser.runtime.onInstalled.addListener(function() {
+  browser.declarativeContent.onPageChanged.removeRules(undefined, function() {
+    browser.declarativeContent.onPageChanged.addRules([{
+      conditions: [new browser.declarativeContent.PageStateMatcher({
         pageUrl: {urlMatches: '(http|https|file):/+[a-z]*'},
       })],
-      actions: [new chrome.declarativeContent.ShowPageAction()]
+      actions: [new browser.declarativeContent.ShowPageAction()]
     }]);
   });
+});
+--------------------------------------------------------------------------------------------------------*/
 
 
-
+/*----------------------------- browser action (the icon in the toolbar) can be disabled with this ---------------
+//low priority, do later
+browser.tabs.onCreated.addListener(() => {
+  browser.browserAction.enable();
 });
 
+browser.browserAction.onClicked.addListener(() => {
+  browser.browserAction.disable();
+});
+----------------------------------------------------------------------------------------------------------------*/

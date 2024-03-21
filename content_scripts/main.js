@@ -106,6 +106,8 @@ window.hasRun = true;
 
   //a hack function to copy to clipboard
   function copyHack(str){
+  console.log("<<<<<<<<++++++++++++++++++++++");
+  console.log(str);
   var ta=document.createElement("textarea");
   ta.textContent=str;
   document.body.appendChild(ta);

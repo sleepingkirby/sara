@@ -8,7 +8,7 @@
     "activeTab",
     "tabs",
     "webNavigation",
-    "contextMenus",
+    "menus",
     "clipboardWrite"
   ],
   "icons": {
@@ -24,7 +24,10 @@
     "default_title": "SARA",
     "default_popup": "popup/menu.html"
   },
-  "options_page": "options/settings.html",
+  "options_ui": {
+    "page":"./options/settings.html",
+    "open_in_tab":true
+  },
   "background": {
     "scripts": ["./background.js"],
     "persistent": false
