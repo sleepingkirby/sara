@@ -1,6 +1,4 @@
-//loading external files and settings.
 (function() {
-
 /**
  * Check and set a global guard variable.
  * If this content script is injected into the same page again,
@@ -11,6 +9,11 @@
   }
 window.hasRun = true;
 
+
+  //
+  function onError(err){
+  console.log(err);
+  }
 
   //validate Str
   function validStr(str){
@@ -106,8 +109,6 @@ window.hasRun = true;
 
   //a hack function to copy to clipboard
   function copyHack(str){
-  console.log("<<<<<<<<++++++++++++++++++++++");
-  console.log(str);
   var ta=document.createElement("textarea");
   ta.textContent=str;
   document.body.appendChild(ta);
@@ -164,7 +165,7 @@ window.hasRun = true;
   value from the settings via the string, fills
   the onEl with the value.
   ---------------------------------------------*/ 
-  function pasteVal(str, flag=false){
+  function pasteVal(str, onEl, flag=false){
   //console.log("SARA: starting pasteVal: "+str);
     if(typeof str!="string" || str==""){
     return null;
@@ -196,8 +197,9 @@ window.hasRun = true;
     //console.log("found: "+ptr);
     copyHack(ptr);
 
-      if(typeof ptr!="string" || typeof onEl!="object"){
+      if(typeof ptr!="string" && typeof onEl!="object"){
       console.log("SARA: Attempt to paste value into field failed. Field either not an object or value not a string.");
+      console.log(typeof ptr);
       //console.log(onEl);
       //console.log(prt);
       return null;
@@ -324,7 +326,7 @@ window.hasRun = true;
       break;
       case 'pasteVal':
         browser.storage.local.get().then((d)=>{
-        pasteVal(request.msg.path, d.settings.eventFill);
+        pasteVal(request.msg.path, onEl, d.settings.eventFill);
         });
       sendResponse(true);  
       break;
@@ -413,8 +415,14 @@ window.hasRun = true;
   function to capture what element was right-clicked on
   ---------------------------------------------------*/
   function rghtClckOnEl(e){
-    if(e.path){
+    if(e.target){
+    onEl=e.target;
+    }
+    else if(e.path){
     onEl=e.path[0];
+    }
+    else if(e.composedPath){
+    onEl=e.composedPath[0];
     }
   }
 
@@ -960,8 +968,7 @@ return true;
 }
 
 //================================================= main code run ====================================================
-
-var onEl;
+var onEl=null;
 var ignErr=null;
 var ignrHsh={}; //hash for ignore list
 var applyHsh={}; //hash for apply list
@@ -969,6 +976,18 @@ var isApply=false; //is this domain in apply list?
 var curPrfl=null; //profile name to apply for this page
 var curInpt=null;
 var dmn=window.location.host;//domain of current page/
+/*
+window['extSARAVars']={
+onEl:null,
+ignErr:null,
+ignrHsh:{},
+applyHsh:{},
+isApply:false,
+curPrfl:null,
+curInpt:null,
+dmn:window.location.host
+}
+*/
 
 document.addEventListener("mouseover", mouseOvrEvnt);
 document.addEventListener("contextmenu", rghtClckOnEl);
