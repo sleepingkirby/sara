@@ -473,11 +473,10 @@ browser.webNavigation.onCompleted.addListener(function(details){
     //adds listeners for the right click/context menu so we know what to do if something is clicked
     browser.menus.onClicked.addListener(function(info, tabs) {
         // if info.menuItemId starts with "info-", the action is to copy the data into the clipboard
+        console.log(info.menuItemId);
         if(info.menuItemId.substr(0,5) == "info-"){
           if(cntxtCch.hasOwnProperty(info.menuItemId) && cntxtCch[info.menuItemId].hasOwnProperty("attr") && cntxtCch[info.menuItemId].hasOwnProperty("val")){
             browser.tabs.query({active: true, currentWindow: true}).then(function(tabs){
-            console.log("<<<<<<==================background");
-            console.log({attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val});
               browser.tabs.sendMessage(tabs[0].id, {action: "sendInfo", msg:{attr:cntxtCch[info.menuItemId].attr,val:cntxtCch[info.menuItemId].val}}).then((e)=>{chromeSendMsgErrHndlDtl("sendInfo", details);});
             });
           }
