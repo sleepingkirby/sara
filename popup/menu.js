@@ -40,7 +40,7 @@ inParam: element id, array to fill, option to be selected
 fill out the select element
 --------------------------------------------------------------------*/
 function fillSlct(id, arr, prf){
-  if(!id || id==""||typeof arr !="object" || Object.keys(arr) <= 0){
+  if(!id || id==""||typeof arr !="object" || Object.keys(arr).length <= 0){
   return 0;
   }
 
@@ -48,6 +48,8 @@ function fillSlct(id, arr, prf){
   if(typeof p !="string"){
   p=false;
   }
+
+  console.log(p);
 
   var tmp=null;
   var slct=document.getElementById(id);
