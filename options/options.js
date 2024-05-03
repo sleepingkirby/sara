@@ -732,12 +732,10 @@ function getVal(prf, meta, stk, leaf){
 
 
 var val=prf;
-var categFlag=0;//flag to skip category since that's always first
-  for(i=1; i<stk.length; i++){
-    if(categFlag==1&&val.hasOwnProperty(meta[stk[i].n].nm)){
+  for(i=2; i<stk.length; i++){
+    if(val.hasOwnProperty(meta[stk[i].n].nm)){
     val=val[meta[stk[i].n].nm];
     }
-  categFlag=1;
   }
  
   if(val.hasOwnProperty(meta[leaf].nm)){

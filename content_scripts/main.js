@@ -577,11 +577,11 @@ window.hasRun = true;
   var val='';
   var pos=prf;
     for(var i=0; i<max; i++){
-      if(pos.hasOwnProperty(meta[stk[i].n].nm)){
+      if(i>=2&&pos.hasOwnProperty(meta[stk[i].n].nm)){
       pos=pos[meta[stk[i].n].nm];
       }
     }
-   
+ 
     if(pos.hasOwnProperty(leaf) && typeof pos[leaf]=="string"){
     return pos[leaf];
     }
