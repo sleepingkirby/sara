@@ -506,7 +506,7 @@ browser.webNavigation.onCompleted.addListener(function(details){
   }
 
   //============set proper paste context menu on page load/reload=====
-  if(details.url!=""&&details.url.indexOf("chrome")!=0&&details.frameId==0){
+  if(details.url!=""&&details.url.indexOf("about")!=0&&details.frameId==0){
     browser.storage.local.get().then((d)=>{
     let h=hostFromURL(details.url);
     let aHsh=strToApplyLst(d.settings.applyLst);
